@@ -1,0 +1,14 @@
+{
+  "name": "portfolio-atelier-grafika",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Atelier Grafika - Link in Bio & Portfolio Architecture, Design d'Espace, BTP",
+  "scripts": {
+    "dev": "vite --host --open",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.14"
+  }
+}

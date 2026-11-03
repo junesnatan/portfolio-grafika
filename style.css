@@ -1,0 +1,1329 @@
+/* ==========================================================================
+   ATELIER GRAFRIKA - CHARTE GRAPHIQUE OFFICIELLE & REPRODUCTION BRANDLYFT
+   - Bleu architectural royal : #003B73
+   - Rouge brique BTP : #850C14
+   - Fond chaleureux & lumineux type BrandLyft : #FAF8F5
+   - Typographies : Poppins (titres/boutons) + Montserrat (textes/spécifications)
+   - Style : Épuré, haute rigueur architecturale, animations bien rigides
+   - Structure : Contacts & profil bio en haut, Projets en dessous
+   ========================================================================== */
+
+:root {
+    --brand-blue: #003b73;
+    --brand-blue-hover: #002952;
+    --brand-blue-soft: rgba(0, 59, 115, 0.08);
+
+    --brand-red: #850c14;
+    --brand-red-hover: #67080e;
+    --brand-red-soft: rgba(133, 12, 20, 0.08);
+
+    --whatsapp-green: #25d366;
+    --whatsapp-hover: #1ebd5b;
+
+    --bg-page: #faf8f5; /* Fond ivoire chaleureux et prestigieux comme BrandLyft */
+    --bg-white: #ffffff;
+    --bg-card-subtle: #f4efe9;
+
+    --text-primary: #0c131d;
+    --text-secondary: #475569;
+    --text-subtle: #7a869a;
+
+    --border-subtle: #e6dfd5;
+    --border-hairline: rgba(0, 59, 115, 0.1);
+
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Montserrat', sans-serif;
+    --font-hand: 'Caveat', cursive, sans-serif;
+
+    --radius-pill: 9999px;
+    --radius-card: 24px;
+    --radius-tile: 14px;
+
+    --shadow-soft: 0 4px 18px rgba(0, 35, 75, 0.04);
+    --shadow-card: 0 14px 34px rgba(0, 35, 75, 0.10);
+    --shadow-hover: 0 22px 50px rgba(0, 35, 75, 0.20);
+
+    /* Transitions & mécaniques rigides (snappy physics) */
+    --ease-rigid: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-snap: cubic-bezier(0.2, 0, 0, 1);
+    --duration-snap: 0.18s;
+}
+
+/* Reset universel */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 15px;
+    background-color: var(--bg-page);
+    overflow-x: hidden;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+    background-color: var(--bg-page);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* ==========================================================================
+   0. SPLASH SCREEN D'OUVERTURE (STYLE APPLICATION MOBILE)
+   Affiche uniquement le logo dans son macaron épuré avec loader rapide
+   ========================================================================== */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s var(--ease-rigid), visibility 0.4s ease;
+}
+
+.splash-screen.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.splash-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: splashAppear 0.5s var(--ease-rigid) forwards;
+}
+
+.splash-logo-box {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 36px rgba(0, 59, 115, 0.12);
+    margin-bottom: 1.6rem;
+    animation: logoPulse 1.6s infinite ease-in-out;
+}
+
+.splash-logo {
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
+}
+
+.splash-loader-line {
+    width: 80px;
+    height: 3px;
+    background: #edf0f5;
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    margin-bottom: 0.8rem;
+}
+
+.splash-loader-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-blue), var(--brand-red));
+    border-radius: var(--radius-pill);
+    animation: splashProgress 1.1s ease forwards;
+}
+
+.splash-tagline {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: var(--brand-blue);
+    opacity: 0.9;
+}
+
+@keyframes splashAppear {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes logoPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 12px 36px rgba(0, 59, 115, 0.12); }
+    50% { transform: scale(1.05); box-shadow: 0 16px 42px rgba(0, 59, 115, 0.22); }
+}
+
+@keyframes splashProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+/* Conteneur principal */
+.page-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem 1rem 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+.page-wrapper.animate-page {
+    animation: pageReveal 0.6s var(--ease-rigid) 0.15s both;
+}
+
+@keyframes pageReveal {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   1. LES CONTACTS EN HAUT (PROFIL BIO & TUILES LINKTREE)
+   ========================================================================== */
+.bio-header {
+    width: 100%;
+    max-width: 460px;
+    text-align: center;
+    margin-bottom: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0.5rem;
+}
+
+.brand-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 8px 26px rgba(0, 59, 115, 0.08);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+    padding: 6px;
+    transition: transform var(--duration-snap) var(--ease-rigid);
+}
+
+.brand-avatar:hover {
+    transform: scale(1.04);
+}
+
+.logo-img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+}
+
+.location-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--brand-red);
+    background: var(--brand-red-soft);
+    padding: 3px 11px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 0.65rem;
+}
+
+.brand-title {
+    font-family: var(--font-heading);
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+}
+
+.brand-red {
+    color: var(--brand-red);
+}
+
+.brand-blue {
+    color: var(--brand-blue);
+}
+
+.brand-tagline {
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--brand-blue);
+    margin-bottom: 0.45rem;
+}
+
+.brand-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    max-width: 400px;
+    line-height: 1.5;
+    margin-bottom: 1.4rem;
+}
+
+.bio-links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.action-tile {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-tile);
+    padding: 0.75rem 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+    transition: all var(--duration-snap) var(--ease-rigid);
+    text-align: left;
+}
+
+.action-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 59, 115, 0.09);
+    border-color: var(--brand-blue);
+}
+
+.action-tile:active {
+    transform: scale(0.97) !important;
+    transition-duration: 0.08s !important;
+}
+
+.action-tile.action-primary {
+    background: var(--brand-blue);
+    border-color: var(--brand-blue);
+    color: #ffffff;
+}
+
+.action-tile.action-primary .tile-icon {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+}
+
+.action-tile.action-primary .tile-arrow {
+    color: #ffffff;
+}
+
+.action-tile.action-primary:hover {
+    background: var(--brand-blue-hover);
+    box-shadow: 0 8px 26px rgba(0, 59, 115, 0.28);
+}
+
+.tile-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--brand-blue-soft);
+    color: var(--brand-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tile-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tile-arrow {
+    color: var(--text-subtle);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    transition: transform var(--duration-snap) ease;
+}
+
+.action-tile:hover .tile-arrow {
+    transform: translateX(4px);
+}
+
+.action-tile.action-scroll:hover .tile-arrow {
+    transform: translateY(3px);
+}
+
+/* ==========================================================================
+   2. LES PROJETS EN DESSOUS (SECTION SHOWCASE STYLE BRANDLYFT)
+   ========================================================================== */
+.projects-section {
+    width: 100%;
+    max-width: 1120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+.projects-header-box {
+    max-width: 760px;
+    margin-bottom: 2.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+.projects-big-title {
+    font-family: var(--font-heading);
+    font-size: 2.7rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+    margin-bottom: 0.8rem;
+    text-wrap: balance;
+}
+
+.projects-big-title span {
+    display: block;
+}
+
+.projects-big-title .title-sub-part {
+    color: var(--brand-blue);
+    font-weight: 800;
+}
+
+.projects-subtext {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.5;
+    text-wrap: balance;
+}
+
+@media (max-width: 768px) {
+    .projects-header-box {
+        margin-bottom: 1.3rem;
+        padding: 0 1.2rem;
+    }
+
+    .projects-big-title {
+        font-size: 1.36rem;
+        line-height: 1.3;
+        letter-spacing: -0.015em;
+        margin-bottom: 0.4rem;
+    }
+
+    .projects-big-title span {
+        display: block;
+    }
+
+    .projects-big-title .title-sub-part {
+        display: block;
+        margin-top: 3px;
+        color: var(--brand-blue);
+    }
+
+    .projects-subtext {
+        font-size: 0.84rem;
+        line-height: 1.4;
+    }
+}
+
+/* ==========================================================================
+   RUBAN COURBÉ EN ARCHE (PC) / CAROUSEL TOUCH SNAP (MOBILE)
+   Cartes 100% visuelles pures : ZÉRO bouton ni texte superposé sur l'image
+   ========================================================================== */
+.arch-gallery-container {
+    width: 100vw;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2.2rem 1rem 3rem;
+    display: flex;
+    justify-content: center;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.arch-gallery-container::-webkit-scrollbar {
+    display: none;
+}
+
+.arch-track {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 0 1.5rem;
+    min-width: max-content;
+}
+
+/* Cartes individuelles : visuels majestueux au format BrandLyft */
+.arch-card {
+    position: relative;
+    width: 210px;
+    height: 335px;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    cursor: pointer;
+    background: #e5e9f0;
+    box-shadow: var(--shadow-card);
+    flex-shrink: 0;
+    transition: 
+        transform var(--duration-snap) var(--ease-rigid),
+        box-shadow var(--duration-snap) ease;
+    transform-origin: center bottom;
+    user-select: none;
+}
+
+.arch-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s var(--ease-rigid);
+}
+
+.arch-card:hover {
+    box-shadow: var(--shadow-hover);
+    z-index: 15;
+}
+
+.arch-card:hover img {
+    transform: scale(1.06);
+}
+
+.arch-card:active {
+    transform: scale(0.97) !important;
+    transition-duration: 0.08s !important;
+}
+
+/* Titre & Localisation du projet en bas (Épuré : Zéro bouton) */
+.card-title-scrim {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 3rem 1.1rem 1.1rem;
+    background: linear-gradient(
+        to top,
+        rgba(0, 30, 65, 0.95) 0%,
+        rgba(0, 30, 65, 0.55) 60%,
+        transparent 100%
+    );
+    color: #ffffff;
+    text-align: left;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.card-project-title {
+    font-family: var(--font-heading);
+    font-size: 0.96rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 0.2rem;
+    color: #ffffff;
+}
+
+.card-project-loc {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.88);
+    display: block;
+}
+
+/* Points de pagination mobile */
+.mobile-carousel-dots {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    margin-top: 0.5rem;
+    margin-bottom: 1.8rem;
+}
+
+.dot-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: #d8deeb;
+    transition: all 0.2s var(--ease-rigid);
+    cursor: pointer;
+}
+
+.dot-indicator.active {
+    width: 24px;
+    background: var(--brand-blue);
+}
+
+/* ==========================================================================
+   OPTIMISATIONS MOBILE (CARTES 100% VISUELLES & IMMERSIVES)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .arch-gallery-container {
+        justify-content: flex-start;
+        padding: 1rem 0 1.5rem;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0 10vw;
+    }
+
+    .arch-track {
+        padding: 0 10vw;
+        gap: 14px;
+        align-items: center;
+    }
+
+    .arch-card {
+        width: 80vw;
+        max-width: 320px;
+        height: 420px;
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(0, 59, 115, 0.16);
+        scroll-snap-align: center;
+        transform: none !important;
+    }
+
+    .card-title-scrim {
+        padding: 3.8rem 1.4rem 1.4rem;
+    }
+
+    .card-project-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .card-project-loc {
+        font-size: 0.82rem;
+    }
+
+    .mobile-carousel-dots {
+        display: flex;
+    }
+}
+
+/* ==========================================================================
+   BOUTON AVEC BORDURE POINTILLÉE STYLE BRANDLYFT & DOODLES
+   ========================================================================== */
+.hero-bottom-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 1.2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.dashed-pill-wrapper {
+    padding: 5px;
+    border: 1.8px dashed rgba(133, 12, 20, 0.45);
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    transition: border-color 0.2s ease, transform var(--duration-snap) var(--ease-rigid);
+}
+
+.dashed-pill-wrapper:hover {
+    border-color: var(--brand-red);
+    transform: scale(1.02);
+}
+
+.cta-action-btn {
+    background: var(--brand-red);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 0.85rem 2.1rem;
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(133, 12, 20, 0.32);
+    transition: all var(--duration-snap) var(--ease-rigid);
+}
+
+.cta-action-btn:hover {
+    background: var(--brand-red-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(133, 12, 20, 0.42);
+}
+
+.cta-action-btn:active {
+    transform: scale(0.97) !important;
+}
+
+/* Doodles BrandLyft manuscrits */
+.doodle-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #2b3342;
+    pointer-events: none;
+}
+
+.doodle-text {
+    font-family: var(--font-hand);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #2c384e;
+    transform: rotate(-4deg);
+    display: inline-block;
+}
+
+.doodle-arrow-svg {
+    width: 38px;
+    height: 26px;
+    color: #2c384e;
+}
+
+.doodle-arrow-svg.flip-x {
+    transform: scaleX(-1);
+}
+
+.cta-note-label {
+    width: 100%;
+    font-size: 0.76rem;
+    color: var(--text-subtle);
+    font-weight: 600;
+    margin-top: 0.4rem;
+}
+
+@media (max-width: 640px) {
+    .doodle-item {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   3. PIED DE PAGE ÉPURÉ
+   ========================================================================== */
+.minimal-footer {
+    width: 100%;
+    max-width: 480px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 2.2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.footer-logo-box img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    margin-bottom: 0.6rem;
+}
+
+.footer-name {
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+}
+
+.footer-role {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.footer-copy {
+    font-size: 0.7rem;
+    color: var(--text-subtle);
+}
+
+/* ==========================================================================
+   MODALS ÉPURÉS & BOUTONS WHATSAPP RECONÇUS
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(12, 19, 29, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s var(--ease-rigid);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-box {
+    background: #ffffff;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 1.8rem 1.6rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+    transform: translateY(16px) scale(0.97);
+    transition: transform 0.22s var(--ease-rigid);
+}
+
+.modal-overlay.active .modal-box {
+    transform: translateY(0) scale(1);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+    z-index: 20;
+}
+
+.modal-close-btn:hover {
+    background: var(--brand-red);
+    color: #ffffff;
+}
+
+.modal-head {
+    text-align: center;
+    margin-bottom: 1.4rem;
+}
+
+.modal-pre {
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--brand-red);
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.modal-heading {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+}
+
+.modal-sub {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    text-align: left;
+}
+
+.input-field label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.input-field input,
+.input-field textarea {
+    font-family: inherit;
+    font-size: 0.86rem;
+    padding: 0.68rem 0.95rem;
+    border-radius: 11px;
+    border: 1px solid var(--border-subtle);
+    background: #ffffff;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.18s ease;
+}
+
+.input-field input:focus,
+.input-field textarea:focus {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 2px var(--brand-blue-soft);
+}
+
+/* =========================================================================
+   SELECT ARCHITECTURAL HAUT DE GAMME SUR-MESURE (MODAL DEVIS)
+   ========================================================================= */
+.custom-select-container {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.custom-select-container.open {
+    z-index: 60;
+}
+
+/* Déclencheur tactile */
+.custom-select-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 0.72rem 1rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.86rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.custom-select-trigger:hover {
+    border-color: rgba(0, 59, 115, 0.4);
+    background: #fafcfe;
+}
+
+.custom-select-trigger:focus,
+.custom-select-container.open .custom-select-trigger {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 3px rgba(0, 59, 115, 0.14);
+    background: #ffffff;
+}
+
+.custom-select-label {
+    color: var(--text-subtle);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 0.5rem;
+    transition: color 0.18s ease;
+}
+
+.custom-select-label.has-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.custom-select-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-blue);
+    transition: transform 0.22s var(--ease-rigid), color 0.18s ease;
+    flex-shrink: 0;
+}
+
+.custom-select-container.open .custom-select-chevron {
+    transform: rotate(180deg);
+    color: var(--brand-red);
+}
+
+/* Menu déroulant architectural */
+.custom-select-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 270px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 59, 115, 0.15);
+    border-radius: 14px;
+    box-shadow: 0 16px 38px rgba(0, 35, 75, 0.18), 0 4px 12px rgba(0, 0, 0, 0.04);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 100;
+    padding: 0.4rem;
+    box-sizing: border-box;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px) scale(0.98);
+    transition: opacity 0.2s var(--ease-rigid), transform 0.2s var(--ease-rigid), visibility 0.2s;
+}
+
+/* Scrollbar soignée pour le dropdown */
+.custom-select-dropdown::-webkit-scrollbar {
+    width: 5px;
+}
+.custom-select-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-select-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(0, 59, 115, 0.2);
+    border-radius: 10px;
+}
+.custom-select-dropdown::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-blue);
+}
+
+.custom-select-container.open .custom-select-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+/* Option individuelle */
+.custom-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.62rem 0.75rem;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.14s ease, transform 0.14s ease;
+    position: relative;
+}
+
+.custom-option:not(:last-child) {
+    margin-bottom: 2px;
+}
+
+.custom-option:hover,
+.custom-option.focused {
+    background-color: rgba(0, 59, 115, 0.06);
+}
+
+.custom-option.selected {
+    background-color: rgba(0, 59, 115, 0.1);
+}
+
+/* Icône de catégorie */
+.option-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    background: var(--brand-blue-soft);
+    color: var(--brand-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.custom-option:hover .option-icon,
+.custom-option.focused .option-icon {
+    background: var(--brand-blue);
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.custom-option.selected .option-icon {
+    background: var(--brand-blue);
+    color: #ffffff;
+}
+
+/* Texte option */
+.option-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    text-align: left;
+}
+
+.option-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.25;
+}
+
+.custom-option.selected .option-title {
+    color: var(--brand-blue);
+    font-weight: 700;
+}
+
+.option-desc {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.25;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Coche de validation */
+.option-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-blue);
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+    flex-shrink: 0;
+    padding-left: 0.25rem;
+}
+
+.custom-option.selected .option-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* État d'erreur si formulaire envoyé sans choix */
+.custom-select-trigger.field-error {
+    border-color: var(--brand-red) !important;
+    background: #fff8f8 !important;
+    box-shadow: 0 0 0 3px rgba(133, 12, 20, 0.12) !important;
+    animation: shakeField 0.35s ease;
+}
+
+@keyframes shakeField {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+}
+
+@media (max-width: 480px) {
+    .input-row {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+    }
+}
+
+/* Réassurance sous le bouton du devis */
+.modal-reassurance-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.73rem;
+    color: var(--text-subtle);
+    font-weight: 500;
+    margin-top: 0.35rem;
+}
+
+.modal-reassurance-row .dot {
+    color: var(--border-subtle);
+}
+
+/* ==========================================================================
+   POPUP DU PROJET (BOUTON ET GALERIE SOIGNÉS)
+   ========================================================================= */
+.modal-detail-box {
+    padding: 0;
+    overflow: hidden;
+    max-width: 500px;
+    border-radius: 24px;
+}
+
+.detail-gallery-stage {
+    position: relative;
+    width: 100%;
+    height: 285px;
+    background: #080d14;
+    overflow: hidden;
+}
+
+.detail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.2s ease;
+}
+
+.detail-thumbnails-strip {
+    display: flex;
+    gap: 8px;
+    padding: 10px 1.4rem;
+    background: #f4f6fa;
+    border-bottom: 1px solid var(--border-subtle);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.detail-thumbnails-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.thumb-item {
+    width: 52px;
+    height: 52px;
+    border-radius: 9px;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    opacity: 0.55;
+    border: 2px solid transparent;
+    transition: all 0.18s var(--ease-rigid);
+}
+
+.thumb-item:hover {
+    opacity: 0.85;
+}
+
+.thumb-item.active {
+    opacity: 1;
+    border-color: var(--brand-blue);
+    box-shadow: 0 2px 8px rgba(0, 59, 115, 0.3);
+    transform: scale(1.05);
+}
+
+.thumb-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.detail-content {
+    padding: 1.4rem 1.5rem 1.6rem;
+    text-align: left;
+}
+
+.detail-meta-clean {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 0.35rem;
+    font-size: 0.74rem;
+    color: var(--text-subtle);
+    font-weight: 600;
+}
+
+.detail-cat-text {
+    color: var(--brand-blue);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.detail-sep {
+    color: var(--border-subtle);
+}
+
+.detail-loc-text {
+    color: var(--text-secondary);
+}
+
+.detail-title {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+    line-height: 1.25;
+}
+
+.detail-specs-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--brand-blue);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.detail-specs-bar .sep {
+    color: #cbd5e1;
+    font-weight: 400;
+}
+
+.detail-text {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 1.3rem;
+}
+
+/* ==========================================================================
+   BOUTON WHATSAPP DU POPUP (AUCUN TEXTE SUPERPOSÉ, UNE SEULE LIGNE NETTE)
+   ========================================================================== */
+.popup-whatsapp-btn {
+    width: 100%;
+    background: var(--brand-blue);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 0.76rem 1.4rem;
+    font-family: var(--font-heading);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    box-shadow: 0 6px 18px rgba(0, 59, 115, 0.22);
+    transition: all var(--duration-snap) var(--ease-rigid);
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.popup-whatsapp-btn span {
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.popup-whatsapp-btn:hover {
+    background: var(--brand-red);
+    transform: translateY(-1.5px);
+    box-shadow: 0 10px 24px rgba(133, 12, 20, 0.32);
+}
+
+.popup-whatsapp-btn:active {
+    transform: scale(0.97) !important;
+}
+
+.popup-whatsapp-btn svg {
+    flex-shrink: 0;
+}
