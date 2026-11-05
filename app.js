@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 1. DONNÉES DES 7 PROJETS AVEC 7 PHOTOS UNIQUES PAR PROJET (49 PHOTOS AU TOTAL)
+    // 1. DONNÉES SYNCHRONISÉES AVEC LA CONSOLE /ADMIN (LOCALSTORAGE)
     // =========================================================================
-    const projects = [
+    const DEFAULT_PROJECTS = [
         {
             id: 1,
             title: "Villa Océane & Claustras",
@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
             location: "Fidjrossè, Cotonou",
             surface: "360 m²",
             duration: "12 mois",
-            // 7 photos exclusives : Façade, piscine, varangue, salon, cuisine, suite, salle d'eau
             photos: [
                 "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1000&q=85",
                 "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85",
@@ -52,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
             location: "Les Cocotiers, Cotonou",
             surface: "280 m²",
             duration: "5 mois",
-            // 7 photos exclusives : Salon moderne, boiseries iroko, salle à manger, escalier, chambre, dressing, lounge
             photos: [
                 "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=85",
                 "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85",
@@ -71,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
             location: "Ganhi, Cotonou",
             surface: "650 m²",
             duration: "9 mois",
-            // 7 photos exclusives : Ingénieurs de chantier, coffrage, ferraillage, coulage béton, structure, échafaudage, coordination
             photos: [
                 "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=85",
                 "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1000&q=85",
@@ -90,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             location: "Abomey-Calavi",
             surface: "320 m²",
             duration: "10 mois",
-            // 7 photos exclusives : Façade moderne, salon lumineux, cuisine ouverte, mezzanine, chambre d'ami, terrasse, jardin
             photos: [
                 "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=85",
                 "https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?auto=format&fit=crop&w=1000&q=85",
@@ -109,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
             location: "Haie Vive, Cotonou",
             surface: "220 m²",
             duration: "4 mois",
-            // 7 photos exclusives : Terrasse rooftop, salon épuré, cuisine îlot central, séjour, suite, salle de bain, vue extérieure
             photos: [
                 "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1000&q=85",
                 "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=85",
@@ -128,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
             location: "Porto-Novo",
             surface: "720 m²",
             duration: "14 mois",
-            // 7 photos exclusives : Façade achevée, hall d'accueil, appartements témoins, coursives, cages d'escalier, balcons, perspective
             photos: [
                 "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85",
                 "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1000&q=85",
@@ -147,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
             location: "Ouidah",
             surface: "450 m²",
             duration: "16 mois",
-            // 7 photos exclusives : Portail d'entrée, varangue extérieure, cour arborée, salon voûté, chambre d'hôtes, cour d'eau, patio nuit
             photos: [
                 "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1000&q=85",
                 "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=1000&q=85",
@@ -160,6 +153,75 @@ document.addEventListener('DOMContentLoaded', () => {
             description: "Grande maison ouverte sur le jardin, associant pierre locale et varangues fraîches."
         }
     ];
+
+    function getProjects() {
+        const raw = localStorage.getItem('GRAFRIKA_PROJECTS');
+        if (raw) {
+            try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            } catch (e) {}
+        }
+        localStorage.setItem('GRAFRIKA_PROJECTS', JSON.stringify(DEFAULT_PROJECTS));
+        return DEFAULT_PROJECTS;
+    }
+
+    const projects = getProjects();
+
+    // Incrémenter les statistiques de visite pour le tableau de bord /admin
+    try {
+        const rawStats = localStorage.getItem('GRAFRIKA_STATS');
+        const stats = rawStats ? JSON.parse(rawStats) : { views: 248, whatsapp: 39, leads: 12 };
+        stats.views = (stats.views || 0) + 1;
+        localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
+    } catch (e) {}
+
+    // Synchroniser dynamiquement les coordonnées avec les réglages de l'admin
+    function syncSettingsWithUI() {
+        try {
+            const raw = localStorage.getItem('GRAFRIKA_SETTINGS');
+            if (!raw) return;
+            const settings = JSON.parse(raw);
+
+            // Boutons d'appel direct
+            if (settings.phone) {
+                const phoneDigits = settings.phone.replace(/[^0-9+]/g, '');
+                document.querySelectorAll('a[href^="tel:"]').forEach(a => {
+                    a.href = `tel:${phoneDigits}`;
+                });
+            }
+
+            // Boutons d'e-mail
+            if (settings.email) {
+                document.querySelectorAll('a[href^="mailto:"]').forEach(a => {
+                    a.href = `mailto:${settings.email}`;
+                });
+            }
+
+            // Liens réseaux sociaux
+            if (settings.instagram) {
+                const ig = document.querySelector('a[aria-label="Instagram"]');
+                if (ig) ig.href = settings.instagram;
+            }
+            if (settings.tiktok) {
+                const tt = document.querySelector('a[aria-label="TikTok"]');
+                if (tt) tt.href = settings.tiktok;
+            }
+            if (settings.facebook) {
+                const fb = document.querySelector('a[aria-label="Facebook"]');
+                if (fb) fb.href = settings.facebook;
+            }
+            if (settings.linkedin) {
+                const li = document.querySelector('a[aria-label="LinkedIn"]');
+                if (li) li.href = settings.linkedin;
+            }
+            if (settings.x) {
+                const x = document.querySelector('a[aria-label="X (Twitter)"]');
+                if (x) x.href = settings.x;
+            }
+        } catch (e) {}
+    }
+    syncSettingsWithUI();
 
     // =========================================================================
     // 2. DISPOSITION EN ARCHE (PC) / CAROUSEL TOUCH SNAP AVEC POINTS (MOBILE)
@@ -355,9 +417,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Afficher la première photo
         renderPhoto(0);
 
-        // Lien WhatsApp personnalisé au ton naturel
+        // Lien WhatsApp personnalisé au ton naturel avec le numéro configuré
+        let targetWa = '22900000000';
+        try {
+            const set = JSON.parse(localStorage.getItem('GRAFRIKA_SETTINGS') || '{}');
+            if (set.whatsapp) targetWa = set.whatsapp.replace(/[^0-9]/g, '');
+        } catch (e) {}
+
         const whatsappMsg = encodeURIComponent(`Bonjour l'équipe Atelier Grafika ! J'ai vu votre réalisation "${proj.title}" à ${proj.location} et j'aimerais échanger avec vous pour un projet similaire.`);
-        document.getElementById('detailWhatsAppBtn').href = `https://wa.me/22900000000?text=${whatsappMsg}`;
+        document.getElementById('detailWhatsAppBtn').href = `https://wa.me/${targetWa}?text=${whatsappMsg}`;
+
+        // Incrémenter les stats lors du clic
+        document.getElementById('detailWhatsAppBtn').onclick = () => {
+            try {
+                const stats = JSON.parse(localStorage.getItem('GRAFRIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
+                stats.whatsapp = (stats.whatsapp || 0) + 1;
+                localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
+            } catch (e) {}
+        };
 
         detailModal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -511,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Envoi WhatsApp au ton naturel
+    // Envoi WhatsApp au ton naturel et enregistrement du prospect dans le CRM
     if (quoteForm) {
         quoteForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -532,9 +609,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Enregistrer la demande de devis dans le CRM de l'administration (/admin)
+            try {
+                const leads = JSON.parse(localStorage.getItem('GRAFRIKA_LEADS') || '[]');
+                leads.unshift({
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    name,
+                    phone,
+                    city: city || 'Non renseignée',
+                    domain,
+                    message: message || 'À définir ensemble',
+                    status: 'Nouveau'
+                });
+                localStorage.setItem('GRAFRIKA_LEADS', JSON.stringify(leads));
+
+                // Mettre à jour les compteurs de statistiques
+                const stats = JSON.parse(localStorage.getItem('GRAFRIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
+                stats.leads = (stats.leads || 0) + 1;
+                stats.whatsapp = (stats.whatsapp || 0) + 1;
+                localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
+            } catch (err) {}
+
+            // Récupérer le numéro WhatsApp cible depuis les réglages admin
+            let targetWa = '22900000000';
+            try {
+                const set = JSON.parse(localStorage.getItem('GRAFRIKA_SETTINGS') || '{}');
+                if (set.whatsapp) targetWa = set.whatsapp.replace(/[^0-9]/g, '');
+            } catch (e) {}
+
             const text = `Bonjour Atelier Grafika !%0A%0AJe souhaite demander un devis pour un projet :%0A- *Nom :* ${encodeURIComponent(name)}%0A- *Téléphone :* ${encodeURIComponent(phone)}%0A- *Localisation :* ${encodeURIComponent(city || 'À préciser')}%0A- *Prestation :* ${encodeURIComponent(domain)}%0A- *Détails :* ${encodeURIComponent(message || 'À définir ensemble')}`;
 
-            window.open(`https://wa.me/22900000000?text=${text}`, '_blank');
+            window.open(`https://wa.me/${targetWa}?text=${text}`, '_blank');
             closeQuote();
         });
     }

@@ -757,6 +757,18 @@ body {
     color: var(--text-subtle);
 }
 
+.footer-admin-link {
+    color: var(--text-subtle);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.16s ease;
+}
+
+.footer-admin-link:hover {
+    color: var(--brand-blue);
+    text-decoration: underline;
+}
+
 /* ==========================================================================
    MODALS ÉPURÉS & BOUTONS WHATSAPP RECONÇUS
    ========================================================================== */
