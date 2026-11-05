@@ -333,6 +333,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const btnQuickFillDemo = document.getElementById('btnQuickFillDemo');
+    if (btnQuickFillDemo) {
+        btnQuickFillDemo.addEventListener('click', () => {
+            const emailInput = document.getElementById('loginEmail');
+            const passwordInput = document.getElementById('loginPassword');
+            const auth = getStoredAuth();
+            if (emailInput) emailInput.value = auth.email;
+            if (passwordInput) passwordInput.value = auth.password;
+            if (loginError) loginError.style.display = 'none';
+            showToast("Identifiants pré-remplis.");
+        });
+    }
+
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();

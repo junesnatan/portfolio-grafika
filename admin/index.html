@@ -18,72 +18,158 @@
     <!-- =========================================================================
          1. ÉCRAN DE CONNEXION SÉCURISÉ (LOGIN)
          ========================================================================= -->
-    <div id="loginScreen" class="login-wrapper">
-        <div class="login-card-floating">
-            <div class="login-brand">
-                <img src="../assets/logo.png" alt="Atelier Grafika" class="login-logo">
-                <h1 class="login-title">
-                    <span class="text-red">ATELIER</span> <span class="text-blue">GRAFRIKA</span>
-                </h1>
-                <p class="login-subtitle">Console d'administration privée</p>
-            </div>
-
-            <form id="loginForm" class="login-form">
-                <div id="loginError" class="login-alert" style="display: none;"></div>
-
-                <div class="form-group">
-                    <label for="loginEmail">Adresse e-mail</label>
-                    <div class="input-with-icon">
-                        <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                            <polyline points="22,6 12,13 2,6"></polyline>
-                        </svg>
-                        <input type="email" id="loginEmail" required placeholder="admin@ateliergrafika.com" autocomplete="email">
+    <!-- =========================================================================
+         1. ÉCRAN DE CONNEXION STUDIO SPLIT-SCREEN (PLEIN ÉCRAN, BORD À BORD, 0 VIDE)
+         ========================================================================= -->
+    <div id="loginScreen" class="login-split-screen">
+        
+        <!-- PANNEAU GAUCHE : VITRINE ARCHITECTURALE IMMERSIVE -->
+        <div class="login-showcase-panel">
+            <div class="login-showcase-overlay"></div>
+            
+            <div class="login-showcase-content">
+                <!-- Branding blanc en haut -->
+                <div class="login-showcase-brand">
+                    <div class="showcase-logo-circle">
+                        <img src="../assets/logo.png" alt="Atelier Grafika">
+                    </div>
+                    <div class="showcase-brand-text">
+                        <span class="showcase-brand-name">ATELIER GRAFRIKA</span>
+                        <span class="showcase-brand-tag">ARCHITECTURE • DESIGN D'ESPACE • BTP</span>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="loginPassword">Mot de passe</label>
-                    <div class="input-with-icon">
-                        <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Citation & Métriques en bas -->
+                <div class="login-showcase-bottom">
+                    <div class="showcase-project-badge">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Villa Océane & Claustras • Cotonou, Bénin</span>
+                    </div>
+                    <blockquote class="showcase-quote">
+                        « Concevoir l'espace avec rigueur, bâtir chaque structure avec excellence et durabilité. »
+                    </blockquote>
+                    <div class="showcase-metrics-row">
+                        <div class="showcase-metric-item">
+                            <span class="metric-val">7</span>
+                            <span class="metric-lbl">Projets en ligne</span>
+                        </div>
+                        <div class="showcase-metric-sep"></div>
+                        <div class="showcase-metric-item">
+                            <span class="metric-val">100%</span>
+                            <span class="metric-lbl">Plans & 3D Dédiés</span>
+                        </div>
+                        <div class="showcase-metric-sep"></div>
+                        <div class="showcase-metric-item">
+                            <span class="metric-val">Bénin</span>
+                            <span class="metric-lbl">& International</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANNEAU DROIT : FORMULAIRE D'ACCÈS ÉPURÉ & ÉLÉGANT -->
+        <div class="login-form-panel">
+            <div class="login-form-inner">
+                
+                <div class="login-form-topbar">
+                    <a href="../" class="login-back-pill">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                        <span>Retour au site public</span>
+                    </a>
+                </div>
+
+                <div class="login-header-group">
+                    <div class="login-badge-secure">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
-                        <input type="password" id="loginPassword" required placeholder="Votre mot de passe" autocomplete="current-password">
-                        <button type="button" id="togglePasswordBtn" class="input-action-btn" title="Afficher/Masquer">
-                            <svg id="eyeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
+                        <span>ESPACE PRO • ATELIER GRAFRIKA</span>
                     </div>
+                    <h1 class="login-form-heading">Connexion administrateur</h1>
+                    <p class="login-form-subtext">Accédez à votre espace pour gérer le portfolio, suivre les devis et piloter les contacts.</p>
                 </div>
 
-                <div class="form-row-between">
-                    <label class="remember-checkbox">
-                        <input type="checkbox" id="rememberMe" checked>
-                        <span>Rester connecté</span>
-                    </label>
+                <form id="loginForm" class="login-form-body">
+                    <div id="loginError" class="login-alert" style="display: none;"></div>
+
+                    <div class="login-field-item">
+                        <label for="loginEmail" class="login-field-label">Adresse e-mail</label>
+                        <div class="input-with-icon">
+                            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <input type="email" id="loginEmail" required placeholder="admin@ateliergrafika.com" autocomplete="email">
+                        </div>
+                    </div>
+
+                    <div class="login-field-item">
+                        <div class="label-with-hint">
+                            <label for="loginPassword" class="login-field-label">Mot de passe</label>
+                        </div>
+                        <div class="input-with-icon">
+                            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <input type="password" id="loginPassword" required placeholder="Votre mot de passe" autocomplete="current-password">
+                            <button type="button" id="togglePasswordBtn" class="input-action-btn" title="Afficher/Masquer">
+                                <svg id="eyeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="login-options-row">
+                        <label class="remember-checkbox">
+                            <input type="checkbox" id="rememberMe" checked>
+                            <span>Mémoriser ma session</span>
+                        </label>
+                        <span class="security-text-note">Accès chiffré</span>
+                    </div>
+
+                    <button type="submit" class="login-submit-btn">
+                        <span>Ouvrir le dashboard</span>
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </form>
+
+                <!-- BOÎTE D'ASSISTANCE RAPIDE (DÉMO / PREVIEW) -->
+                <div class="login-quick-helper">
+                    <div class="quick-helper-text">
+                        <span class="quick-helper-title">Identifiants par défaut :</span>
+                        <code class="quick-code">admin@ateliergrafika.com</code>
+                    </div>
+                    <button type="button" id="btnQuickFillDemo" class="btn-quick-fill">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Remplir</span>
+                    </button>
                 </div>
 
-                <button type="submit" class="btn-primary-pill">
-                    <span>Accéder au dashboard</span>
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </button>
-            </form>
-
-            <div class="login-footer">
-                <a href="../" class="back-link">
+                <div class="login-security-footer">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
-                    <span>Retour au site public</span>
-                </a>
+                    <span>Plateforme sécurisée • Atelier Grafika Bénin &copy; 2026</span>
+                </div>
+
             </div>
         </div>
+
     </div>
 
 
