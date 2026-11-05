@@ -60,7 +60,7 @@
 body.admin-body {
     font-family: var(--font-body);
     color: var(--text-primary);
-    background-color: var(--canvas-bg);
+    background-color: #ffffff;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
@@ -264,43 +264,46 @@ body.admin-body {
 
 
 /* ==========================================================================
-   2. DASHBOARD SHELL & CANVAS (FLOATING CARD DESIGN)
+   2. DASHBOARD SHELL & CANVAS (PLEIN ÉCRAN FLUIDE, ZÉRO SUPERPOSITION)
    ========================================================================== */
 .dashboard-canvas {
     min-height: 100vh;
-    padding: 2.2rem 2.4rem;
-    background-color: var(--canvas-bg);
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #ffffff;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
 }
 
 .dashboard-shell {
     width: 100%;
-    max-width: 1360px;
-    background: var(--card-bg);
-    border-radius: var(--radius-shell);
-    box-shadow: var(--shadow-shell);
+    min-height: 100vh;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
     display: grid;
     grid-template-columns: 260px 1fr;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    min-height: 860px;
 }
 
 
 /* ==========================================================================
-   3. SIDEBAR FLOATING & GROUPÉE (FOND CLAIR, ZÉRO DÉGRADÉ)
+   3. SIDEBAR ANCRÉE PLEINE HAUTEUR (FOND CLAIR, ZÉRO DÉGRADÉ, ZÉRO SUPERPOSITION)
    ========================================================================== */
 .dash-sidebar {
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-subtle);
-    padding: 2.2rem 1.4rem 1.6rem;
+    padding: 2.2rem 1.4rem 1.8rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
-    min-height: 100%;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 50;
 }
 
 .dash-sidebar-header {
@@ -518,10 +521,12 @@ body.admin-body {
    4. ZONE DE CONTENU PRINCIPALE (MAIN CONTENT)
    ========================================================================== */
 .dash-content-area {
-    padding: 2.2rem 2.8rem 2.8rem;
+    padding: 2.2rem 3.2rem 3.5rem;
     background: #ffffff;
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    min-height: 100vh;
 }
 
 /* TOP HEADER AVEC USER PROFILE WIDGET */
@@ -1630,12 +1635,12 @@ body.admin-body {
    ========================================================================== */
 @media (max-width: 1024px) {
     .dashboard-canvas {
-        padding: 1rem;
+        padding: 0;
     }
 
     .dashboard-shell {
         grid-template-columns: 1fr;
-        border-radius: 28px;
+        border-radius: 0;
     }
 
     .dash-sidebar {
@@ -1673,11 +1678,11 @@ body.admin-body {
 
 @media (max-width: 640px) {
     .dashboard-canvas {
-        padding: 0.5rem;
+        padding: 0;
     }
 
     .dashboard-shell {
-        border-radius: 20px;
+        border-radius: 0;
     }
 
     .dash-content-area {
