@@ -282,7 +282,7 @@ body.admin-body {
     border-radius: var(--radius-shell);
     box-shadow: var(--shadow-shell);
     display: grid;
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: 260px 1fr;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.9);
     min-height: 860px;
@@ -290,42 +290,69 @@ body.admin-body {
 
 
 /* ==========================================================================
-   3. SIDEBAR FLOATING & GROUPÉE (FOND CLAIR)
+   3. SIDEBAR FLOATING & GROUPÉE (FOND CLAIR, ZÉRO DÉGRADÉ)
    ========================================================================== */
 .dash-sidebar {
-    background: var(--sidebar-bg);
-    border-right: 1.5px solid rgba(0, 0, 0, 0.03);
-    padding: 2.2rem 1.4rem 1.8rem;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-subtle);
+    padding: 2.2rem 1.4rem 1.6rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 100%;
+    min-height: 100%;
 }
 
 .dash-sidebar-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.2rem;
+    padding-left: 0.2rem;
 }
 
 .dash-brand-block {
     display: flex;
     align-items: center;
     gap: 0.85rem;
+    text-decoration: none;
+    color: inherit;
 }
 
 .dash-logo {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     object-fit: contain;
     background: #ffffff;
     border-radius: 10px;
-    padding: 3px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
 }
 
 .dash-brand-title {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.dash-brand-name {
     font-family: var(--font-heading);
     font-size: 1.05rem;
     font-weight: 800;
     letter-spacing: -0.01em;
+}
+
+.dash-brand-sub {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--text-subtle);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.dash-nav-scroll {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .nav-group-label {
@@ -334,14 +361,14 @@ body.admin-body {
     color: var(--text-subtle);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 0.55rem;
-    padding-left: 0.65rem;
+    margin-bottom: 0.75rem;
+    padding-left: 0.75rem;
 }
 
 .dash-nav-list {
     display: flex;
     flex-direction: column;
-    gap: 0.28rem;
+    gap: 0.35rem;
 }
 
 .dash-nav-btn {
@@ -349,28 +376,38 @@ body.admin-body {
     display: flex;
     align-items: center;
     gap: 0.85rem;
-    padding: 0.68rem 0.95rem;
-    border-radius: 14px;
+    padding: 0.72rem 0.95rem;
+    border-radius: 12px;
     border: none;
     background: transparent;
     font-family: var(--font-heading);
-    font-size: 0.86rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 500;
     color: var(--text-secondary);
     cursor: pointer;
     text-align: left;
-    transition: all 0.16s ease;
+    transition: background 0.16s ease, color 0.16s ease;
     text-decoration: none;
 }
 
+.dash-nav-btn .nav-svg {
+    color: var(--text-subtle);
+    transition: color 0.16s ease;
+    flex-shrink: 0;
+}
+
 .dash-nav-btn:hover {
-    color: var(--text-primary);
-    background: rgba(0, 59, 115, 0.04);
+    color: var(--brand-blue);
+    background: #edf2f7;
+}
+
+.dash-nav-btn:hover .nav-svg {
+    color: var(--brand-blue);
 }
 
 .dash-nav-btn.active {
     color: var(--brand-blue);
-    background: var(--brand-blue-soft);
+    background: #e8eef5;
     font-weight: 700;
 }
 
@@ -380,11 +417,11 @@ body.admin-body {
 
 .nav-counter-pill {
     margin-left: auto;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     font-weight: 700;
     padding: 2px 7px;
     border-radius: var(--radius-pill);
-    background: rgba(0, 59, 115, 0.1);
+    background: #e2e8f0;
     color: var(--brand-blue);
 }
 
@@ -394,79 +431,81 @@ body.admin-body {
 }
 
 .btn-logout-subtle {
-    color: #ef4444 !important;
+    color: var(--text-subtle);
 }
 
 .btn-logout-subtle:hover {
+    color: #ef4444 !important;
     background: #fef2f2 !important;
 }
 
-/* Mini Promo Card en bas de la sidebar */
+.btn-logout-subtle:hover .nav-svg {
+    color: #ef4444;
+}
+
+/* Mini Promo Card en bas de la sidebar (Flat Design, zéro dégradé) */
 .sidebar-promo-box {
     margin-top: 1.8rem;
+    flex-shrink: 0;
 }
 
 .promo-inner-card {
-    background: linear-gradient(145deg, #071727, #003B73);
+    background: #0b1b2b;
     color: #ffffff;
-    border-radius: 20px;
+    border-radius: 18px;
     padding: 1.25rem 1.15rem;
     text-align: left;
-    box-shadow: 0 8px 24px rgba(0, 35, 75, 0.16);
+    box-shadow: 0 6px 20px rgba(11, 27, 43, 0.18);
     position: relative;
-    overflow: hidden;
-}
-
-.promo-inner-card::after {
-    content: '';
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 70px;
-    height: 70px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 70%);
-    border-radius: 50%;
 }
 
 .promo-icon-circle {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.15);
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.65rem;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
 }
 
 .promo-title {
     font-family: var(--font-heading);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    margin-bottom: 0.15rem;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
 }
 
 .promo-desc {
     font-size: 0.72rem;
-    color: #cbd5e1;
-    margin-bottom: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 0.95rem;
     line-height: 1.35;
 }
 
 .promo-btn-pill {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
     width: 100%;
     background: #ffffff;
-    color: #071727;
+    color: #0b1b2b;
     border-radius: var(--radius-pill);
-    padding: 0.48rem 0.8rem;
+    padding: 0.62rem 1rem;
     font-family: var(--font-heading);
-    font-size: 0.76rem;
+    font-size: 0.8rem;
     font-weight: 700;
     text-align: center;
     text-decoration: none;
-    transition: all 0.16s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: background 0.16s ease, transform 0.16s ease;
 }
 
 .promo-btn-pill:hover {
@@ -517,7 +556,7 @@ body.admin-body {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #003B73, #850C14);
+    background: var(--brand-blue);
     color: #ffffff;
     font-family: var(--font-heading);
     font-size: 0.82rem;
@@ -586,7 +625,7 @@ body.admin-body {
 
 
 /* ==========================================================================
-   5. ROW DES KPIS DU DASHBOARD (HERO GRADIENT CARD + WHITE PILL CARDS)
+   5. ROW DES KPIS DU DASHBOARD (HERO SOLID BLUE CARD + WHITE PILL CARDS)
    ========================================================================== */
 .hero-kpi-row {
     display: grid;
@@ -608,24 +647,13 @@ body.admin-body {
     transform: translateY(-2px);
 }
 
-/* Hero card en bleu profond dégradé */
-.hero-gradient-blue {
-    background: linear-gradient(135deg, #003B73 0%, #001f3f 100%);
+/* Hero card en bleu profond solide (Flat design, zéro dégradé) */
+.hero-solid-blue {
+    background: var(--brand-blue);
     color: #ffffff;
-    box-shadow: 0 10px 28px rgba(0, 59, 115, 0.2);
+    box-shadow: 0 10px 24px rgba(0, 59, 115, 0.18);
     position: relative;
     overflow: hidden;
-}
-
-.hero-gradient-blue::before {
-    content: '';
-    position: absolute;
-    bottom: -30px;
-    right: -20px;
-    width: 110px;
-    height: 110px;
-    background: radial-gradient(circle, rgba(133, 12, 20, 0.3), transparent 70%);
-    border-radius: 50%;
 }
 
 .kpi-card-top-row {
@@ -636,7 +664,7 @@ body.admin-body {
     font-weight: 600;
 }
 
-.hero-gradient-blue .kpi-card-label {
+.hero-solid-blue .kpi-card-label {
     color: #cbd5e1;
 }
 
@@ -776,13 +804,7 @@ body.admin-body {
 }
 
 .pill-bar-fill.hatched {
-    background: repeating-linear-gradient(
-        45deg,
-        #e2e8f0,
-        #e2e8f0 5px,
-        #f1f5f9 5px,
-        #f1f5f9 10px
-    );
+    background: #e2e8f0;
 }
 
 /* Bulle de pic (98%) sur le dimanche */
