@@ -551,6 +551,30 @@ function renderDashboardOverview() {
             recentLeadsContainer.appendChild(item);
         });
     }
+
+    // Aperçu du portfolio en ligne sur le dashboard
+    const miniGrid = document.getElementById('dashProjectsMiniGrid');
+    if (miniGrid) {
+        miniGrid.innerHTML = '';
+        const showcaseProjects = projects.slice(0, 3);
+        showcaseProjects.forEach(p => {
+            const tile = document.createElement('div');
+            tile.className = 'mini-project-tile';
+            const firstPhoto = (p.photos && p.photos[0]) ? p.photos[0] : '../assets/logo.png';
+            tile.innerHTML = `
+                <img src="${escapeHtml(firstPhoto)}" alt="${escapeHtml(p.title)}" class="mini-project-thumb">
+                <div class="mini-project-meta">
+                    <span class="mini-project-title">${escapeHtml(p.title)}</span>
+                    <span class="mini-project-sub">${escapeHtml(p.category || 'Architecture')} • ${escapeHtml(p.location || 'Bénin')}</span>
+                </div>
+            `;
+            tile.addEventListener('click', () => {
+                const projectsTabBtn = document.querySelector('.dash-nav-btn[data-tab="projects"]');
+                if (projectsTabBtn) projectsTabBtn.click();
+            });
+            miniGrid.appendChild(tile);
+        });
+    }
 }
 
 

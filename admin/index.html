@@ -217,6 +217,7 @@
 
             <!-- CONTENU PRINCIPAL DU DASHBOARD -->
             <main class="dash-content-area">
+                <div class="dash-content-inner">
                 
                 <!-- TOP HEADER BAR AVEC PROFIL UTILISATEUR EN HAUT À DROITE -->
                 <header class="dash-top-header">
@@ -319,27 +320,6 @@
                             </div>
                         </div>
 
-                        <!-- CARTE 4 : VISITEURS DU SITE -->
-                        <div class="kpi-pill-card white-kpi">
-                            <div class="kpi-card-top-row">
-                                <span class="kpi-card-label">Visiteurs Portfolio</span>
-                                <div class="kpi-arrow-circle dark">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="7" y1="17" x2="17" y2="7"></line>
-                                        <polyline points="7 7 17 7 17 17"></polyline>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="kpi-card-number text-dark" id="statViews">248</div>
-                            <div class="kpi-trend-note dark">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                    <polyline points="17 6 23 6 23 12"></polyline>
-                                </svg>
-                                <span>Vues sur votre Link in Bio</span>
-                            </div>
-                        </div>
-
                     </div>
 
 
@@ -423,6 +403,39 @@
                         <!-- LISTE DE PROSPECTS STYLE LIGNES FIDÈLES -->
                         <div class="leads-rows-container" id="dashRecentLeadsList">
                             <!-- Rempli dynamiquement en JS -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION VITRINE DU PORTFOLIO (ANCRE LE DASHBOARD ET SUPPRIME TOUT ESPACE VIDE) -->
+                    <div class="dashboard-portfolio-preview-card">
+                        <div class="leads-widget-header">
+                            <div>
+                                <h3 class="widget-section-title">Réalisations récentes en ligne</h3>
+                                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.2rem;">Projets actuellement visibles par le public sur le Link in Bio.</p>
+                            </div>
+                            <button class="btn-outline-pill-small" data-tab-switch="projects">
+                                <span>Gérer tous les projets (7)</span>
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="portfolio-mini-grid" id="dashProjectsMiniGrid">
+                            <!-- Rempli dynamiquement en JS -->
+                        </div>
+                    </div>
+
+                    <!-- FOOTER STATUS ÉPURÉ (ANCRE LA PAGE ET ÉVITE TOUT VIDE) -->
+                    <div class="dashboard-status-footer">
+                        <div class="status-footer-item">
+                            <span class="status-dot-green"></span>
+                            <span>Site public : <strong>En ligne</strong> (<a href="../" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">atelier-grafika.vercel.app</a>)</span>
+                        </div>
+                        <div class="status-footer-item">
+                            <span>Passerelle devis : <strong>Opérationnelle</strong></span>
+                        </div>
+                        <div class="status-footer-item">
+                            <span>Localisation : <strong>Abomey-Calavi, Bénin</strong></span>
                         </div>
                     </div>
 
@@ -690,6 +703,7 @@
                     </div>
                 </div>
 
+                </div><!-- fin dash-content-inner -->
             </main>
 
         </div>
