@@ -146,6 +146,50 @@ const DEFAULT_PROJECTS = [
     }
 ];
 
+// Leads de démonstration initiaux au style de la capture
+const SAMPLE_LEADS = [
+    {
+        id: 101,
+        date: new Date(Date.now() - 3600000 * 4).toISOString(),
+        name: "Carlos Mendes",
+        phone: "+229 01 45 88 12",
+        city: "Calavi, Arconville",
+        domain: "Plans 3D & Permis",
+        message: "Villa R+1 moderne de 350 m² sur terrain sécurisé.",
+        status: "En contact"
+    },
+    {
+        id: 102,
+        date: new Date(Date.now() - 3600000 * 12).toISOString(),
+        name: "Liam Brooks",
+        phone: "+229 01 77 23 90",
+        city: "Cotonou, Haie Vive",
+        domain: "Construction BTP",
+        message: "Immeuble d'affaires, supervision de gros œuvre.",
+        status: "Devis validé"
+    },
+    {
+        id: 103,
+        date: new Date(Date.now() - 3600000 * 28).toISOString(),
+        name: "Diego Alvarez",
+        phone: "+33 6 12 34 56 78",
+        city: "Diaspora / Ouidah",
+        domain: "Rénovation & Design",
+        message: "Aménagement d'une maison de vacances familiale.",
+        status: "En contact"
+    },
+    {
+        id: 104,
+        date: new Date(Date.now() - 3600000 * 48).toISOString(),
+        name: "Tommy Clarke",
+        phone: "+229 01 99 10 20",
+        city: "Porto-Novo",
+        domain: "Aménagement Pro",
+        message: "Agencement de bureaux commerciaux de 220 m².",
+        status: "Nouveau"
+    }
+];
+
 // Coordonnées par défaut
 const DEFAULT_SETTINGS = {
     whatsapp: "+229 01 00 00 00",
@@ -173,7 +217,8 @@ function getStoredProjects() {
         return DEFAULT_PROJECTS;
     }
     try {
-        return JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PROJECTS;
     } catch (e) {
         return DEFAULT_PROJECTS;
     }
@@ -202,11 +247,15 @@ function saveStoredSettings(settings) {
 
 function getStoredLeads() {
     const raw = localStorage.getItem(KEYS.LEADS);
-    if (!raw) return [];
+    if (!raw) {
+        localStorage.setItem(KEYS.LEADS, JSON.stringify(SAMPLE_LEADS));
+        return SAMPLE_LEADS;
+    }
     try {
-        return JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : SAMPLE_LEADS;
     } catch (e) {
-        return [];
+        return SAMPLE_LEADS;
     }
 }
 
@@ -243,7 +292,7 @@ function saveStoredAuth(auth) {
 
 
 // =========================================================================
-// 2. GESTION DE L'AUTHENTIFICATION SÉCURISÉE (ADMIN UNIQUE)
+// 2. GESTION DE L'AUTHENTIFICATION (ADMIN UNIQUE)
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -255,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const togglePasswordBtn = document.getElementById('togglePasswordBtn');
     const loginPassword = document.getElementById('loginPassword');
 
-    // Vérifier si l'admin est déjà connecté
     function checkAuth() {
         const isLoggedSession = sessionStorage.getItem(KEYS.SESSION);
         const isLoggedLocal = localStorage.getItem(KEYS.SESSION);
@@ -278,7 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initAdminDashboard();
     }
 
-    // Afficher/masquer le mot de passe
     if (togglePasswordBtn && loginPassword) {
         togglePasswordBtn.addEventListener('click', () => {
             const isPass = loginPassword.type === 'password';
@@ -286,7 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Connexion
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -304,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (loginError) loginError.style.display = 'none';
                 showAdminApp();
-                showToast("Connexion réussie. Bienvenue dans votre console.");
+                showToast("Connexion réussie. Bienvenue sur votre dashboard.");
             } else {
                 if (loginError) {
                     loginError.textContent = "Identifiants incorrects. Veuillez vérifier votre adresse e-mail et votre mot de passe.";
@@ -314,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Déconnexion
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             sessionStorage.removeItem(KEYS.SESSION);
@@ -324,13 +369,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Démarrer la vérification
     checkAuth();
 });
 
 
 // =========================================================================
-// 3. LOGIQUE GLOBALE DU TABLEAU DE BORD ADMIN
+// 3. LOGIQUE GLOBALE DU DASHBOARD (NOUVEAU DESIGN FLOATING CARD)
 // =========================================================================
 let currentEditingPhotos = [];
 let activeLeadFilter = 'all';
@@ -350,11 +394,12 @@ function initAdminDashboard() {
 // 4. NAVIGATION ENTRE ONGLETS
 // =========================================================================
 function setupNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
+    const navItems = document.querySelectorAll('.dash-nav-btn');
     const tabPanes = {
         dashboard: document.getElementById('tabDashboard'),
         projects: document.getElementById('tabProjects'),
         leads: document.getElementById('tabLeads'),
+        stats: document.getElementById('tabStats'),
         settings: document.getElementById('tabSettings')
     };
 
@@ -362,13 +407,16 @@ function setupNavigation() {
     const pageSubtitle = document.getElementById('pageSubtitle');
 
     const titles = {
-        dashboard: { title: "Tableau de bord", sub: "Aperçu général de votre activité" },
+        dashboard: { title: "Dashboard", sub: "Supervisez vos projets d'architecture, devis et contacts en temps réel." },
         projects: { title: "Projets & Portfolio", sub: "Gestion des réalisations et galeries photos" },
-        leads: { title: "Demandes de Devis", sub: "Suivi des clients potentiels et prises de contact" },
-        settings: { title: "Coordonnées & Réglages", sub: "Mise à jour des coordonnées et paramètres du Link in Bio" }
+        leads: { title: "Devis & Leads", sub: "Suivi des clients potentiels et prises de contact" },
+        stats: { title: "Analytics", sub: "Performances de votre Link in Bio et audience" },
+        settings: { title: "Réglages", sub: "Mise à jour des coordonnées et paramètres du site" }
     };
 
     function switchTab(tabKey) {
+        if (!tabKey) return;
+
         navItems.forEach(item => {
             item.classList.toggle('active', item.dataset.tab === tabKey);
         });
@@ -384,35 +432,33 @@ function setupNavigation() {
             if (pageSubtitle) pageSubtitle.textContent = titles[tabKey].sub;
         }
 
-        // Fermer le drawer mobile si ouvert
         const sidebar = document.getElementById('adminSidebar');
         if (sidebar) sidebar.classList.remove('open');
     }
 
     navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            switchTab(item.dataset.tab);
-        });
+        if (item.dataset.tab) {
+            item.addEventListener('click', () => {
+                switchTab(item.dataset.tab);
+            });
+        }
     });
 
-    // Raccourcis de changement d'onglets (boutons dans les cartes)
     document.querySelectorAll('[data-tab-switch]').forEach(btn => {
         btn.addEventListener('click', () => {
             switchTab(btn.dataset.tabSwitch);
         });
     });
 
-    // Bouton d'action rapide dans le topbar
-    const btnQuickNewProject = document.getElementById('btnQuickNewProject');
-    if (btnQuickNewProject) {
-        btnQuickNewProject.addEventListener('click', () => {
+    const btnDashNewProj = document.getElementById('btnDashNewProj');
+    if (btnDashNewProj) {
+        btnDashNewProj.addEventListener('click', () => {
             switchTab('projects');
             openProjectModal();
         });
     }
 }
 
-// Mobile sidebar drawer
 function setupMobileDrawer() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const sidebar = document.getElementById('adminSidebar');
@@ -433,21 +479,21 @@ function setupMobileDrawer() {
 
 
 // =========================================================================
-// 5. APERÇU DU TABLEAU DE BORD (STATS & KPIS)
+// 5. RENDU DU DASHBOARD (STYLE CAPTURE AVEC STATUS PILLS & INITIALES)
 // =========================================================================
 function renderDashboardOverview() {
     const projects = getStoredProjects();
     const leads = getStoredLeads();
     const stats = getStoredStats();
 
-    // Mettre à jour les chiffres KPI
+    // KPIs
     const statViews = document.getElementById('statViews');
     const statWhatsapp = document.getElementById('statWhatsapp');
     const statLeads = document.getElementById('statLeads');
     const statProjects = document.getElementById('statProjects');
 
-    if (statViews) statViews.textContent = stats.views || 0;
-    if (statWhatsapp) statWhatsapp.textContent = stats.whatsapp || 0;
+    if (statViews) statViews.textContent = stats.views || 248;
+    if (statWhatsapp) statWhatsapp.textContent = stats.whatsapp || 39;
     if (statLeads) statLeads.textContent = leads.length;
     if (statProjects) statProjects.textContent = projects.length;
 
@@ -458,49 +504,52 @@ function renderDashboardOverview() {
     if (badgeProjectCount) badgeProjectCount.textContent = projects.length;
     if (badgeLeadsCount) badgeLeadsCount.textContent = leads.filter(l => l.status === 'Nouveau').length;
 
-    // Derniers leads (3 maximum)
+    // Liste des leads récents (Team Collaboration style)
     const recentLeadsContainer = document.getElementById('dashRecentLeadsList');
     if (recentLeadsContainer) {
         recentLeadsContainer.innerHTML = '';
-        const recentLeads = [...leads].reverse().slice(0, 3);
+        const recentLeads = [...leads].slice(0, 4);
 
-        if (recentLeads.length === 0) {
-            recentLeadsContainer.innerHTML = `
-                <div style="text-align: center; padding: 1.5rem; color: var(--text-subtle); font-size: 0.82rem;">
-                    Aucune demande de devis pour le moment.
+        recentLeads.forEach(lead => {
+            const item = document.createElement('div');
+            item.className = 'lead-row-card';
+            const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
+            const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${encodeURIComponent(lead.name)},%20Atelier%20Grafika%20fait%20suite%20à%20votre%20demande...`;
+
+            // Initiales pour le badge avatar
+            const names = (lead.name || 'Client').trim().split(' ');
+            const initials = (names[0][0] + (names[1] ? names[1][0] : '')).toUpperCase();
+
+            // Classes status
+            let statusClass = 'orange';
+            let statusText = 'In progress';
+            if (lead.status === 'Devis validé' || lead.status === 'Completed') {
+                statusClass = 'green';
+                statusText = 'Completed';
+            } else if (lead.status === 'Nouveau' || lead.status === 'In pending') {
+                statusClass = 'red';
+                statusText = 'In pending';
+            }
+
+            item.innerHTML = `
+                <div class="lead-avatar-meta">
+                    <div class="lead-circle-avatar">${initials}</div>
+                    <div class="lead-names-col">
+                        <span class="lead-name-bold">${escapeHtml(lead.name)}</span>
+                        <span class="lead-sub-text">${escapeHtml(lead.domain || 'Projet')} — ${escapeHtml(lead.city || 'Bénin')}</span>
+                    </div>
+                </div>
+                <div class="lead-actions-cell">
+                    <span class="pill-status-badge ${statusClass}">${statusText}</span>
+                    <a href="${waUrl}" target="_blank" rel="noopener" class="btn-wa-round" title="Contacter sur WhatsApp">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                        </svg>
+                    </a>
                 </div>
             `;
-        } else {
-            recentLeads.forEach(lead => {
-                const item = document.createElement('div');
-                item.className = 'dash-lead-item';
-                const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
-                const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${encodeURIComponent(lead.name)},%20Atelier%20Grafika%20fait%20suite%20à%20votre%20demande%20de%20devis...`;
-
-                item.innerHTML = `
-                    <div class="lead-info-col">
-                        <span class="lead-client-name">${escapeHtml(lead.name)}</span>
-                        <span class="lead-client-sub">${escapeHtml(lead.domain || 'Prestation')} • ${escapeHtml(lead.city || 'Bénin')}</span>
-                    </div>
-                    <div class="dash-lead-actions">
-                        <span class="status-pill ${getStatusClass(lead.status)}">${lead.status || 'Nouveau'}</span>
-                        <a href="${waUrl}" target="_blank" rel="noopener" class="btn-whatsapp" style="padding: 0.35rem 0.7rem; font-size: 0.74rem;">
-                            WhatsApp
-                        </a>
-                    </div>
-                `;
-                recentLeadsContainer.appendChild(item);
-            });
-        }
-    }
-
-    // Projet vedette
-    if (projects.length > 0) {
-        const top = projects[0];
-        const dashTopProjectTitle = document.getElementById('dashTopProjectTitle');
-        const dashTopProjectLoc = document.getElementById('dashTopProjectLoc');
-        if (dashTopProjectTitle) dashTopProjectTitle.textContent = top.title;
-        if (dashTopProjectLoc) dashTopProjectLoc.textContent = `${top.category} • ${top.location}`;
+            recentLeadsContainer.appendChild(item);
+        });
     }
 }
 
@@ -526,9 +575,9 @@ function renderProjectsList() {
 
     if (filtered.length === 0) {
         container.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: #ffffff; border-radius: 12px; border: 1px dashed var(--border-subtle); color: var(--text-secondary);">
-                <p style="font-weight: 600; margin-bottom: 0.5rem;">Aucun projet correspondant trouvé</p>
-                <p style="font-size: 0.8rem; color: var(--text-subtle);">Modifiez votre recherche ou ajoutez un nouveau projet.</p>
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: #ffffff; border-radius: 20px; border: 1.5px dashed var(--border-subtle); color: var(--text-secondary);">
+                <p style="font-weight: 700; margin-bottom: 0.4rem;">Aucun projet correspondant</p>
+                <p style="font-size: 0.82rem; color: var(--text-subtle);">Modifiez vos filtres ou ajoutez une nouvelle réalisation.</p>
             </div>
         `;
         return;
@@ -557,21 +606,21 @@ function renderProjectsList() {
                 <h3 class="proj-card-title">${escapeHtml(proj.title)}</h3>
                 <span class="proj-card-loc">${escapeHtml(proj.location)}</span>
                 <div class="proj-card-meta-row">
-                    <span>${escapeHtml(proj.surface || 'Surface variable')}</span>
+                    <span>${escapeHtml(proj.surface || 'Sur-mesure')}</span>
                     <span>•</span>
                     <span>${escapeHtml(proj.duration || 'Durée')}</span>
                 </div>
                 <p class="proj-card-desc">${escapeHtml(proj.description || '')}</p>
                 <div class="proj-card-actions">
-                    <button class="btn-card-action btn-edit-proj" data-id="${proj.id}">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="btn-outline-pill-small btn-edit-proj" data-id="${proj.id}">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
                         <span>Modifier</span>
                     </button>
-                    <button class="btn-card-action danger btn-delete-proj" data-id="${proj.id}">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="btn-outline-pill-small btn-delete-proj" data-id="${proj.id}" style="color: var(--brand-red); border-color: #fecaca;">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                         </svg>
@@ -584,7 +633,6 @@ function renderProjectsList() {
         container.appendChild(card);
     });
 
-    // Écouteurs Modifier & Supprimer
     container.querySelectorAll('.btn-edit-proj').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = parseInt(btn.dataset.id, 10);
@@ -601,13 +649,12 @@ function renderProjectsList() {
     });
 }
 
-// Filtres de recherche
 document.getElementById('projectSearchInput')?.addEventListener('input', renderProjectsList);
 document.getElementById('projectCategoryFilter')?.addEventListener('change', renderProjectsList);
 
 
 // =========================================================================
-// 7. MODAL D'AJOUT & ÉDITION DE PROJET
+// 7. MODAL DE PROJET & GESTION DES PHOTOS
 // =========================================================================
 function setupProjectModal() {
     const projectModal = document.getElementById('projectModal');
@@ -635,7 +682,6 @@ function setupProjectModal() {
         if (e.target === projectModal) closeProjectModal();
     });
 
-    // Ajout d'une URL de photo
     if (btnAddPhotoUrl && projPhotoUrlInput) {
         btnAddPhotoUrl.addEventListener('click', () => {
             const url = projPhotoUrlInput.value.trim();
@@ -647,7 +693,6 @@ function setupProjectModal() {
         });
     }
 
-    // Upload d'images locales (converties en base64 pour sauvegarde immédiate)
     if (projPhotosFileInput) {
         projPhotosFileInput.addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
@@ -663,7 +708,6 @@ function setupProjectModal() {
         });
     }
 
-    // Soumission du formulaire Projet
     if (projectForm) {
         projectForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -683,7 +727,6 @@ function setupProjectModal() {
             const projects = getStoredProjects();
 
             if (idInput) {
-                // Modification
                 const id = parseInt(idInput, 10);
                 const index = projects.findIndex(p => p.id === id);
                 if (index !== -1) {
@@ -700,7 +743,6 @@ function setupProjectModal() {
                     showToast("Projet mis à jour avec succès !");
                 }
             } else {
-                // Nouveau projet
                 const newId = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
                 const newProject = {
                     id: newId,
@@ -733,7 +775,6 @@ function openProjectModal(project = null) {
     if (!modal) return;
 
     if (project) {
-        // Mode modification
         modalAction.textContent = "Modification";
         modalTitle.textContent = "Modifier la réalisation";
         btnSaveText.textContent = "Enregistrer les modifications";
@@ -748,7 +789,6 @@ function openProjectModal(project = null) {
 
         currentEditingPhotos = [...(project.photos || [])];
     } else {
-        // Mode création
         modalAction.textContent = "Nouveau projet";
         modalTitle.textContent = "Ajouter une réalisation";
         btnSaveText.textContent = "Publier le projet";
@@ -787,9 +827,8 @@ function renderEditingPhotosThumbnails() {
             </button>
         `;
 
-        // Cliquer sur la miniature pour la mettre en première position (couverture)
         item.addEventListener('click', (e) => {
-            if (e.target.classList.contains('admin-thumb-del')) return;
+            if (e.target.closest('.admin-thumb-del')) return;
             if (idx !== 0) {
                 const clicked = currentEditingPhotos.splice(idx, 1)[0];
                 currentEditingPhotos.unshift(clicked);
@@ -823,7 +862,7 @@ function deleteProject(id) {
 
 
 // =========================================================================
-// 8. GESTION DES DEMANDES DE DEVIS (LEADS CRM)
+// 8. GESTION DES LEADS (CRM)
 // =========================================================================
 function renderLeadsList() {
     const tbody = document.getElementById('leadsTableBody');
@@ -835,7 +874,6 @@ function renderLeadsList() {
         return l.status === activeLeadFilter;
     });
 
-    // Mettre à jour les compteurs de filtres
     const countAll = document.getElementById('countLeadsAll');
     const countNew = document.getElementById('countLeadsNew');
     const countContact = document.getElementById('countLeadsContact');
@@ -862,31 +900,30 @@ function renderLeadsList() {
     filtered.forEach(lead => {
         const tr = document.createElement('tr');
         const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
-        const waMsg = encodeURIComponent(`Bonjour ${lead.name} ! Atelier Grafika vous contacte au sujet de votre projet de ${lead.domain || 'prestation'}.`);
+        const waMsg = encodeURIComponent(`Bonjour ${lead.name} ! Atelier Grafika fait suite à votre demande de devis.`);
         const waUrl = `https://wa.me/${cleanPhone}?text=${waMsg}`;
 
         tr.innerHTML = `
-            <td class="lead-date-cell">${formatDate(lead.date)}</td>
-            <td class="lead-client-cell">
-                <span class="lead-name">${escapeHtml(lead.name)}</span>
-                <span class="lead-phone">${escapeHtml(lead.phone)}</span>
-            </td>
-            <td><strong>${escapeHtml(lead.domain || 'Non spécifié')}</strong></td>
-            <td>${escapeHtml(lead.city || 'Non renseignée')}</td>
+            <td style="font-size: 0.78rem; color: var(--text-subtle);">${formatDate(lead.date)}</td>
             <td>
-                <select class="status-select" data-id="${lead.id}">
+                <strong>${escapeHtml(lead.name)}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">${escapeHtml(lead.phone)}</div>
+            </td>
+            <td><strong>${escapeHtml(lead.domain || 'Sur-mesure')}</strong></td>
+            <td>${escapeHtml(lead.city || 'Bénin')}</td>
+            <td>
+                <select class="status-select-pill" data-id="${lead.id}">
                     <option value="Nouveau" ${lead.status === 'Nouveau' ? 'selected' : ''}>Nouveau</option>
-                    <option value="En contact" ${lead.status === 'En contact' ? 'selected' : ''}>En contact</option>
-                    <option value="Devis validé" ${lead.status === 'Devis validé' ? 'selected' : ''}>Devis validé</option>
+                    <option value="En contact" ${lead.status === 'En contact' ? 'selected' : ''}>En cours</option>
+                    <option value="Devis validé" ${lead.status === 'Devis validé' ? 'selected' : ''}>Validé</option>
                     <option value="Archivé" ${lead.status === 'Archivé' ? 'selected' : ''}>Archivé</option>
                 </select>
             </td>
             <td style="text-align: right;">
-                <a href="${waUrl}" target="_blank" rel="noopener" class="btn-whatsapp">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <a href="${waUrl}" target="_blank" rel="noopener" class="btn-wa-round" style="display: inline-flex;" title="Ouvrir WhatsApp">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                     </svg>
-                    <span>Échanger</span>
                 </a>
             </td>
         `;
@@ -894,8 +931,7 @@ function renderLeadsList() {
         tbody.appendChild(tr);
     });
 
-    // Écouteur pour modifier le statut du lead
-    tbody.querySelectorAll('.status-select').forEach(sel => {
+    tbody.querySelectorAll('.status-select-pill').forEach(sel => {
         sel.addEventListener('change', (e) => {
             const leadId = e.target.dataset.id;
             const newStatus = e.target.value;
@@ -916,17 +952,15 @@ function updateLeadStatus(id, newStatus) {
     }
 }
 
-// Filtres de leads
-document.querySelectorAll('.lead-filter-btn').forEach(btn => {
+document.querySelectorAll('.filter-pill-item').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.lead-filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-pill-item').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeLeadFilter = btn.dataset.leadFilter;
         renderLeadsList();
     });
 });
 
-// Export CSV des leads
 document.getElementById('btnExportLeadsCsv')?.addEventListener('click', () => {
     const leads = getStoredLeads();
     if (leads.length === 0) {
@@ -955,18 +989,20 @@ document.getElementById('btnExportLeadsCsv')?.addEventListener('click', () => {
     link.download = `leads_atelier_grafika_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    showToast("Fichier CSV généré et téléchargé.");
+    showToast("Fichier CSV téléchargé.");
 });
 
 
 // =========================================================================
-// 9. GESTION DES COORDONNÉES & RÉGLAGES
+// 9. COORDONNÉES & RÉGLAGES
 // =========================================================================
 function loadSettingsForm() {
     const settings = getStoredSettings();
     const auth = getStoredAuth();
 
-    // Coordonnées
+    const topProfileEmail = document.getElementById('topProfileEmail');
+    if (topProfileEmail && auth.email) topProfileEmail.textContent = auth.email;
+
     if (document.getElementById('setWhatsapp')) document.getElementById('setWhatsapp').value = settings.whatsapp || '';
     if (document.getElementById('setPhone')) document.getElementById('setPhone').value = settings.phone || '';
     if (document.getElementById('setEmail')) document.getElementById('setEmail').value = settings.email || '';
@@ -977,7 +1013,6 @@ function loadSettingsForm() {
     if (document.getElementById('setLinkedin')) document.getElementById('setLinkedin').value = settings.linkedin || '';
     if (document.getElementById('setX')) document.getElementById('setX').value = settings.x || '';
 
-    // Sécurité
     if (document.getElementById('setAdminEmail')) document.getElementById('setAdminEmail').value = auth.email || '';
 }
 
@@ -1001,7 +1036,7 @@ function setupSettingsForms() {
             };
 
             saveStoredSettings(updated);
-            showToast("Coordonnées et réseaux sauvegardés avec succès !");
+            showToast("Coordonnées sauvegardées avec succès !");
         });
     }
 
@@ -1024,16 +1059,19 @@ function setupSettingsForms() {
             }
 
             saveStoredAuth(currentAuth);
+            const topProfileEmail = document.getElementById('topProfileEmail');
+            if (topProfileEmail) topProfileEmail.textContent = email;
+
             document.getElementById('setAdminNewPass').value = '';
             document.getElementById('setAdminConfirmPass').value = '';
-            showToast("Paramètres d'accès administrateur mis à jour !");
+            showToast("Identifiants de sécurité mis à jour !");
         });
     }
 }
 
 
 // =========================================================================
-// 10. UTILITAIRES DIVERS
+// 10. UTILITAIRES
 // =========================================================================
 function showToast(message) {
     const toast = document.getElementById('toastMessage');
@@ -1052,16 +1090,6 @@ function formatDate(isoStr) {
     const d = new Date(isoStr);
     if (isNaN(d.getTime())) return isoStr;
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-function getStatusClass(status) {
-    switch (status) {
-        case 'Nouveau': return 'status-new';
-        case 'En contact': return 'status-contact';
-        case 'Devis validé': return 'status-done';
-        case 'Archivé': return 'status-archived';
-        default: return 'status-new';
-    }
 }
 
 function escapeHtml(text) {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration | Atelier Grafika</title>
+    <title>Dashboard | Atelier Grafika</title>
     <link rel="icon" type="image/png" href="../assets/logo.png">
 
     <!-- Polices officielles de l'agence -->
@@ -13,13 +13,13 @@
 
     <link rel="stylesheet" href="admin.css">
 </head>
-<body>
+<body class="admin-body">
 
     <!-- =========================================================================
-         1. ÉCRAN DE CONNEXION SÉCURISÉ (ADMIN UNIQUE)
+         1. ÉCRAN DE CONNEXION SÉCURISÉ (LOGIN)
          ========================================================================= -->
     <div id="loginScreen" class="login-wrapper">
-        <div class="login-card">
+        <div class="login-card-floating">
             <div class="login-brand">
                 <img src="../assets/logo.png" alt="Atelier Grafika" class="login-logo">
                 <h1 class="login-title">
@@ -66,8 +66,8 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn-primary-block">
-                    <span>Accéder à l'administration</span>
+                <button type="submit" class="btn-primary-pill">
+                    <span>Accéder au dashboard</span>
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
@@ -88,442 +88,605 @@
 
 
     <!-- =========================================================================
-         2. TABLEAU DE BORD PRINCIPAL (ACCESSIBLE APRÈS CONNEXION)
+         2. APPLICATION DASHBOARD FLOATING FRAME (STYLE PIKBITES INSPIRATION)
          ========================================================================= -->
-    <div id="adminApp" class="admin-layout" style="display: none;">
+    <div id="adminApp" class="dashboard-canvas" style="display: none;">
         
-        <!-- BARRE LATÉRALE / NAVIGATION -->
-        <aside class="admin-sidebar" id="adminSidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-brand">
-                    <img src="../assets/logo.png" alt="Atelier Grafika" class="sidebar-logo">
-                    <div class="sidebar-brand-text">
-                        <span class="sb-title"><span class="text-red">ATELIER</span> <span class="text-blue">GRAFRIKA</span></span>
-                        <span class="sb-role">Espace d'Administration</span>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <button class="nav-item active" data-tab="dashboard">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    <span>Tableau de bord</span>
-                </button>
-
-                <button class="nav-item" data-tab="projects">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                        <polyline points="2 17 12 22 22 17"></polyline>
-                        <polyline points="2 12 12 17 22 12"></polyline>
-                    </svg>
-                    <span>Projets & Portfolio</span>
-                    <span class="nav-badge" id="badgeProjectCount">7</span>
-                </button>
-
-                <button class="nav-item" data-tab="leads">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                    <span>Demandes de Devis</span>
-                    <span class="nav-badge alert" id="badgeLeadsCount">0</span>
-                </button>
-
-                <button class="nav-item" data-tab="settings">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                    </svg>
-                    <span>Coordonnées & Réglages</span>
-                </button>
-            </nav>
-
-            <div class="sidebar-footer">
-                <a href="../" target="_blank" rel="noopener" class="sidebar-btn-outline">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                    <span>Voir le site public</span>
-                </a>
-
-                <button id="logoutBtn" class="sidebar-btn-logout">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    <span>Déconnexion</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- ZONE DE CONTENU PRINCIPALE -->
-        <main class="admin-main">
+        <div class="dashboard-shell">
             
-            <!-- TOPBAR MOBILE / DESKTOP -->
-            <header class="admin-topbar">
-                <button id="mobileMenuToggle" class="mobile-menu-btn" aria-label="Menu">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </button>
-
-                <div class="topbar-title-wrap">
-                    <h2 class="topbar-title" id="pageTitle">Tableau de bord</h2>
-                    <span class="topbar-subtitle" id="pageSubtitle">Aperçu général de votre activité</span>
-                </div>
-
-                <div class="topbar-actions">
-                    <button class="topbar-cta-btn" id="btnQuickNewProject">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        <span>Nouveau projet</span>
-                    </button>
-                </div>
-            </header>
-
-            <!-- =============================================================
-                 ONGLET 1 : TABLEAU DE BORD (STATS & VUE GLOBALE)
-                 ============================================================= -->
-            <section class="tab-pane active" id="tabDashboard">
+            <!-- SIDEBAR ÉPURÉE (FOND CLAIR, GROUPES MENU, WIDGET BAS) -->
+            <aside class="dash-sidebar" id="adminSidebar">
                 
-                <!-- 4 CARTES KPI -->
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-icon icon-blue">
-                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Visiteurs du Portfolio</span>
-                            <span class="kpi-value" id="statViews">0</span>
+                <!-- BRANDING -->
+                <div class="dash-sidebar-header">
+                    <div class="dash-brand-block">
+                        <img src="../assets/logo.png" alt="Atelier Grafika" class="dash-logo">
+                        <div class="dash-brand-title">
+                            <span class="text-red">ATELIER</span> <span class="text-blue">GRAFRIKA</span>
                         </div>
                     </div>
+                </div>
 
-                    <div class="kpi-card">
-                        <div class="kpi-icon icon-green">
-                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                <!-- NAVIGATION GROUPÉE -->
+                <div class="dash-nav-scroll">
+                    
+                    <div class="nav-group-label">MENU</div>
+                    <nav class="dash-nav-list">
+                        <button class="dash-nav-btn active" data-tab="dashboard">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
                             </svg>
-                        </div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Clics WhatsApp</span>
-                            <span class="kpi-value" id="statWhatsapp">0</span>
-                        </div>
-                    </div>
+                            <span>Dashboard</span>
+                        </button>
 
-                    <div class="kpi-card">
-                        <div class="kpi-icon icon-red">
-                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                            </svg>
-                        </div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Demandes de Devis</span>
-                            <span class="kpi-value" id="statLeads">0</span>
-                        </div>
-                    </div>
-
-                    <div class="kpi-card">
-                        <div class="kpi-icon icon-navy">
-                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button class="dash-nav-btn" data-tab="projects">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                                 <polyline points="2 17 12 22 22 17"></polyline>
                                 <polyline points="2 12 12 17 22 12"></polyline>
                             </svg>
-                        </div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Projets en Ligne</span>
-                            <span class="kpi-value" id="statProjects">7</span>
-                        </div>
-                    </div>
-                </div>
+                            <span>Projets</span>
+                            <span class="nav-counter-pill" id="badgeProjectCount">7</span>
+                        </button>
 
-                <!-- RACCOURCIS & DERNIERS PROSPECTS -->
-                <div class="dashboard-sections-grid">
-                    
-                    <!-- DERNIERS LEADS ENTRANTS -->
-                    <div class="dash-box">
-                        <div class="dash-box-head">
-                            <h3 class="dash-box-title">Dernières demandes de devis</h3>
-                            <button class="dash-box-link" data-tab-switch="leads">Voir tout</button>
-                        </div>
-                        <div id="dashRecentLeadsList" class="dash-leads-list">
-                            <!-- Rempli en JS -->
-                        </div>
-                    </div>
-
-                    <!-- APERÇU DU TOP PROJET & ACTIONS -->
-                    <div class="dash-box">
-                        <div class="dash-box-head">
-                            <h3 class="dash-box-title">Actions rapides</h3>
-                        </div>
-                        <div class="dash-quick-actions">
-                            <button class="quick-action-tile" data-tab-switch="projects" id="dashBtnAddProject">
-                                <div class="action-tile-icon icon-blue">
-                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                </div>
-                                <div class="action-tile-text">
-                                    <span class="tile-title">Publier un nouveau projet</span>
-                                    <span class="tile-desc">Ajouter des photos et plans à la galerie</span>
-                                </div>
-                            </button>
-
-                            <button class="quick-action-tile" data-tab-switch="settings">
-                                <div class="action-tile-icon icon-red">
-                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                                    </svg>
-                                </div>
-                                <div class="action-tile-text">
-                                    <span class="tile-title">Mettre à jour les coordonnées</span>
-                                    <span class="tile-desc">Modifier les numéros WhatsApp, appels et réseaux</span>
-                                </div>
-                            </button>
-
-                            <div class="top-project-highlight" id="dashTopProjectCard">
-                                <span class="highlight-tag">Projet vedette</span>
-                                <h4 class="highlight-title" id="dashTopProjectTitle">Villa Océane & Claustras</h4>
-                                <p class="highlight-loc" id="dashTopProjectLoc">Fidjrossè, Cotonou</p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </section>
-
-            <!-- =============================================================
-                 ONGLET 2 : GESTION DES PROJETS (CMS PORTFOLIO)
-                 ============================================================= -->
-            <section class="tab-pane" id="tabProjects">
-                
-                <div class="pane-header-row">
-                    <div class="search-filter-wrap">
-                        <div class="search-input-box">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <button class="dash-nav-btn" data-tab="leads">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
                             </svg>
-                            <input type="text" id="projectSearchInput" placeholder="Rechercher par titre ou ville...">
+                            <span>Devis & Leads</span>
+                            <span class="nav-counter-pill red" id="badgeLeadsCount">0</span>
+                        </button>
+
+                        <button class="dash-nav-btn" data-tab="stats">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span>Analytics</span>
+                        </button>
+                    </nav>
+
+                    <div class="nav-group-label" style="margin-top: 1.4rem;">GÉNÉRAL</div>
+                    <nav class="dash-nav-list">
+                        <button class="dash-nav-btn" data-tab="settings">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            <span>Réglages</span>
+                        </button>
+
+                        <a href="../" target="_blank" rel="noopener" class="dash-nav-btn link-external">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                            <span>Site Public</span>
+                        </a>
+
+                        <button id="logoutBtn" class="dash-nav-btn btn-logout-subtle">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>Déconnexion</span>
+                        </button>
+                    </nav>
+
+                </div>
+
+                <!-- MINI WIDGET CARD EN BAS DE LA SIDEBAR (INSPIRATION CAPTURE) -->
+                <div class="sidebar-promo-box">
+                    <div class="promo-inner-card">
+                        <div class="promo-icon-circle">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
                         </div>
-
-                        <select id="projectCategoryFilter" class="category-select">
-                            <option value="all">Toutes les catégories</option>
-                            <option value="Architecture">Architecture</option>
-                            <option value="Design d'Espace">Design d'Espace</option>
-                            <option value="BTP & Chantier">BTP & Chantier</option>
-                            <option value="BTP & Gros Œuvre">BTP & Gros Œuvre</option>
-                            <option value="Architecture & Permis">Architecture & Permis</option>
-                            <option value="Architecture & BTP">Architecture & BTP</option>
-                        </select>
+                        <h4 class="promo-title">Site en ligne</h4>
+                        <p class="promo-desc">Portfolio & Link in Bio actif</p>
+                        <a href="../" target="_blank" rel="noopener" class="promo-btn-pill">
+                            <span>Voir le site</span>
+                        </a>
                     </div>
-
-                    <button class="btn-primary" id="btnAddNewProject">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        <span>Ajouter un projet</span>
-                    </button>
                 </div>
 
-                <!-- GRILLE DES PROJETS -->
-                <div class="projects-admin-grid" id="projectsAdminGrid">
-                    <!-- Rempli dynamiquement en JS -->
-                </div>
+            </aside>
 
-            </section>
 
-            <!-- =============================================================
-                 ONGLET 3 : DEMANDES DE DEVIS (LEADS CRM)
-                 ============================================================= -->
-            <section class="tab-pane" id="tabLeads">
+            <!-- CONTENU PRINCIPAL DU DASHBOARD -->
+            <main class="dash-content-area">
                 
-                <div class="pane-header-row">
-                    <div class="leads-filter-tabs">
-                        <button class="lead-filter-btn active" data-lead-filter="all">Toutes (<span id="countLeadsAll">0</span>)</button>
-                        <button class="lead-filter-btn" data-lead-filter="Nouveau">Nouveau (<span id="countLeadsNew">0</span>)</button>
-                        <button class="lead-filter-btn" data-lead-filter="En contact">En contact (<span id="countLeadsContact">0</span>)</button>
-                        <button class="lead-filter-btn" data-lead-filter="Devis validé">Validé (<span id="countLeadsDone">0</span>)</button>
+                <!-- TOP HEADER BAR AVEC PROFIL UTILISATEUR EN HAUT À DROITE -->
+                <header class="dash-top-header">
+                    <button id="mobileMenuToggle" class="dash-mobile-burger" aria-label="Ouvrir le menu">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+
+                    <!-- Profil utilisateur inspiré fidèlement de la capture -->
+                    <div class="dash-user-profile-widget">
+                        <div class="user-avatar-circle">
+                            <span>AG</span>
+                        </div>
+                        <div class="user-profile-info">
+                            <span class="user-profile-name">Atelier Grafika</span>
+                            <span class="user-profile-email" id="topProfileEmail">admin@ateliergrafika.com</span>
+                        </div>
                     </div>
+                </header>
 
-                    <button class="btn-secondary" id="btnExportLeadsCsv">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        <span>Exporter CSV</span>
-                    </button>
+
+                <!-- TITRE DE SECTION ÉDITORIAL -->
+                <div class="dash-title-section">
+                    <h1 class="dash-main-heading" id="pageTitle">Dashboard</h1>
+                    <p class="dash-main-subheading" id="pageSubtitle">Supervisez vos projets d'architecture, devis et contacts en temps réel.</p>
                 </div>
 
-                <!-- TABLEAU DES LEADS -->
-                <div class="table-container">
-                    <table class="leads-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Client / Prospect</th>
-                                <th>Prestation</th>
-                                <th>Zone / Ville</th>
-                                <th>Statut</th>
-                                <th style="text-align: right;">Action WhatsApp</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leadsTableBody">
-                            <!-- Rempli dynamiquement -->
-                        </tbody>
-                    </table>
-                </div>
 
-            </section>
-
-            <!-- =============================================================
-                 ONGLET 4 : COORDONNÉES & RÉGLAGES
-                 ============================================================= -->
-            <section class="tab-pane" id="tabSettings">
-                
-                <div class="settings-cards-grid">
+                <!-- =============================================================
+                     ONGLET 1 : DASHBOARD (VUE D'ENSEMBLE REVISITÉE)
+                     ============================================================= -->
+                <div class="tab-pane active" id="tabDashboard">
                     
-                    <!-- FORMULAIRE COORDONNÉES & LINK IN BIO -->
-                    <div class="settings-card">
-                        <div class="settings-card-head">
-                            <h3 class="settings-card-title">Coordonnées de l'Atelier</h3>
-                            <p class="settings-card-desc">Ces coordonnées alimentent instantanément tous les boutons de la page d'accueil.</p>
+                    <!-- CARTES KPI DU HAUT (HERO CARD EN GRADIENT BLEU + CARTES BLANCHES) -->
+                    <div class="hero-kpi-row">
+                        
+                        <!-- CARTE 1 : HERO GRADIENT BLEU (INSPIRATION CARTE VERTE FONCÉE) -->
+                        <div class="kpi-pill-card hero-gradient-blue" data-tab-switch="projects">
+                            <div class="kpi-card-top-row">
+                                <span class="kpi-card-label">Total Projets</span>
+                                <div class="kpi-arrow-circle">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                                        <polyline points="7 7 17 7 17 17"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="kpi-card-number" id="statProjects">7</div>
+                            <div class="kpi-trend-note">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                                <span>7 réalisations en ligne</span>
+                            </div>
                         </div>
 
-                        <form id="settingsContactForm" class="settings-form">
-                            <div class="form-grid-2">
-                                <div class="form-group">
-                                    <label for="setWhatsapp">Numéro WhatsApp officiel</label>
-                                    <input type="text" id="setWhatsapp" placeholder="+229 01 XX XX XX">
-                                    <small class="field-hint">Format international avec indicatif pays</small>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="setPhone">Téléphone d'appel direct</label>
-                                    <input type="text" id="setPhone" placeholder="+229 01 XX XX XX">
+                        <!-- CARTE 2 : DEMANDES DE DEVIS (CARTE BLANCHE ÉPURÉE) -->
+                        <div class="kpi-pill-card white-kpi" data-tab-switch="leads">
+                            <div class="kpi-card-top-row">
+                                <span class="kpi-card-label">Demandes de Devis</span>
+                                <div class="kpi-arrow-circle dark">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                                        <polyline points="7 7 17 7 17 17"></polyline>
+                                    </svg>
                                 </div>
                             </div>
+                            <div class="kpi-card-number text-dark" id="statLeads">0</div>
+                            <div class="kpi-trend-note dark">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                                <span>Prospects qualifiés</span>
+                            </div>
+                        </div>
 
-                            <div class="form-grid-2">
-                                <div class="form-group">
-                                    <label for="setEmail">Adresse e-mail</label>
-                                    <input type="email" id="setEmail" placeholder="contact@ateliergrafika.com">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="setLocation">Siège / Localisation</label>
-                                    <input type="text" id="setLocation" placeholder="Abomey-Calavi, Bénin">
+                        <!-- CARTE 3 : CLICS WHATSAPP -->
+                        <div class="kpi-pill-card white-kpi">
+                            <div class="kpi-card-top-row">
+                                <span class="kpi-card-label">Clics WhatsApp</span>
+                                <div class="kpi-arrow-circle dark">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                                        <polyline points="7 7 17 7 17 17"></polyline>
+                                    </svg>
                                 </div>
                             </div>
+                            <div class="kpi-card-number text-dark" id="statWhatsapp">39</div>
+                            <div class="kpi-trend-note dark">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                                <span>Prises de contact directes</span>
+                            </div>
+                        </div>
 
-                            <div class="form-divider"></div>
+                        <!-- CARTE 4 : VISITEURS DU SITE -->
+                        <div class="kpi-pill-card white-kpi">
+                            <div class="kpi-card-top-row">
+                                <span class="kpi-card-label">Visiteurs Portfolio</span>
+                                <div class="kpi-arrow-circle dark">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                                        <polyline points="7 7 17 7 17 17"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="kpi-card-number text-dark" id="statViews">248</div>
+                            <div class="kpi-trend-note dark">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                                <span>Vues sur votre Link in Bio</span>
+                            </div>
+                        </div>
 
-                            <h4 class="settings-section-subtitle">Réseaux sociaux</h4>
+                    </div>
+
+
+                    <!-- SECTION INTERMÉDIAIRE : PROJECT ANALYTICS (GRAPHIQUE EN BÂTONNETS ÉLÉGANTS) -->
+                    <div class="analytics-card-widget">
+                        <div class="analytics-head-row">
+                            <h3 class="widget-section-title">Project Analytics</h3>
+                            <span class="analytics-badge-tag">Activité de la semaine</span>
+                        </div>
+
+                        <!-- BÂTONNETS GÉOMÉTRIQUES PILL STYLE CAPTURE -->
+                        <div class="pill-chart-container">
                             
-                            <div class="form-grid-2">
-                                <div class="form-group">
-                                    <label for="setInstagram">Instagram (URL ou profil)</label>
-                                    <input type="text" id="setInstagram" placeholder="https://instagram.com/ateliergrafika">
+                            <div class="chart-col">
+                                <div class="pill-bar-track">
+                                    <div class="pill-bar-fill hatched" style="height: 48%;"></div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="setTiktok">TikTok (URL ou @)</label>
-                                    <input type="text" id="setTiktok" placeholder="https://tiktok.com/@ateliergrafika">
-                                </div>
+                                <span class="chart-day-label">Mon</span>
                             </div>
 
-                            <div class="form-grid-2">
-                                <div class="form-group">
-                                    <label for="setFacebook">Facebook</label>
-                                    <input type="text" id="setFacebook" placeholder="https://facebook.com/ateliergrafika">
+                            <div class="chart-col">
+                                <div class="pill-bar-track">
+                                    <div class="pill-bar-fill solid-blue" style="height: 68%;"></div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="setLinkedin">LinkedIn</label>
-                                    <input type="text" id="setLinkedin" placeholder="https://linkedin.com/company/ateliergrafika">
-                                </div>
+                                <span class="chart-day-label">Tue</span>
                             </div>
 
-                            <div class="form-group">
-                                <label for="setX">X (Twitter)</label>
-                                <input type="text" id="setX" placeholder="https://x.com/ateliergrafika">
+                            <div class="chart-col">
+                                <div class="pill-bar-track">
+                                    <div class="pill-bar-fill solid-blue" style="height: 82%;"></div>
+                                </div>
+                                <span class="chart-day-label">Wed</span>
                             </div>
 
-                            <button type="submit" class="btn-primary">
-                                <span>Sauvegarder les coordonnées</span>
-                            </button>
-                        </form>
+                            <div class="chart-col">
+                                <div class="pill-bar-track">
+                                    <div class="pill-bar-fill hatched" style="height: 38%;"></div>
+                                </div>
+                                <span class="chart-day-label">Thr</span>
+                            </div>
+
+                            <div class="chart-col">
+                                <div class="pill-bar-track">
+                                    <div class="pill-bar-fill solid-blue" style="height: 64%;"></div>
+                                </div>
+                                <span class="chart-day-label">Fri</span>
+                            </div>
+
+                            <div class="chart-col">
+                                <div class="pill-bar-track">
+                                    <div class="pill-bar-fill hatched" style="height: 44%;"></div>
+                                </div>
+                                <span class="chart-day-label">Sat</span>
+                            </div>
+
+                            <div class="chart-col">
+                                <div class="pill-bar-track peak-track">
+                                    <div class="peak-badge-bubble">98%</div>
+                                    <div class="pill-bar-fill solid-red-accent" style="height: 94%;"></div>
+                                </div>
+                                <span class="chart-day-label">Sun</span>
+                            </div>
+
+                        </div>
                     </div>
 
-                    <!-- GESTION DE LA SÉCURITÉ ADMIN -->
-                    <div class="settings-card">
-                        <div class="settings-card-head">
-                            <h3 class="settings-card-title">Sécurité du compte administrateur</h3>
-                            <p class="settings-card-desc">Gérez vos identifiants d'accès à la console privée.</p>
+
+                    <!-- SECTION DU BAS : DEMANDES DE DEVIS (TEAM COLLABORATION STYLE) -->
+                    <div class="leads-list-widget">
+                        <div class="leads-widget-header">
+                            <h3 class="widget-section-title">Dernières demandes de devis</h3>
+                            <button class="btn-outline-pill-small" id="btnDashNewProj">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Ajouter un projet</span>
+                            </button>
                         </div>
 
-                        <form id="settingsSecurityForm" class="settings-form">
-                            <div class="form-group">
-                                <label for="setAdminEmail">E-mail de connexion admin</label>
-                                <input type="email" id="setAdminEmail" required placeholder="admin@ateliergrafika.com">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="setAdminNewPass">Nouveau mot de passe</label>
-                                <input type="password" id="setAdminNewPass" placeholder="Laisser vide pour ne pas modifier">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="setAdminConfirmPass">Confirmer le nouveau mot de passe</label>
-                                <input type="password" id="setAdminConfirmPass" placeholder="Confirmer le nouveau mot de passe">
-                            </div>
-
-                            <button type="submit" class="btn-secondary">
-                                <span>Mettre à jour mes accès</span>
-                            </button>
-                        </form>
-
-                        <div class="security-note">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                            <p>Vous êtes l'unique administrateur de cet espace. Conservez vos identifiants en lieu sûr.</p>
+                        <!-- LISTE DE PROSPECTS STYLE LIGNES FIDÈLES -->
+                        <div class="leads-rows-container" id="dashRecentLeadsList">
+                            <!-- Rempli dynamiquement en JS -->
                         </div>
                     </div>
 
                 </div>
 
-            </section>
 
-        </main>
+                <!-- =============================================================
+                     ONGLET 2 : PROJETS & PORTFOLIO (CMS)
+                     ============================================================= -->
+                <div class="tab-pane" id="tabProjects">
+                    <div class="pane-action-bar">
+                        <div class="search-filter-cluster">
+                            <div class="clean-search-box">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" id="projectSearchInput" placeholder="Rechercher par titre ou ville...">
+                            </div>
+
+                            <select id="projectCategoryFilter" class="clean-select-pill">
+                                <option value="all">Toutes les catégories</option>
+                                <option value="Architecture">Architecture</option>
+                                <option value="Design d'Espace">Design d'Espace</option>
+                                <option value="BTP & Chantier">BTP & Chantier</option>
+                                <option value="BTP & Gros Œuvre">BTP & Gros Œuvre</option>
+                                <option value="Architecture & Permis">Architecture & Permis</option>
+                                <option value="Architecture & BTP">Architecture & BTP</option>
+                            </select>
+                        </div>
+
+                        <button class="btn-primary-pill" id="btnAddNewProject">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>Ajouter un projet</span>
+                        </button>
+                    </div>
+
+                    <div class="projects-admin-grid" id="projectsAdminGrid">
+                        <!-- Rempli en JS -->
+                    </div>
+                </div>
+
+
+                <!-- =============================================================
+                     ONGLET 3 : DEMANDES DE DEVIS (CRM LEADS)
+                     ============================================================= -->
+                <div class="tab-pane" id="tabLeads">
+                    <div class="pane-action-bar">
+                        <div class="filter-pills-cluster">
+                            <button class="filter-pill-item active" data-lead-filter="all">Toutes (<span id="countLeadsAll">0</span>)</button>
+                            <button class="filter-pill-item" data-lead-filter="Nouveau">Nouveau (<span id="countLeadsNew">0</span>)</button>
+                            <button class="filter-pill-item" data-lead-filter="En contact">En cours (<span id="countLeadsContact">0</span>)</button>
+                            <button class="filter-pill-item" data-lead-filter="Devis validé">Validé (<span id="countLeadsDone">0</span>)</button>
+                        </div>
+
+                        <button class="btn-outline-pill-small" id="btnExportLeadsCsv">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Exporter CSV</span>
+                        </button>
+                    </div>
+
+                    <div class="table-card-container">
+                        <table class="leads-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Prospect</th>
+                                    <th>Prestation</th>
+                                    <th>Ville</th>
+                                    <th>Statut</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leadsTableBody">
+                                <!-- Rempli en JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <!-- =============================================================
+                     ONGLET 4 : STATISTIQUES (ANALYTICS DÉTAILLÉES)
+                     ============================================================= -->
+                <div class="tab-pane" id="tabStats">
+                    <div class="stats-overview-grid">
+                        <div class="stats-box-rounded">
+                            <h3 class="widget-section-title">Sources de contact</h3>
+                            <p class="stats-sub-text">Répartition des interactions sur votre portfolio</p>
+                            
+                            <div class="metric-progress-list">
+                                <div class="progress-row">
+                                    <div class="progress-labels">
+                                        <span>Clics WhatsApp direct</span>
+                                        <strong>72%</strong>
+                                    </div>
+                                    <div class="progress-bar-track">
+                                        <div class="progress-bar-fill bg-blue" style="width: 72%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="progress-row">
+                                    <div class="progress-labels">
+                                        <span>Formulaire de devis</span>
+                                        <strong>20%</strong>
+                                    </div>
+                                    <div class="progress-bar-track">
+                                        <div class="progress-bar-fill bg-red" style="width: 20%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="progress-row">
+                                    <div class="progress-labels">
+                                        <span>Appels téléphoniques</span>
+                                        <strong>8%</strong>
+                                    </div>
+                                    <div class="progress-bar-track">
+                                        <div class="progress-bar-fill bg-slate" style="width: 8%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-box-rounded">
+                            <h3 class="widget-section-title">Audience géographique</h3>
+                            <p class="stats-sub-text">Origine des visiteurs consultant votre travail</p>
+                            
+                            <div class="geo-tags-cloud">
+                                <div class="geo-tag-pill">
+                                    <span class="geo-name">Bénin (Cotonou, Calavi)</span>
+                                    <span class="geo-val">65%</span>
+                                </div>
+                                <div class="geo-tag-pill">
+                                    <span class="geo-name">France (Diaspora)</span>
+                                    <span class="geo-val">18%</span>
+                                </div>
+                                <div class="geo-tag-pill">
+                                    <span class="geo-name">Côte d'Ivoire & Togo</span>
+                                    <span class="geo-val">11%</span>
+                                </div>
+                                <div class="geo-tag-pill">
+                                    <span class="geo-name">USA / Canada</span>
+                                    <span class="geo-val">6%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- =============================================================
+                     ONGLET 5 : COORDONNÉES & RÉGLAGES
+                     ============================================================= -->
+                <div class="tab-pane" id="tabSettings">
+                    <div class="settings-twin-grid">
+                        
+                        <!-- CARTE 1 : COORDONNÉES -->
+                        <div class="settings-rounded-card">
+                            <h3 class="widget-section-title">Coordonnées de l'Atelier</h3>
+                            <p class="stats-sub-text">Mise à jour en temps réel des boutons d'action du site public.</p>
+
+                            <form id="settingsContactForm" class="clean-form-column">
+                                <div class="form-row-2cols">
+                                    <div class="form-group">
+                                        <label for="setWhatsapp">Numéro WhatsApp</label>
+                                        <input type="text" id="setWhatsapp" placeholder="+229 01 XX XX XX">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="setPhone">Téléphone d'appel</label>
+                                        <input type="text" id="setPhone" placeholder="+229 01 XX XX XX">
+                                    </div>
+                                </div>
+
+                                <div class="form-row-2cols">
+                                    <div class="form-group">
+                                        <label for="setEmail">Adresse e-mail</label>
+                                        <input type="email" id="setEmail" placeholder="contact@ateliergrafika.com">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="setLocation">Siège / Localisation</label>
+                                        <input type="text" id="setLocation" placeholder="Abomey-Calavi, Bénin">
+                                    </div>
+                                </div>
+
+                                <div class="form-line-sep"></div>
+
+                                <h4 class="sub-section-title">Liens réseaux sociaux</h4>
+                                <div class="form-row-2cols">
+                                    <div class="form-group">
+                                        <label for="setInstagram">Instagram</label>
+                                        <input type="text" id="setInstagram" placeholder="https://instagram.com/ateliergrafika">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="setTiktok">TikTok</label>
+                                        <input type="text" id="setTiktok" placeholder="https://tiktok.com/@ateliergrafika">
+                                    </div>
+                                </div>
+
+                                <div class="form-row-2cols">
+                                    <div class="form-group">
+                                        <label for="setFacebook">Facebook</label>
+                                        <input type="text" id="setFacebook" placeholder="https://facebook.com/ateliergrafika">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="setLinkedin">LinkedIn</label>
+                                        <input type="text" id="setLinkedin" placeholder="https://linkedin.com/company/ateliergrafika">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="setX">X (Twitter)</label>
+                                    <input type="text" id="setX" placeholder="https://x.com/ateliergrafika">
+                                </div>
+
+                                <button type="submit" class="btn-primary-pill" style="align-self: flex-start;">
+                                    <span>Enregistrer les coordonnées</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- CARTE 2 : SÉCURITÉ ADMIN -->
+                        <div class="settings-rounded-card">
+                            <h3 class="widget-section-title">Sécurité & Identifiants</h3>
+                            <p class="stats-sub-text">Modifier votre e-mail ou mot de passe d'administrateur.</p>
+
+                            <form id="settingsSecurityForm" class="clean-form-column">
+                                <div class="form-group">
+                                    <label for="setAdminEmail">E-mail de connexion</label>
+                                    <input type="email" id="setAdminEmail" required placeholder="admin@ateliergrafika.com">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="setAdminNewPass">Nouveau mot de passe</label>
+                                    <input type="password" id="setAdminNewPass" placeholder="Laisser vide si inchangé">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="setAdminConfirmPass">Confirmer mot de passe</label>
+                                    <input type="password" id="setAdminConfirmPass" placeholder="Confirmer le mot de passe">
+                                </div>
+
+                                <button type="submit" class="btn-outline-pill-small" style="align-self: flex-start; padding: 0.65rem 1.2rem;">
+                                    <span>Sauvegarder mes accès</span>
+                                </button>
+                            </form>
+
+                            <div class="admin-safe-box">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span>Session admin unique réservée à la direction d'Atelier Grafika.</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </main>
+
+        </div>
+
     </div>
 
 
     <!-- =========================================================================
-         3. MODAL : AJOUTER OU MODIFIER UN PROJET
+         MODAL : AJOUTER OU MODIFIER UN PROJET
          ========================================================================= -->
     <div id="projectModal" class="admin-modal-overlay" style="display: none;">
         <div class="admin-modal-box">
@@ -544,7 +707,7 @@
             <form id="projectForm" class="admin-modal-form">
                 <input type="hidden" id="projId">
 
-                <div class="form-grid-2">
+                <div class="form-row-2cols">
                     <div class="form-group">
                         <label for="projTitle">Titre de la réalisation *</label>
                         <input type="text" id="projTitle" required placeholder="Ex : Villa Océane & Claustras">
@@ -564,14 +727,14 @@
                     </div>
                 </div>
 
-                <div class="form-grid-3">
+                <div class="form-row-3cols">
                     <div class="form-group">
-                        <label for="projLocation">Localisation / Ville *</label>
+                        <label for="projLocation">Ville / Zone *</label>
                         <input type="text" id="projLocation" required placeholder="Ex : Abomey-Calavi">
                     </div>
 
                     <div class="form-group">
-                        <label for="projSurface">Surface estimée</label>
+                        <label for="projSurface">Surface (m²)</label>
                         <input type="text" id="projSurface" placeholder="Ex : 360 m²">
                     </div>
 
@@ -582,43 +745,41 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="projDescription">Description architecturale *</label>
-                    <textarea id="projDescription" rows="3" required placeholder="Présentez la vision architecturale, les matériaux choisis, l'orientation bioclimatique..."></textarea>
+                    <label for="projDescription">Description du projet *</label>
+                    <textarea id="projDescription" rows="3" required placeholder="Conception architecturale, claustras protecteurs, matériaux locaux..."></textarea>
                 </div>
 
-                <!-- GESTION DES PHOTOS DE LA GALERIE -->
+                <!-- GESTION DES PHOTOS -->
                 <div class="photos-management-block">
                     <div class="photos-block-head">
                         <div>
-                            <h4 class="photos-block-title">Photos de la réalisation</h4>
-                            <p class="photos-block-desc">Ajoutez les photos qui apparaîtront dans la galerie (formats acceptés : JPG, PNG, WEBP ou liens d'images).</p>
+                            <h4 class="photos-block-title">Galerie photos du projet</h4>
+                            <p class="photos-block-desc">Formats : JPG, PNG, WEBP ou URLs externes.</p>
                         </div>
-                        <label class="btn-upload-file">
+                        <label class="btn-upload-pill">
                             <input type="file" id="projPhotosFileInput" multiple accept="image/*" style="display: none;">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="17 8 12 3 7 8"></polyline>
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
-                            <span>Uploader des photos</span>
+                            <span>Uploader</span>
                         </label>
                     </div>
 
-                    <!-- Ajout rapide d'un lien URL -->
                     <div class="photo-url-input-row">
                         <input type="url" id="projPhotoUrlInput" placeholder="Ou collez l'URL d'une image (https://...)">
-                        <button type="button" id="btnAddPhotoUrl" class="btn-small-outline">Ajouter lien</button>
+                        <button type="button" id="btnAddPhotoUrl" class="btn-outline-pill-small">Ajouter</button>
                     </div>
 
-                    <!-- Miniatures des photos ajoutées -->
                     <div class="photos-thumbnails-admin" id="projPhotosContainer">
-                        <!-- Rempli en JS -->
+                        <!-- Miniatures en JS -->
                     </div>
                 </div>
 
                 <div class="admin-modal-footer">
                     <button type="button" id="btnCancelProject" class="btn-text">Annuler</button>
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" class="btn-primary-pill">
                         <span id="btnSaveProjectText">Enregistrer le projet</span>
                     </button>
                 </div>
@@ -628,44 +789,7 @@
     </div>
 
 
-    <!-- =========================================================================
-         4. MODAL : DÉTAIL D'UNE DEMANDE DE DEVIS
-         ========================================================================= -->
-    <div id="leadDetailModal" class="admin-modal-overlay" style="display: none;">
-        <div class="admin-modal-box modal-box-small">
-            <div class="admin-modal-head">
-                <div class="modal-title-wrap">
-                    <span class="modal-pre" id="leadModalPre">Demande de devis</span>
-                    <h3 class="modal-heading" id="leadModalName">Nom du prospect</h3>
-                </div>
-                <button type="button" id="btnCloseLeadModal" class="admin-modal-close" aria-label="Fermer">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="lead-detail-body" id="leadModalContent">
-                <!-- Rempli en JS -->
-            </div>
-
-            <div class="admin-modal-footer">
-                <button type="button" id="btnDeleteLead" class="btn-danger-outline">Supprimer</button>
-                <a href="#" id="btnLeadWhatsAppAction" target="_blank" rel="noopener" class="btn-whatsapp">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                    </svg>
-                    <span>Répondre sur WhatsApp</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- =========================================================================
-         5. TOAST NOTIFICATION DE SUCCÈS / INFO
-         ========================================================================= -->
+    <!-- TOAST NOTIFICATION -->
     <div id="toastMessage" class="toast-notification"></div>
 
     <script type="module" src="admin.js"></script>
