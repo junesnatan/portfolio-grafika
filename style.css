@@ -802,44 +802,178 @@ body {
    OPTIMISATIONS MOBILE (CARTES 100% VISUELLES & IMMERSIVES)
    ========================================================================== */
 @media (max-width: 768px) {
+    .bio-header {
+        padding: 1.5rem 1rem 0;
+    }
+
+    .brand-avatar {
+        width: 82px;
+        height: 82px;
+        margin-bottom: 0.75rem;
+    }
+
+    .brand-title {
+        font-size: 1.55rem;
+    }
+
+    .brand-tagline {
+        font-size: 0.8rem;
+    }
+
+    .arch-hand-quote {
+        font-size: 1.05rem;
+    }
+
+    .brand-desc {
+        font-size: 0.84rem;
+        padding: 0 0.5rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .action-tile {
+        padding: 0.75rem 1rem;
+        font-size: 0.84rem;
+        border-radius: 14px;
+    }
+
+    .claustra-section-divider {
+        margin: 0 auto 1.8rem;
+        gap: 8px;
+    }
+
+    .claustra-divider-cluster {
+        padding: 0.45rem 1rem;
+    }
+
+    .claustra-divider-caption {
+        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+    }
+
     .arch-gallery-container {
         justify-content: flex-start;
-        padding: 1rem 0 1.5rem;
+        padding: 0.5rem 0 1.2rem;
         scroll-snap-type: x mandatory;
-        scroll-padding: 0 10vw;
+        scroll-padding: 0 8vw;
     }
 
     .arch-track {
-        padding: 0 10vw;
-        gap: 14px;
+        padding: 0 8vw;
+        gap: 12px;
         align-items: center;
     }
 
     .arch-card {
-        width: 80vw;
-        max-width: 320px;
-        height: 420px;
-        border-radius: 24px;
-        box-shadow: 0 16px 40px rgba(0, 59, 115, 0.16);
+        width: 82vw;
+        max-width: 310px;
+        min-width: 260px;
+        height: 350px;
+        border-radius: 20px;
+        box-shadow: 0 12px 32px rgba(0, 59, 115, 0.14);
         scroll-snap-align: center;
         transform: none !important;
     }
 
     .card-title-scrim {
-        padding: 3.8rem 1.4rem 1.4rem;
+        padding: 0.85rem 1rem 0.9rem;
     }
 
     .card-project-title {
-        font-size: 1.25rem;
-        margin-bottom: 0.25rem;
+        font-size: 1.12rem;
+        margin-bottom: 0.2rem;
     }
 
     .card-project-loc {
-        font-size: 0.82rem;
+        font-size: 0.78rem;
+    }
+
+    .card-meta-line {
+        font-size: 0.65rem;
     }
 
     .mobile-carousel-dots {
         display: flex;
+        margin-top: 0.6rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .hero-bottom-cta {
+        margin-top: 0.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-action-btn {
+        padding: 0.82rem 1.8rem;
+        font-size: 0.88rem;
+    }
+
+    /* Modal Detail sur Mobile */
+    .modal-detail-box {
+        max-width: 92vw;
+        border-radius: 20px;
+        max-height: 88vh;
+    }
+
+    .detail-gallery-stage {
+        height: 210px;
+    }
+
+    .detail-thumbnails-strip {
+        padding: 8px 1rem;
+        gap: 6px;
+    }
+
+    .thumb-item {
+        width: 44px;
+        height: 44px;
+        border-radius: 7px;
+    }
+
+    .detail-content {
+        padding: 1rem 1.15rem 1.25rem;
+    }
+
+    .detail-title {
+        font-size: 1.15rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-specs-bar {
+        font-size: 0.74rem;
+        margin-bottom: 0.45rem;
+    }
+
+    .detail-text {
+        font-size: 0.82rem;
+        line-height: 1.45;
+        margin-bottom: 1rem;
+    }
+
+    .popup-whatsapp-btn {
+        padding: 0.78rem 1.2rem;
+        font-size: 0.84rem;
+    }
+
+    /* Modal Devis sur Mobile */
+    .modal-box {
+        max-width: 92vw;
+        padding: 1.4rem 1.15rem;
+        border-radius: 20px;
+    }
+
+    .modal-heading {
+        font-size: 1.2rem;
+    }
+
+    .modal-sub {
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-form input,
+    .modal-form select,
+    .modal-form textarea {
+        font-size: 16px !important;
     }
 }
 

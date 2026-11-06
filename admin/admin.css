@@ -2293,3 +2293,166 @@ body.admin-body {
         border-radius: 22px;
     }
 }
+
+
+
+/* ==========================================================================
+   SIDEBAR MOBILE BACKDROP & CLOSE BUTTON
+   ========================================================================== */
+.sidebar-mobile-backdrop {
+    display: none;
+}
+
+.sidebar-mobile-close {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .sidebar-mobile-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(11, 27, 43, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+    }
+
+    .sidebar-mobile-backdrop.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar-mobile-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(0, 59, 115, 0.08);
+        border: 1px solid var(--border-subtle);
+        color: var(--navy-dark);
+        cursor: pointer;
+        transition: all 0.18s ease;
+        margin-left: auto;
+    }
+
+    .sidebar-mobile-close:hover {
+        background: var(--brand-red);
+        color: #ffffff;
+        border-color: var(--brand-red);
+    }
+
+    .dash-sidebar {
+        display: flex !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 280px !important;
+        max-width: 85vw !important;
+        height: 100vh !important;
+        z-index: 1000 !important;
+        box-shadow: 10px 0 35px rgba(11, 27, 43, 0.25) !important;
+        transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .dash-sidebar.open {
+        transform: translateX(0) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Login Mobile Épuré & Focalisé */
+    .login-showcase-panel {
+        display: none !important;
+    }
+
+    .login-form-panel {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.25rem;
+    }
+
+    .login-form-inner {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .login-header-group {
+        text-align: center;
+    }
+
+    .login-badge-secure {
+        margin: 0 auto 0.75rem auto;
+    }
+
+    .login-form-heading {
+        font-size: 1.45rem;
+    }
+
+    .login-form-subtext {
+        font-size: 0.84rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .login-claustra-accent {
+        margin: 0.8rem auto 1.5rem auto;
+    }
+
+    /* Top Header Mobile */
+    .dash-arch-status-pill {
+        display: none !important;
+    }
+
+    .user-profile-info {
+        display: none !important;
+    }
+
+    .dash-top-header {
+        margin-bottom: 0.8rem;
+    }
+
+    .dash-title-section {
+        margin-bottom: 1.2rem;
+    }
+
+    .dash-main-heading {
+        font-size: 1.4rem;
+    }
+
+    .dash-main-subheading {
+        font-size: 0.82rem;
+    }
+
+    /* Leads Widget Mobile */
+    .leads-list-widget {
+        padding: 1.1rem 1rem;
+    }
+
+    .lead-row-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.65rem;
+        padding: 0.85rem;
+    }
+
+    .lead-avatar-meta {
+        width: 100%;
+    }
+
+    .lead-actions-cell {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 0.4rem;
+        border-top: 1px dashed rgba(0, 59, 115, 0.08);
+    }
+}
