@@ -6,18 +6,15 @@
     <title>Dashboard | Atelier Grafika</title>
     <link rel="icon" type="image/png" href="../assets/logo.png">
 
-    <!-- Polices officielles de l'agence -->
+    <!-- Polices officielles de l'agence : Poppins + Montserrat + Caveat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="admin.css">
 </head>
 <body class="admin-body">
 
-    <!-- =========================================================================
-         1. ÉCRAN DE CONNEXION SÉCURISÉ (LOGIN)
-         ========================================================================= -->
     <!-- =========================================================================
          1. ÉCRAN DE CONNEXION STUDIO SPLIT-SCREEN (PLEIN ÉCRAN, BORD À BORD, 0 VIDE)
          ========================================================================= -->
@@ -41,16 +38,18 @@
 
                 <!-- Citation & Métriques en bas -->
                 <div class="login-showcase-bottom">
+                    <div class="showcase-arch-stamp" aria-hidden="true">+ AG-STUDIO-DIRECTION // COTONOU-CALAVI +</div>
                     <div class="showcase-project-badge">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                             <circle cx="12" cy="10" r="3"></circle>
                         </svg>
-                        <span>Villa Océane & Claustras • Cotonou, Bénin</span>
+                        <span>Villa Océane &amp; Claustras • Cotonou, Bénin</span>
                     </div>
                     <blockquote class="showcase-quote">
                         « Concevoir l'espace avec rigueur, bâtir chaque structure avec excellence et durabilité. »
                     </blockquote>
+                    <span class="showcase-hand-annotation" aria-hidden="true">« Rigueur d'exécution &amp; suivi de chantier »</span>
                     <div class="showcase-metrics-row">
                         <div class="showcase-metric-item">
                             <span class="metric-val">7</span>
@@ -74,6 +73,10 @@
         <!-- PANNEAU DROIT : FORMULAIRE D'ACCÈS ÉPURÉ & ÉLÉGANT -->
         <div class="login-form-panel">
             <div class="login-form-inner">
+                <span class="login-arch-mark c-tl" aria-hidden="true">+</span>
+                <span class="login-arch-mark c-tr" aria-hidden="true">+</span>
+                <span class="login-arch-mark c-bl" aria-hidden="true">+</span>
+                <span class="login-arch-mark c-br" aria-hidden="true">+</span>
                 
                 <div class="login-form-topbar">
                     <a href="../" class="login-back-pill">
@@ -94,6 +97,7 @@
                     </div>
                     <h1 class="login-form-heading">Connexion administrateur</h1>
                     <p class="login-form-subtext">Accédez à votre espace pour gérer le portfolio, suivre les devis et piloter les contacts.</p>
+                    <div class="login-claustra-accent" aria-hidden="true"></div>
                 </div>
 
                 <form id="loginForm" class="login-form-body">
@@ -189,9 +193,12 @@
                         <img src="../assets/logo.png" alt="Atelier Grafika" class="dash-logo">
                         <div class="dash-brand-title">
                             <div class="dash-brand-name"><span class="text-red">ATELIER</span> <span class="text-blue">GRAFRIKA</span></div>
-                            <span class="dash-brand-sub">ARCHITECTURE & BTP</span>
+                            <span class="dash-brand-sub">ARCHITECTURE &amp; BTP</span>
                         </div>
                     </a>
+                    <div class="sidebar-claustra-accent" aria-hidden="true">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
                 </div>
 
                 <!-- NAVIGATION GROUPÉE -->
@@ -315,6 +322,12 @@
                         </svg>
                     </button>
 
+                    <div class="dash-arch-status-pill" aria-hidden="true">
+                        <span class="status-cross">+</span>
+                        <span>BUREAU D'ÉTUDES • COTONOU &amp; CALAVI</span>
+                        <span class="status-cross">+</span>
+                    </div>
+
                     <!-- Profil utilisateur inspiré fidèlement de la capture -->
                     <div class="dash-user-profile-widget">
                         <div class="user-avatar-circle">
@@ -331,6 +344,7 @@
                 <!-- TITRE DE SECTION ÉDITORIAL -->
                 <div class="dash-title-section">
                     <h1 class="dash-main-heading" id="pageTitle">Dashboard</h1>
+                    <span class="dash-hand-note" aria-hidden="true">« Synchronisation directe avec le site Link-in-Bio »</span>
                     <p class="dash-main-subheading" id="pageSubtitle">Supervisez vos projets d'architecture, devis et contacts en temps réel.</p>
                 </div>
 
@@ -345,6 +359,8 @@
                         
                         <!-- CARTE 1 : HERO CARTE BLEU ARCHITECTURAL SOLIDE #003B73 -->
                         <div class="kpi-pill-card hero-solid-blue" data-tab-switch="projects">
+                            <span class="kpi-arch-mark c-tl" aria-hidden="true">+</span>
+                            <span class="kpi-arch-mark c-tr" aria-hidden="true">+</span>
                             <div class="kpi-card-top-row">
                                 <span class="kpi-card-label">Total Projets</span>
                                 <div class="kpi-arrow-circle">
@@ -802,11 +818,16 @@
          ========================================================================= -->
     <div id="projectModal" class="admin-modal-overlay" style="display: none;">
         <div class="admin-modal-box">
+            <span class="admin-modal-arch-corner c-tl" aria-hidden="true">+</span>
+            <span class="admin-modal-arch-corner c-tr" aria-hidden="true">+</span>
+            <span class="admin-modal-arch-corner c-bl" aria-hidden="true">+</span>
+            <span class="admin-modal-arch-corner c-br" aria-hidden="true">+</span>
             
             <div class="admin-modal-head">
                 <div class="modal-title-wrap">
                     <span class="modal-pre" id="projectModalAction">Nouveau projet</span>
                     <h3 class="modal-heading" id="projectModalTitle">Ajouter une réalisation</h3>
+                    <div class="admin-modal-claustra-bar" aria-hidden="true"></div>
                 </div>
                 <button type="button" id="btnCloseProjectModal" class="admin-modal-close" aria-label="Fermer">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

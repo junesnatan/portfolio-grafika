@@ -266,12 +266,20 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transform = `translateY(${yOffset}px) rotate(${rotZ}deg)`;
         }
 
-        // Carte visuelle avec uniquement le titre et la localisation (Zéro bouton)
+        // Carte visuelle avec repères d'architecte et spécifications nettes (Zéro bouton)
         card.innerHTML = `
+            <span class="card-arch-mark c-tl" aria-hidden="true">+</span>
+            <span class="card-arch-mark c-tr" aria-hidden="true">+</span>
+            <span class="card-arch-chip">${escapeHtml(proj.category)}</span>
             <img src="${proj.photos[0]}" alt="${proj.title}" loading="lazy">
             <div class="card-title-scrim">
-                <h3 class="card-project-title">${proj.title}</h3>
-                <span class="card-project-loc">${proj.location}</span>
+                <div class="card-meta-line">
+                    <span class="card-spec-surface">${escapeHtml(proj.surface)}</span>
+                    <span class="card-spec-sep">•</span>
+                    <span class="card-spec-dur">${escapeHtml(proj.duration)}</span>
+                </div>
+                <h3 class="card-project-title">${escapeHtml(proj.title)}</h3>
+                <span class="card-project-loc">${escapeHtml(proj.location)}</span>
             </div>
         `;
 
@@ -643,6 +651,16 @@ document.addEventListener('DOMContentLoaded', () => {
             window.open(`https://wa.me/${targetWa}?text=${text}`, '_blank');
             closeQuote();
         });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     const yr = document.getElementById('currentYear');

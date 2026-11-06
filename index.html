@@ -42,7 +42,18 @@
              1. LES CONTACTS EN HAUT (PROFIL BIO & LIENS LINKTREE)
              ============================================== -->
         <header class="bio-header">
+            <!-- Repères d'architecte & Coordonnées géographiques officielles -->
+            <div class="arch-registration-bar" aria-hidden="true">
+                <span class="arch-coord-mark">+</span>
+                <span class="arch-coord-text">LAT 6°26'42"N • LON 2°21'10"E // CALAVI &amp; COTONOU</span>
+                <span class="arch-coord-mark">+</span>
+            </div>
+
             <div class="brand-avatar">
+                <span class="avatar-corner c-tl" aria-hidden="true">+</span>
+                <span class="avatar-corner c-tr" aria-hidden="true">+</span>
+                <span class="avatar-corner c-bl" aria-hidden="true">+</span>
+                <span class="avatar-corner c-br" aria-hidden="true">+</span>
                 <img src="assets/logo.png" alt="Atelier Grafika" class="logo-img">
             </div>
 
@@ -59,8 +70,9 @@
             </h1>
 
             <p class="brand-tagline">Architecture • Design d'Espace • BTP</p>
+            <span class="arch-hand-quote" aria-hidden="true">« Rigueur structurelle &amp; élégance tropicale »</span>
             <p class="brand-desc">
-                Architecture, design d'espace & BTP au Bénin et à l'international.
+                Architecture, design d'espace &amp; BTP au Bénin et à l'international.
             </p>
 
             <!-- Liste des contacts et réseaux sociaux au format Linktree harmonisé -->
@@ -174,12 +186,48 @@
         </header>
 
         <!-- ==============================================
+             SÉPARATEUR GÉOMÉTRIQUE : CLAUSTRA BÉNINOIS & TRÂME TROPICALE
+             (Aplats solides #003B73 & #850C14, 0 dégradé, 0 émoji)
+             ============================================== -->
+        <div class="claustra-section-divider" aria-hidden="true">
+            <span class="claustra-divider-line"></span>
+            <div class="claustra-divider-cluster">
+                <svg viewBox="0 0 100 24" width="100" height="24" fill="none" class="claustra-svg-ribbon">
+                    <!-- Module 1 : Brique de claustra béton ajouré #003B73 -->
+                    <rect x="2" y="2" width="20" height="20" rx="3" stroke="#003B73" stroke-width="1.8" fill="none"/>
+                    <rect x="7" y="7" width="10" height="10" rx="1.5" fill="#003B73"/>
+                    <!-- Module 2 : Fente croisée tropicale #850C14 -->
+                    <rect x="28" y="2" width="20" height="20" rx="3" stroke="#850C14" stroke-width="1.8" fill="none"/>
+                    <path d="M33 12h10M38 7v10" stroke="#850C14" stroke-width="2" stroke-linecap="round"/>
+                    <!-- Module 3 : Claustra à noyau plein & évidements d'angle #003B73 -->
+                    <rect x="54" y="2" width="20" height="20" rx="3" stroke="#003B73" stroke-width="1.8" fill="none"/>
+                    <circle cx="64" cy="12" r="4.5" fill="#850C14"/>
+                    <!-- Points de chaînage architectural -->
+                    <circle cx="82" cy="12" r="2.2" fill="#003B73"/>
+                    <circle cx="92" cy="12" r="1.5" fill="#850C14"/>
+                </svg>
+                <span class="claustra-divider-caption">RÉALISATIONS ARCHITECTURALES // BÉNIN &amp; INTERNATIONAL</span>
+            </div>
+            <span class="claustra-divider-line"></span>
+        </div>
+
+        <!-- ==============================================
              2. LES PROJETS EN DESSOUS (DESIGN DE CARTES BRANDLYFT)
-             (Plus aucun rectangle arrondi avant le titre, titre H1 naturel et sous-titre simple)
              ============================================== -->
         <section class="projects-section" id="projets">
             
             <div class="projects-header-box">
+                <!-- Tag architectural officiel -->
+                <div class="arch-spec-pill">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>CONCEPTION 3D • PERMIS • DIRECTION DE CHANTIER</span>
+                </div>
+
                 <!-- Titre H2 naturel, direct et sans rectangle au-dessus -->
                 <h2 class="projects-big-title">
                     <span class="title-main">Nous donnons vie à vos projets,</span>
@@ -188,7 +236,7 @@
 
                 <!-- Sous-titre simple -->
                 <p class="projects-subtext">
-                    Découvrez nos réalisations récentes.
+                    Découvrez nos réalisations récentes sélectionnées.
                 </p>
             </div>
 
@@ -215,6 +263,10 @@
                 </div>
 
                 <div class="dashed-pill-wrapper">
+                    <span class="dash-corner d-tl" aria-hidden="true">+</span>
+                    <span class="dash-corner d-tr" aria-hidden="true">+</span>
+                    <span class="dash-corner d-bl" aria-hidden="true">+</span>
+                    <span class="dash-corner d-br" aria-hidden="true">+</span>
                     <button class="cta-action-btn" id="btnMainQuote">
                         Demander un devis gratuit
                     </button>
@@ -226,10 +278,10 @@
                         <path d="M4 22 C14 8, 32 6, 42 12"></path>
                         <polyline points="36 6 42 12 38 19"></polyline>
                     </svg>
-                    <span class="doodle-text">Jetez un œil</span>
+                    <span class="doodle-text">Devis sous 48h</span>
                 </div>
 
-                <span class="cta-note-label">On discute de votre projet et on vous répond vite.</span>
+                <span class="cta-note-label">On discute de votre projet et on vous répond rapidement avec une étude personnalisée.</span>
             </div>
 
         </section>
@@ -238,11 +290,16 @@
              3. PIED DE PAGE ÉPURÉ
              ============================================== -->
         <footer class="minimal-footer">
+            <!-- Séparateur claustra micro -->
+            <div class="claustra-micro-dots" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
             <div class="footer-logo-box">
                 <img src="assets/logo.png" alt="Atelier Grafika">
             </div>
             <p class="footer-name">ATELIER GRAFRIKA</p>
-            <p class="footer-role">Architecture • Design d'Espace • BTP • Bénin & International</p>
+            <p class="footer-role">Architecture • Design d'Espace • BTP • Bénin &amp; International</p>
+            <p class="footer-firm-seal">Conception architecturale, plans 3D &amp; suivi rigoureux de chantiers • République du Bénin</p>
             <p class="footer-copy">&copy; <span id="currentYear"></span> Atelier Grafika. Tous droits réservés. • <a href="admin/" class="footer-admin-link">Espace Pro</a></p>
         </footer>
 
@@ -253,11 +310,20 @@
          ============================================== -->
     <div class="modal-overlay" id="quoteModal" aria-hidden="true">
         <div class="modal-box modal-quote-box">
+            <span class="modal-arch-corner c-tl" aria-hidden="true">+</span>
+            <span class="modal-arch-corner c-tr" aria-hidden="true">+</span>
+            <span class="modal-arch-corner c-bl" aria-hidden="true">+</span>
+            <span class="modal-arch-corner c-br" aria-hidden="true">+</span>
             <button class="modal-close-btn" id="btnCloseQuote" aria-label="Fermer">&times;</button>
             <div class="modal-head">
-                <span class="modal-pre">Étude & Estimation</span>
+                <div class="modal-arch-tag">
+                    <span class="tag-cross">+</span>
+                    <span>ÉTUDE PRÉALABLE // ESTIMATION BTP &amp; ARCHITECTURE</span>
+                    <span class="tag-cross">+</span>
+                </div>
                 <h3 class="modal-heading">Demande de devis gratuit</h3>
                 <p class="modal-sub">Partagez-nous votre besoin, notre bureau d'études vous répond sous 48h sans engagement.</p>
+                <div class="modal-claustra-mini-bar" aria-hidden="true"></div>
             </div>
 
             <form id="quoteForm" class="modal-form">
@@ -433,10 +499,15 @@
          ============================================== -->
     <div class="modal-overlay" id="detailModal" aria-hidden="true">
         <div class="modal-box modal-detail-box">
+            <span class="modal-arch-corner c-tl" aria-hidden="true">+</span>
+            <span class="modal-arch-corner c-tr" aria-hidden="true">+</span>
+            <span class="modal-arch-corner c-bl" aria-hidden="true">+</span>
+            <span class="modal-arch-corner c-br" aria-hidden="true">+</span>
             <button class="modal-close-btn" id="btnCloseDetail" aria-label="Fermer">&times;</button>
             
             <!-- Grande photo active épurée (Zéro bouton ni texte superposé sur l'image) -->
             <div class="detail-gallery-stage">
+                <span class="stage-scale-badge" aria-hidden="true">ECH. 1:100 • PLAN D'EXÉCUTION</span>
                 <img src="" alt="" id="detailImg" class="detail-img">
             </div>
 

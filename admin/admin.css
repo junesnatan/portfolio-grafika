@@ -37,6 +37,14 @@
 
     --font-heading: 'Poppins', sans-serif;
     --font-body: 'Montserrat', sans-serif;
+    --font-hand: 'Caveat', cursive, sans-serif;
+
+    /* Motifs géométriques de claustras contemporains & Trame architecturale */
+    /* ZÉRO dégradé : Aplats solides purs #003B73 et #850C14 */
+    --claustra-pattern-blue: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='%23003B73' fill-opacity='0.045'%3E%3Cpath d='M0 0h18v3H3v15H0V0zm26 0h18v18h-3V3H26V0zM0 26h3v15h15v3H0V26zm41 15H26v3h18V26h-3v15z'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%23003B73' fill-opacity='0.05'/%3E%3Ccircle cx='22' cy='22' r='3.5' fill='%23850C14' fill-opacity='0.06'/%3E%3C/g%3E%3C/svg%3E");
+    --claustra-pattern-brick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='%23850C14' fill-opacity='0.045'%3E%3Cpath d='M0 0h18v3H3v15H0V0zm26 0h18v18h-3V3H26V0zM0 26h3v15h15v3H0V26zm41 15H26v3h18V26h-3v15z'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%23850C14' fill-opacity='0.05'/%3E%3Ccircle cx='22' cy='22' r='3.5' fill='%23003B73' fill-opacity='0.06'/%3E%3C/g%3E%3C/svg%3E");
+    --claustra-pattern-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.055'%3E%3Cpath d='M0 0h18v3H3v15H0V0zm26 0h18v18h-3V3H26V0zM0 26h3v15h15v3H0V26zm41 15H26v3h18V26h-3v15z'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%23FFFFFF' fill-opacity='0.06'/%3E%3Ccircle cx='22' cy='22' r='3.5' fill='%23FFFFFF' fill-opacity='0.08'/%3E%3C/g%3E%3C/svg%3E");
+    --blueprint-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M32 0H0v32' fill='none' stroke='%23003B73' stroke-width='0.6' stroke-opacity='0.035'/%3E%3Ccircle cx='0' cy='0' r='0.8' fill='%23850C14' fill-opacity='0.07'/%3E%3C/svg%3E");
 
     --radius-shell: 40px;
     --radius-card: 24px;
@@ -101,7 +109,9 @@ body.admin-body {
 .login-showcase-overlay {
     position: absolute;
     inset: 0;
-    background-color: rgba(11, 27, 43, 0.78);
+    background-color: rgba(11, 27, 43, 0.82);
+    background-image: var(--claustra-pattern-light);
+    background-repeat: repeat;
     z-index: 1;
 }
 
@@ -167,6 +177,17 @@ body.admin-body {
     padding-top: 3rem;
 }
 
+.showcase-arch-stamp {
+    font-family: var(--font-heading);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.8rem;
+    display: block;
+}
+
 .showcase-project-badge {
     display: inline-flex;
     align-items: center;
@@ -187,9 +208,19 @@ body.admin-body {
     font-weight: 600;
     line-height: 1.45;
     color: #ffffff;
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
     max-width: 500px;
     font-style: normal;
+}
+
+.showcase-hand-annotation {
+    font-family: var(--font-hand);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    display: block;
+    margin-bottom: 1.6rem;
+    transform: rotate(-1.5deg);
 }
 
 .showcase-metrics-row {
@@ -245,6 +276,37 @@ body.admin-body {
     display: flex;
     flex-direction: column;
     gap: 1.35rem;
+    position: relative;
+    padding: 1.8rem 1.6rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+}
+
+/* Repères d'architecte aux angles du formulaire */
+.login-arch-mark {
+    position: absolute;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--brand-blue);
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.login-arch-mark.c-tl { top: -6px; left: -6px; }
+.login-arch-mark.c-tr { top: -6px; right: -6px; }
+.login-arch-mark.c-bl { bottom: -6px; left: -6px; }
+.login-arch-mark.c-br { bottom: -6px; right: -6px; }
+
+.login-claustra-accent {
+    width: 44px;
+    height: 3px;
+    background: var(--brand-blue);
+    border-radius: var(--radius-pill);
+    margin-top: 0.85rem;
 }
 
 .login-form-topbar {
@@ -566,6 +628,28 @@ body.admin-body {
     padding-left: 0.2rem;
 }
 
+.sidebar-claustra-accent {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 0.75rem;
+    padding-left: 0.2rem;
+}
+
+.sidebar-claustra-accent span {
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
+    background: var(--brand-blue);
+    opacity: 0.65;
+    display: inline-block;
+}
+
+.sidebar-claustra-accent span:nth-child(even) {
+    background: var(--brand-red);
+    border-radius: 50%;
+}
+
 .dash-brand-block {
     display: flex;
     align-items: center;
@@ -798,8 +882,9 @@ body.admin-body {
 .dash-top-header {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 1rem;
+    gap: 1rem;
 }
 
 .dash-mobile-burger {
@@ -811,6 +896,28 @@ body.admin-body {
     margin-right: auto;
 }
 
+/* Badge de statut architecte en haut */
+.dash-arch-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-heading);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brand-blue);
+    background: var(--brand-blue-soft);
+    padding: 0.35rem 0.95rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(0, 59, 115, 0.14);
+}
+
+.dash-arch-status-pill .status-cross {
+    color: var(--brand-red);
+    font-size: 0.75rem;
+}
+
 /* Profil utilisateur à droite */
 .dash-user-profile-widget {
     display: flex;
@@ -820,6 +927,7 @@ body.admin-body {
     background: #f8fafc;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border-subtle);
+    margin-left: auto;
 }
 
 .user-avatar-circle {
@@ -870,6 +978,16 @@ body.admin-body {
     line-height: 1.2;
 }
 
+.dash-hand-note {
+    font-family: var(--font-hand);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--brand-blue);
+    display: block;
+    margin-top: 0.25rem;
+    margin-bottom: 0.2rem;
+}
+
 .dash-main-subheading {
     font-size: 0.86rem;
     color: var(--text-secondary);
@@ -917,14 +1035,31 @@ body.admin-body {
     transform: translateY(-2px);
 }
 
-/* Hero card en bleu profond solide (Flat design, zéro dégradé) */
+/* Hero card en bleu profond solide avec trame claustra (Flat design, zéro dégradé) */
 .hero-solid-blue {
-    background: var(--brand-blue);
+    background-color: var(--brand-blue);
+    background-image: var(--claustra-pattern-light);
+    background-repeat: repeat;
     color: #ffffff;
     box-shadow: 0 10px 24px rgba(0, 59, 115, 0.18);
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
+
+.kpi-arch-mark {
+    position: absolute;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0.55;
+}
+
+.kpi-arch-mark.c-tl { top: 10px; left: 12px; }
+.kpi-arch-mark.c-tr { top: 10px; right: 12px; }
 
 .kpi-card-top-row {
     display: flex;
@@ -1784,6 +1919,7 @@ body.admin-body {
 }
 
 .admin-modal-box {
+    position: relative;
     background: #ffffff;
     border-radius: 32px;
     width: 100%;
@@ -1792,6 +1928,31 @@ body.admin-body {
     overflow-y: auto;
     padding: 2.2rem 2.4rem;
     box-shadow: var(--shadow-pop);
+}
+
+.admin-modal-arch-corner {
+    position: absolute;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--brand-blue);
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0.55;
+    user-select: none;
+}
+
+.admin-modal-arch-corner.c-tl { top: 14px; left: 16px; }
+.admin-modal-arch-corner.c-tr { top: 14px; right: 54px; }
+.admin-modal-arch-corner.c-bl { bottom: 14px; left: 16px; }
+.admin-modal-arch-corner.c-br { bottom: 14px; right: 16px; }
+
+.admin-modal-claustra-bar {
+    width: 44px;
+    height: 3px;
+    background: var(--brand-blue);
+    border-radius: var(--radius-pill);
+    margin-top: 0.45rem;
 }
 
 .admin-modal-head {

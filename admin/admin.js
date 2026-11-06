@@ -757,7 +757,7 @@ function setupProjectModal() {
             const description = document.getElementById('projDescription').value.trim();
 
             if (currentEditingPhotos.length === 0) {
-                alert("Veuillez ajouter au moins une photo pour cette réalisation.");
+                showToast("Veuillez ajouter au moins une photo pour cette réalisation.", 'alert');
                 return;
             }
 
@@ -1001,7 +1001,7 @@ document.querySelectorAll('.filter-pill-item').forEach(btn => {
 document.getElementById('btnExportLeadsCsv')?.addEventListener('click', () => {
     const leads = getStoredLeads();
     if (leads.length === 0) {
-        alert("Aucun lead à exporter.");
+        showToast("Aucun lead à exporter.", 'alert');
         return;
     }
 
@@ -1085,7 +1085,7 @@ function setupSettingsForms() {
             const confirmPass = document.getElementById('setAdminConfirmPass').value.trim();
 
             if (newPass && newPass !== confirmPass) {
-                alert("Les deux mots de passe ne correspondent pas.");
+                showToast("Les deux mots de passe ne correspondent pas.", 'alert');
                 return;
             }
 
@@ -1110,14 +1110,19 @@ function setupSettingsForms() {
 // =========================================================================
 // 10. UTILITAIRES
 // =========================================================================
-function showToast(message) {
+function showToast(message, type = 'info') {
     const toast = document.getElementById('toastMessage');
     if (!toast) return;
 
-    toast.textContent = message;
+    const iconSvg = (type === 'error' || type === 'alert')
+        ? `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#f87171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`
+        : `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+    toast.innerHTML = `<span style="display:inline-flex;align-items:center;gap:0.55rem;">${iconSvg}<span>${escapeHtml(message)}</span></span>`;
     toast.classList.add('show');
 
-    setTimeout(() => {
+    if (toast._dismissTimer) clearTimeout(toast._dismissTimer);
+    toast._dismissTimer = setTimeout(() => {
         toast.classList.remove('show');
     }, 3500);
 }
