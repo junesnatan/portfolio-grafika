@@ -1,5 +1,5 @@
 /**
- * ATELIER GRAFIKA - LOGIQUE D'ADMINISTRATION COMPLÈTE
+ * ATELIER GRAFRIKA - LOGIQUE D'ADMINISTRATION COMPLÈTE
  * Gestion du portfolio, des demandes de devis, des coordonnées et des statistiques
  * 0 émoji - 100% vectoriel SVG
  */
@@ -8,21 +8,21 @@
 // 1. GESTION DES CLÉS & VALEURS PAR DÉFAUT (LOCALSTORAGE)
 // =========================================================================
 const KEYS = {
-    PROJECTS: 'GRAFIKA_PROJECTS',
-    SETTINGS: 'GRAFIKA_SETTINGS',
-    LEADS: 'GRAFIKA_LEADS',
-    STATS: 'GRAFIKA_STATS',
-    AUTH: 'GRAFIKA_AUTH',
-    SESSION: 'GRAFIKA_ADMIN_SESSION'
-};
-
-const LEGACY_KEYS = {
     PROJECTS: 'GRAFRIKA_PROJECTS',
     SETTINGS: 'GRAFRIKA_SETTINGS',
     LEADS: 'GRAFRIKA_LEADS',
     STATS: 'GRAFRIKA_STATS',
     AUTH: 'GRAFRIKA_AUTH',
     SESSION: 'GRAFRIKA_ADMIN_SESSION'
+};
+
+const LEGACY_KEYS = {
+    PROJECTS: 'GRAFIKA_PROJECTS',
+    SETTINGS: 'GRAFIKA_SETTINGS',
+    LEADS: 'GRAFIKA_LEADS',
+    STATS: 'GRAFIKA_STATS',
+    AUTH: 'GRAFIKA_AUTH',
+    SESSION: 'GRAFIKA_ADMIN_SESSION'
 };
 
 // 7 Projets officiels par défaut
@@ -203,7 +203,7 @@ const SAMPLE_LEADS = [
 const DEFAULT_SETTINGS = {
     whatsapp: "+229 01 00 00 00",
     phone: "+229 01 00 00 00",
-    email: "contact@ateliergrafika.com",
+    email: "contact@ateliergrafrika.com",
     location: "Abomey-Calavi, Bénin",
     instagram: "https://instagram.com",
     tiktok: "https://tiktok.com",
@@ -214,8 +214,10 @@ const DEFAULT_SETTINGS = {
 
 // Accès administrateur par défaut
 const DEFAULT_AUTH = {
-    email: "admin@ateliergrafika.com",
-    password: "grafika2026"
+    email: "admin@ateliergrafrika.com",
+    legacyEmail: "admin@ateliergrafika.com",
+    password: "grafrika2026",
+    legacyPassword: "grafika2026"
 };
 
 // Fonctions d'accès au stockage
@@ -570,7 +572,7 @@ function renderDashboardOverview() {
             const item = document.createElement('div');
             item.className = 'lead-row-card';
             const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
-            const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${encodeURIComponent(lead.name)},%20Atelier%20Grafika%20fait%20suite%20à%20votre%20demande...`;
+            const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${encodeURIComponent(lead.name)},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`;
 
             // Initiales pour le badge avatar
             const names = (lead.name || 'Client').trim().split(' ');
@@ -980,7 +982,7 @@ function renderLeadsList() {
     filtered.forEach(lead => {
         const tr = document.createElement('tr');
         const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
-        const waMsg = encodeURIComponent(`Bonjour ${lead.name} ! Atelier Grafika fait suite à votre demande de devis.`);
+        const waMsg = encodeURIComponent(`Bonjour ${lead.name} ! Atelier Grafrika fait suite à votre demande de devis.`);
         const waUrl = `https://wa.me/${cleanPhone}?text=${waMsg}`;
 
         tr.innerHTML = `

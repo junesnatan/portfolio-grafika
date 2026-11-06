@@ -1,5 +1,5 @@
 /**
- * ATELIER GRAFIKA - GALERIE EN ARCHE PANORAMIQUE (MODÈLE BRANDLYFT)
+ * ATELIER GRAFRIKA - GALERIE EN ARCHE PANORAMIQUE (MODÈLE BRANDLYFT)
  * Chaque projet dispose d'une galerie de 7 photos 100% uniques et dédiées (0 doublon)
  * Ton naturel et chaleureux
  */
@@ -155,14 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     function getProjects() {
-        const raw = localStorage.getItem('GRAFIKA_PROJECTS') || localStorage.getItem('GRAFRIKA_PROJECTS');
+        const raw = localStorage.getItem('GRAFRIKA_PROJECTS') || localStorage.getItem('GRAFIKA_PROJECTS');
         if (raw) {
             try {
                 const parsed = JSON.parse(raw);
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             } catch (e) {}
         }
-        localStorage.setItem('GRAFIKA_PROJECTS', JSON.stringify(DEFAULT_PROJECTS));
+        localStorage.setItem('GRAFRIKA_PROJECTS', JSON.stringify(DEFAULT_PROJECTS));
         return DEFAULT_PROJECTS;
     }
 
@@ -170,16 +170,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Incrémenter les statistiques de visite pour le tableau de bord /admin
     try {
-        const rawStats = localStorage.getItem('GRAFIKA_STATS') || localStorage.getItem('GRAFRIKA_STATS');
+        const rawStats = localStorage.getItem('GRAFRIKA_STATS') || localStorage.getItem('GRAFIKA_STATS');
         const stats = rawStats ? JSON.parse(rawStats) : { views: 248, whatsapp: 39, leads: 12 };
         stats.views = (stats.views || 0) + 1;
-        localStorage.setItem('GRAFIKA_STATS', JSON.stringify(stats));
+        localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
     } catch (e) {}
 
     // Synchroniser dynamiquement les coordonnées avec les réglages de l'admin
     function syncSettingsWithUI() {
         try {
-            const raw = localStorage.getItem('GRAFIKA_SETTINGS') || localStorage.getItem('GRAFRIKA_SETTINGS');
+            const raw = localStorage.getItem('GRAFRIKA_SETTINGS') || localStorage.getItem('GRAFIKA_SETTINGS');
             if (!raw) return;
             const settings = JSON.parse(raw);
 
@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (set.whatsapp) targetWa = set.whatsapp.replace(/[^0-9]/g, '');
         } catch (e) {}
 
-        const whatsappMsg = encodeURIComponent(`Bonjour l'équipe Atelier Grafika ! J'ai vu votre réalisation "${proj.title}" à ${proj.location} et j'aimerais échanger avec vous pour un projet similaire.`);
+        const whatsappMsg = encodeURIComponent(`Bonjour l'équipe Atelier Grafrika ! J'ai vu votre réalisation "${proj.title}" à ${proj.location} et j'aimerais échanger avec vous pour un projet similaire.`);
         document.getElementById('detailWhatsAppBtn').href = `https://wa.me/${targetWa}?text=${whatsappMsg}`;
 
         // Incrémenter les stats lors du clic
@@ -617,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Enregistrer la demande de devis dans le CRM de l'administration (/admin)
             try {
-                const leads = JSON.parse(localStorage.getItem('GRAFIKA_LEADS') || localStorage.getItem('GRAFRIKA_LEADS') || '[]');
+                const leads = JSON.parse(localStorage.getItem('GRAFRIKA_LEADS') || localStorage.getItem('GRAFIKA_LEADS') || '[]');
                 leads.unshift({
                     id: Date.now(),
                     date: new Date().toISOString(),
@@ -628,23 +628,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     message: message || 'À définir ensemble',
                     status: 'Nouveau'
                 });
-                localStorage.setItem('GRAFIKA_LEADS', JSON.stringify(leads));
+                localStorage.setItem('GRAFRIKA_LEADS', JSON.stringify(leads));
 
                 // Mettre à jour les compteurs de statistiques
-                const stats = JSON.parse(localStorage.getItem('GRAFIKA_STATS') || localStorage.getItem('GRAFRIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
+                const stats = JSON.parse(localStorage.getItem('GRAFRIKA_STATS') || localStorage.getItem('GRAFIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
                 stats.leads = (stats.leads || 0) + 1;
                 stats.whatsapp = (stats.whatsapp || 0) + 1;
-                localStorage.setItem('GRAFIKA_STATS', JSON.stringify(stats));
+                localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
             } catch (err) {}
 
             // Récupérer le numéro WhatsApp cible depuis les réglages admin
             let targetWa = '22900000000';
             try {
-                const set = JSON.parse(localStorage.getItem('GRAFIKA_SETTINGS') || localStorage.getItem('GRAFRIKA_SETTINGS') || '{}');
+                const set = JSON.parse(localStorage.getItem('GRAFRIKA_SETTINGS') || localStorage.getItem('GRAFIKA_SETTINGS') || '{}');
                 if (set.whatsapp) targetWa = set.whatsapp.replace(/[^0-9]/g, '');
             } catch (e) {}
 
-            const text = `Bonjour Atelier Grafika !%0A%0AJe souhaite demander un devis pour un projet :%0A- *Nom :* ${encodeURIComponent(name)}%0A- *Téléphone :* ${encodeURIComponent(phone)}%0A- *Localisation :* ${encodeURIComponent(city || 'À préciser')}%0A- *Prestation :* ${encodeURIComponent(domain)}%0A- *Détails :* ${encodeURIComponent(message || 'À définir ensemble')}`;
+            const text = `Bonjour Atelier Grafrika !%0A%0AJe souhaite demander un devis pour un projet :%0A- *Nom :* ${encodeURIComponent(name)}%0A- *Téléphone :* ${encodeURIComponent(phone)}%0A- *Localisation :* ${encodeURIComponent(city || 'À préciser')}%0A- *Prestation :* ${encodeURIComponent(domain)}%0A- *Détails :* ${encodeURIComponent(message || 'À définir ensemble')}`;
 
             window.open(`https://wa.me/${targetWa}?text=${text}`, '_blank');
             closeQuote();

@@ -1,8 +1,8 @@
 {
-  "name": "portfolio-atelier-grafika",
+  "name": "portfolio-atelier-grafrika",
   "version": "1.0.0",
   "private": true,
-  "description": "Atelier Grafika - Link in Bio & Portfolio Architecture, Design d'Espace, BTP",
+  "description": "Atelier Grafrika - Link in Bio & Portfolio Architecture, Design d'Espace, BTP",
   "scripts": {
     "dev": "vite --host --open",
     "build": "vite build",
