@@ -1,5 +1,5 @@
 /**
- * ATELIER GRAFRIKA - LOGIQUE D'ADMINISTRATION COMPLÈTE
+ * ATELIER GRAFIKA - LOGIQUE D'ADMINISTRATION COMPLÈTE
  * Gestion du portfolio, des demandes de devis, des coordonnées et des statistiques
  * 0 émoji - 100% vectoriel SVG
  */
@@ -8,6 +8,15 @@
 // 1. GESTION DES CLÉS & VALEURS PAR DÉFAUT (LOCALSTORAGE)
 // =========================================================================
 const KEYS = {
+    PROJECTS: 'GRAFIKA_PROJECTS',
+    SETTINGS: 'GRAFIKA_SETTINGS',
+    LEADS: 'GRAFIKA_LEADS',
+    STATS: 'GRAFIKA_STATS',
+    AUTH: 'GRAFIKA_AUTH',
+    SESSION: 'GRAFIKA_ADMIN_SESSION'
+};
+
+const LEGACY_KEYS = {
     PROJECTS: 'GRAFRIKA_PROJECTS',
     SETTINGS: 'GRAFRIKA_SETTINGS',
     LEADS: 'GRAFRIKA_LEADS',
@@ -211,7 +220,7 @@ const DEFAULT_AUTH = {
 
 // Fonctions d'accès au stockage
 function getStoredProjects() {
-    const raw = localStorage.getItem(KEYS.PROJECTS);
+    const raw = localStorage.getItem(KEYS.PROJECTS) || localStorage.getItem(LEGACY_KEYS.PROJECTS);
     if (!raw) {
         localStorage.setItem(KEYS.PROJECTS, JSON.stringify(DEFAULT_PROJECTS));
         return DEFAULT_PROJECTS;
@@ -229,7 +238,7 @@ function saveStoredProjects(projects) {
 }
 
 function getStoredSettings() {
-    const raw = localStorage.getItem(KEYS.SETTINGS);
+    const raw = localStorage.getItem(KEYS.SETTINGS) || localStorage.getItem(LEGACY_KEYS.SETTINGS);
     if (!raw) {
         localStorage.setItem(KEYS.SETTINGS, JSON.stringify(DEFAULT_SETTINGS));
         return DEFAULT_SETTINGS;
@@ -246,7 +255,7 @@ function saveStoredSettings(settings) {
 }
 
 function getStoredLeads() {
-    const raw = localStorage.getItem(KEYS.LEADS);
+    const raw = localStorage.getItem(KEYS.LEADS) || localStorage.getItem(LEGACY_KEYS.LEADS);
     if (!raw) {
         localStorage.setItem(KEYS.LEADS, JSON.stringify(SAMPLE_LEADS));
         return SAMPLE_LEADS;
@@ -264,7 +273,7 @@ function saveStoredLeads(leads) {
 }
 
 function getStoredStats() {
-    const raw = localStorage.getItem(KEYS.STATS);
+    const raw = localStorage.getItem(KEYS.STATS) || localStorage.getItem(LEGACY_KEYS.STATS);
     if (!raw) return { views: 248, whatsapp: 39, leads: 12 };
     try {
         return JSON.parse(raw);
@@ -274,7 +283,7 @@ function getStoredStats() {
 }
 
 function getStoredAuth() {
-    const raw = localStorage.getItem(KEYS.AUTH);
+    const raw = localStorage.getItem(KEYS.AUTH) || localStorage.getItem(LEGACY_KEYS.AUTH);
     if (!raw) {
         localStorage.setItem(KEYS.AUTH, JSON.stringify(DEFAULT_AUTH));
         return DEFAULT_AUTH;
@@ -305,8 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginPassword = document.getElementById('loginPassword');
 
     function checkAuth() {
-        const isLoggedSession = sessionStorage.getItem(KEYS.SESSION);
-        const isLoggedLocal = localStorage.getItem(KEYS.SESSION);
+        const isLoggedSession = sessionStorage.getItem(KEYS.SESSION) || sessionStorage.getItem(LEGACY_KEYS.SESSION);
+        const isLoggedLocal = localStorage.getItem(KEYS.SESSION) || localStorage.getItem(LEGACY_KEYS.SESSION);
 
         if (isLoggedSession === 'true' || isLoggedLocal === 'true') {
             showAdminApp();
@@ -475,17 +484,51 @@ function setupNavigation() {
 function setupMobileDrawer() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const sidebar = document.getElementById('adminSidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const btnCloseSidebar = document.getElementById('btnCloseSidebar');
+
+    function openDrawer() {
+        if (sidebar) sidebar.classList.add('open');
+        if (backdrop) backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+        if (sidebar) sidebar.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+        document.body.style.overflow = '';
+    }
 
     if (mobileMenuToggle && sidebar) {
         mobileMenuToggle.addEventListener('click', (e) => {
             e.stopPropagation();
-            sidebar.classList.toggle('open');
+            if (sidebar.classList.contains('open')) {
+                closeDrawer();
+            } else {
+                openDrawer();
+            }
         });
 
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
-                sidebar.classList.remove('open');
-            }
+        if (btnCloseSidebar) {
+            btnCloseSidebar.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeDrawer();
+            });
+        }
+
+        if (backdrop) {
+            backdrop.addEventListener('click', () => {
+                closeDrawer();
+            });
+        }
+
+        // Fermer automatiquement le tiroir sur mobile lors du choix d'un onglet
+        sidebar.querySelectorAll('.dash-nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    closeDrawer();
+                }
+            });
         });
     }
 }

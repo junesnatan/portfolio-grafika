@@ -1,5 +1,5 @@
 /**
- * ATELIER GRAFRIKA - GALERIE EN ARCHE PANORAMIQUE (MODÈLE BRANDLYFT)
+ * ATELIER GRAFIKA - GALERIE EN ARCHE PANORAMIQUE (MODÈLE BRANDLYFT)
  * Chaque projet dispose d'une galerie de 7 photos 100% uniques et dédiées (0 doublon)
  * Ton naturel et chaleureux
  */
@@ -155,14 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     function getProjects() {
-        const raw = localStorage.getItem('GRAFRIKA_PROJECTS');
+        const raw = localStorage.getItem('GRAFIKA_PROJECTS') || localStorage.getItem('GRAFRIKA_PROJECTS');
         if (raw) {
             try {
                 const parsed = JSON.parse(raw);
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             } catch (e) {}
         }
-        localStorage.setItem('GRAFRIKA_PROJECTS', JSON.stringify(DEFAULT_PROJECTS));
+        localStorage.setItem('GRAFIKA_PROJECTS', JSON.stringify(DEFAULT_PROJECTS));
         return DEFAULT_PROJECTS;
     }
 
@@ -170,16 +170,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Incrémenter les statistiques de visite pour le tableau de bord /admin
     try {
-        const rawStats = localStorage.getItem('GRAFRIKA_STATS');
+        const rawStats = localStorage.getItem('GRAFIKA_STATS') || localStorage.getItem('GRAFRIKA_STATS');
         const stats = rawStats ? JSON.parse(rawStats) : { views: 248, whatsapp: 39, leads: 12 };
         stats.views = (stats.views || 0) + 1;
-        localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
+        localStorage.setItem('GRAFIKA_STATS', JSON.stringify(stats));
     } catch (e) {}
 
     // Synchroniser dynamiquement les coordonnées avec les réglages de l'admin
     function syncSettingsWithUI() {
         try {
-            const raw = localStorage.getItem('GRAFRIKA_SETTINGS');
+            const raw = localStorage.getItem('GRAFIKA_SETTINGS') || localStorage.getItem('GRAFRIKA_SETTINGS');
             if (!raw) return;
             const settings = JSON.parse(raw);
 
@@ -266,17 +266,15 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transform = `translateY(${yOffset}px) rotate(${rotZ}deg)`;
         }
 
-        // Carte visuelle avec repères d'architecte et spécifications nettes (Zéro bouton)
+        // Carte visuelle avec spécifications nettes (Zéro bouton)
         card.innerHTML = `
-            <span class="card-arch-mark c-tl" aria-hidden="true">+</span>
-            <span class="card-arch-mark c-tr" aria-hidden="true">+</span>
             <span class="card-arch-chip">${escapeHtml(proj.category)}</span>
-            <img src="${proj.photos[0]}" alt="${proj.title}" loading="lazy">
+            <img src="${escapeHtml(proj.photos[0])}" alt="${escapeHtml(proj.title)}" loading="lazy">
             <div class="card-title-scrim">
                 <div class="card-meta-line">
-                    <span class="card-spec-surface">${escapeHtml(proj.surface)}</span>
+                    <span class="card-spec-surface">${escapeHtml(proj.surface || "Sur-mesure")}</span>
                     <span class="card-spec-sep">•</span>
-                    <span class="card-spec-dur">${escapeHtml(proj.duration)}</span>
+                    <span class="card-spec-dur">${escapeHtml(proj.duration || "Étude personnalisée")}</span>
                 </div>
                 <h3 class="card-project-title">${escapeHtml(proj.title)}</h3>
                 <span class="card-project-loc">${escapeHtml(proj.location)}</span>
@@ -406,16 +404,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('detailCategory').textContent = proj.category;
         document.getElementById('detailTitle').textContent = proj.title;
         document.getElementById('detailLoc').textContent = proj.location;
-        document.getElementById('detailArea').textContent = proj.surface;
-        document.getElementById('detailDur').textContent = proj.duration;
-        document.getElementById('detailDesc').textContent = proj.description;
+        document.getElementById('detailArea').textContent = proj.surface || 'Sur-mesure';
+        document.getElementById('detailDur').textContent = proj.duration || 'Étude personnalisée';
+        document.getElementById('detailDesc').textContent = proj.description || '';
 
         // Générer les 7 miniatures
         thumbnailsStrip.innerHTML = '';
         proj.photos.forEach((photoUrl, pIdx) => {
             const thumb = document.createElement('div');
             thumb.className = `thumb-item ${pIdx === 0 ? 'active' : ''}`;
-            thumb.innerHTML = `<img src="${photoUrl}" alt="Photo ${pIdx + 1}" loading="lazy">`;
+            thumb.innerHTML = `<img src="${escapeHtml(photoUrl)}" alt="Photo ${pIdx + 1}" loading="lazy">`;
             thumb.addEventListener('click', () => {
                 renderPhoto(pIdx);
             });
@@ -619,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Enregistrer la demande de devis dans le CRM de l'administration (/admin)
             try {
-                const leads = JSON.parse(localStorage.getItem('GRAFRIKA_LEADS') || '[]');
+                const leads = JSON.parse(localStorage.getItem('GRAFIKA_LEADS') || localStorage.getItem('GRAFRIKA_LEADS') || '[]');
                 leads.unshift({
                     id: Date.now(),
                     date: new Date().toISOString(),
@@ -630,19 +628,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     message: message || 'À définir ensemble',
                     status: 'Nouveau'
                 });
-                localStorage.setItem('GRAFRIKA_LEADS', JSON.stringify(leads));
+                localStorage.setItem('GRAFIKA_LEADS', JSON.stringify(leads));
 
                 // Mettre à jour les compteurs de statistiques
-                const stats = JSON.parse(localStorage.getItem('GRAFRIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
+                const stats = JSON.parse(localStorage.getItem('GRAFIKA_STATS') || localStorage.getItem('GRAFRIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
                 stats.leads = (stats.leads || 0) + 1;
                 stats.whatsapp = (stats.whatsapp || 0) + 1;
-                localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
+                localStorage.setItem('GRAFIKA_STATS', JSON.stringify(stats));
             } catch (err) {}
 
             // Récupérer le numéro WhatsApp cible depuis les réglages admin
             let targetWa = '22900000000';
             try {
-                const set = JSON.parse(localStorage.getItem('GRAFRIKA_SETTINGS') || '{}');
+                const set = JSON.parse(localStorage.getItem('GRAFIKA_SETTINGS') || localStorage.getItem('GRAFRIKA_SETTINGS') || '{}');
                 if (set.whatsapp) targetWa = set.whatsapp.replace(/[^0-9]/g, '');
             } catch (e) {}
 

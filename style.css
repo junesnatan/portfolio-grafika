@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ATELIER GRAFRIKA - CHARTE GRAPHIQUE OFFICIELLE & REPRODUCTION BRANDLYFT
+   ATELIER GRAFIKA - CHARTE GRAPHIQUE OFFICIELLE & REPRODUCTION BRANDLYFT
    - Bleu architectural royal : #003B73
    - Rouge brique BTP : #850C14
    - Fond chaleureux & lumineux type BrandLyft : #FAF8F5
@@ -485,6 +485,13 @@ body {
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-pill);
     box-shadow: var(--shadow-soft);
+    transition: transform var(--duration-snap) var(--ease-rigid), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.claustra-divider-cluster:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 59, 115, 0.25);
+    box-shadow: var(--shadow-card);
 }
 
 .claustra-svg-ribbon {
@@ -688,7 +695,7 @@ body {
 
 .card-arch-chip {
     position: absolute;
-    top: 9px;
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 4;
@@ -698,13 +705,16 @@ body {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #ffffff;
-    background: rgba(0, 59, 115, 0.88);
+    background: rgba(0, 59, 115, 0.92);
     backdrop-filter: blur(4px);
     padding: 2.5px 9px;
     border-radius: var(--radius-pill);
     border: 1px solid rgba(255, 255, 255, 0.22);
     pointer-events: none;
     white-space: nowrap;
+    max-width: calc(100% - 48px);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Titre & Localisation du projet en bas (Épuré : Zéro bouton) */
@@ -853,7 +863,10 @@ body {
     border: 1.8px dashed rgba(133, 12, 20, 0.45);
     border-radius: var(--radius-pill);
     display: inline-flex;
-    transition: border-color 0.2s ease, transform var(--duration-snap) var(--ease-rigid);
+    background-color: rgba(255, 255, 255, 0.9);
+    background-image: var(--claustra-pattern-brick);
+    background-repeat: repeat;
+    transition: border-color 0.2s ease, transform var(--duration-snap) var(--ease-rigid), box-shadow 0.2s ease;
 }
 
 .dash-corner {
@@ -1068,6 +1081,12 @@ body {
     border: 1px solid var(--border-subtle);
 }
 
+.modal-quote-box {
+    background-color: #ffffff;
+    background-image: var(--claustra-pattern-blue);
+    background-repeat: repeat;
+}
+
 .modal-arch-corner {
     position: absolute;
     font-family: var(--font-heading);
@@ -1077,12 +1096,14 @@ body {
     line-height: 1;
     pointer-events: none;
     opacity: 0.65;
+    z-index: 5;
+    user-select: none;
 }
 
-.modal-arch-corner.c-tl { top: 10px; left: 12px; }
-.modal-arch-corner.c-tr { top: 10px; right: 48px; }
-.modal-arch-corner.c-bl { bottom: 10px; left: 12px; }
-.modal-arch-corner.c-br { bottom: 10px; right: 12px; }
+.modal-arch-corner.c-tl { top: 12px; left: 14px; }
+.modal-arch-corner.c-tr { top: 12px; right: 48px; }
+.modal-arch-corner.c-bl { bottom: 12px; left: 14px; }
+.modal-arch-corner.c-br { bottom: 12px; right: 14px; }
 
 .modal-overlay.active .modal-box {
     transform: translateY(0) scale(1);
@@ -1447,6 +1468,15 @@ body {
     .input-row {
         grid-template-columns: 1fr;
         gap: 0.85rem;
+    }
+
+    .modal-box {
+        padding: 1.5rem 1.15rem;
+    }
+
+    .modal-arch-tag {
+        font-size: 0.58rem;
+        letter-spacing: 0.07em;
     }
 }
 

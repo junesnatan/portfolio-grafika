@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ATELIER GRAFRIKA - DASHBOARD HAUT DE GAMME INSPIRÉ DU DESIGN FLOATING CARD
+   ATELIER GRAFIKA - DASHBOARD HAUT DE GAMME INSPIRÉ DU DESIGN FLOATING CARD
    Palette officielle : Bleu Architectural #003B73 & Rouge Brique #850C14
    Typographies : Poppins (titres/KPIs/boutons) & Montserrat (corps/tableaux)
    0 émoji - 100% vectoriel SVG
@@ -262,7 +262,9 @@ body.admin-body {
 .login-form-panel {
     flex: 1;
     min-height: 100vh;
-    background: #ffffff;
+    background-color: #f8fafc;
+    background-image: var(--blueprint-grid);
+    background-repeat: repeat;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -611,6 +613,8 @@ body.admin-body {
     width: 250px;
     min-width: 250px;
     background-color: var(--sidebar-bg);
+    background-image: var(--claustra-pattern-blue);
+    background-repeat: repeat;
     border-right: 1px solid var(--border-subtle);
     padding: 1.8rem 1.25rem 1.5rem;
     display: flex;
@@ -1401,7 +1405,9 @@ body.admin-body {
 
 /* Carte de prévisualisation rapide des projets (Dashboard) */
 .dashboard-portfolio-preview-card {
-    background: #ffffff;
+    background-color: #ffffff;
+    background-image: var(--claustra-pattern-blue);
+    background-repeat: repeat;
     border: 1.5px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: 1.6rem 1.8rem;
@@ -1920,7 +1926,9 @@ body.admin-body {
 
 .admin-modal-box {
     position: relative;
-    background: #ffffff;
+    background-color: #ffffff;
+    background-image: var(--claustra-pattern-blue);
+    background-repeat: repeat;
     border-radius: 32px;
     width: 100%;
     max-width: 660px;
@@ -1940,6 +1948,7 @@ body.admin-body {
     pointer-events: none;
     opacity: 0.55;
     user-select: none;
+    z-index: 5;
 }
 
 .admin-modal-arch-corner.c-tl { top: 14px; left: 16px; }
@@ -2162,13 +2171,16 @@ body.admin-body {
 
     .login-showcase-panel {
         flex: none;
-        min-height: 220px;
-        padding: 2.2rem 1.8rem;
+        min-height: auto;
+        padding: 2rem 1.8rem;
     }
 
+    .login-showcase-bottom,
     .showcase-quote,
     .showcase-metrics-row,
-    .showcase-project-badge {
+    .showcase-project-badge,
+    .showcase-arch-stamp,
+    .showcase-hand-annotation {
         display: none;
     }
 
