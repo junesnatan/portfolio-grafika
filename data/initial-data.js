@@ -32,10 +32,10 @@ export const DEFAULT_SETTINGS = {
     email: "ateliergrafrika.me@gmail.com",
     address: "Abomey-Calavi & Cotonou, République du Bénin",
     instagram: "https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=n55byrf",
-    tiktok: "https://tiktok.com/@ateliergrafrika",
+    tiktok: "https://www.tiktok.com/@atelier.grafrika?_r=1&_t=ZS-9BGWeK75ehr",
     facebook: "https://www.facebook.com/share/14yYvD9ULWL/",
-    linkedin: "https://linkedin.com",
-    x: "https://x.com"
+    linkedin: "https://www.linkedin.com/in/m-principe-junior-zegue-aa1405246?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    x: ""
 };
 
 export const SAMPLE_LEADS = [];
