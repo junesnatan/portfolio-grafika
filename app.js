@@ -1,187 +1,43 @@
 /**
- * ATELIER GRAFRIKA - GALERIE EN ARCHE PANORAMIQUE (MODÈLE BRANDLYFT)
- * Chaque projet dispose d'une galerie de 7 photos 100% uniques et dédiées (0 doublon)
+ * ATELIER GRAFRIKA - GALERIE EN ARCHE PANORAMIQUE & FRONTEND
+ * Connecté au backend Vercel Serverless via apiClient
  * Ton naturel et chaleureux
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+import { apiClient } from './api-client.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
 
     // =========================================================================
     // 0. GESTION DU SPLASH SCREEN (STYLE APPLICATION MOBILE)
     // =========================================================================
     const splashScreen = document.getElementById('appSplashScreen');
     if (splashScreen) {
-        // Disparition automatique après 1.2s (comme sur une vraie app mobile)
         setTimeout(() => {
             splashScreen.classList.add('hide');
         }, 1200);
 
-        // Possibilité d'accélérer en cliquant sur l'écran
         splashScreen.addEventListener('click', () => {
             splashScreen.classList.add('hide');
         });
     }
 
     // =========================================================================
-    // 1. DONNÉES SYNCHRONISÉES AVEC LA CONSOLE /ADMIN (LOCALSTORAGE)
+    // 1. CHARGEMENT ASYNCHRONE DES PROJETS & COORDONNÉES DEPUIS L'API
     // =========================================================================
-    const DEFAULT_PROJECTS = [
-        {
-            id: 1,
-            title: "Villa Océane & Claustras",
-            category: "Architecture",
-            location: "Fidjrossè, Cotonou",
-            surface: "360 m²",
-            duration: "12 mois",
-            photos: [
-                "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=85"
-            ],
-            description: "Une villa claire et aérée face à la mer, pensée pour laisser circuler la brise naturelle avec piscine et claustras protecteurs."
-        },
-        {
-            id: 2,
-            title: "Résidence de Prestige & Iroko",
-            category: "Design d'Espace",
-            location: "Les Cocotiers, Cotonou",
-            surface: "280 m²",
-            duration: "5 mois",
-            photos: [
-                "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1616137466211-f939a420be84?auto=format&fit=crop&w=1000&q=85"
-            ],
-            description: "Un intérieur sobre et chaleureux où le bois d'iroko local habille les espaces sur-mesure."
-        },
-        {
-            id: 3,
-            title: "Chantier BTP & Structure Béton",
-            category: "BTP & Gros Œuvre",
-            location: "Ganhi, Cotonou",
-            surface: "650 m²",
-            duration: "9 mois",
-            photos: [
-                "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=1000&q=85"
-            ],
-            description: "Supervision complète du gros œuvre et coulage de la structure béton pour un bâtiment d'affaires."
-        },
-        {
-            id: 4,
-            title: "Villa Duplex Contemporaine",
-            category: "Architecture & Permis",
-            location: "Abomey-Calavi",
-            surface: "320 m²",
-            duration: "10 mois",
-            photos: [
-                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=1000&q=85"
-            ],
-            description: "Du premier coup de crayon en plan 3D jusqu'à la remise des clés de ce duplex contemporain."
-        },
-        {
-            id: 5,
-            title: "Penthouse & Rooftop Végétalisé",
-            category: "Design d'Espace",
-            location: "Haie Vive, Cotonou",
-            surface: "220 m²",
-            duration: "4 mois",
-            photos: [
-                "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1000&q=85"
-            ],
-            description: "Rénovation d'un dernier étage transformé en espace ouvert avec terrasse et pergola ombragée."
-        },
-        {
-            id: 6,
-            title: "Immeuble R+3 Résidentiel",
-            category: "BTP & Chantier",
-            location: "Porto-Novo",
-            surface: "720 m²",
-            duration: "14 mois",
-            photos: [
-                "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1000&q=85"
-            ],
-            description: "Chantier complet pour cet immeuble résidentiel, des fondations jusqu'aux finitions intérieures."
-        },
-        {
-            id: 7,
-            title: "Domaine & Résidence Tropicale",
-            category: "Architecture & BTP",
-            location: "Ouidah",
-            surface: "450 m²",
-            duration: "16 mois",
-            photos: [
-                "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=1000&q=85",
-                "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=85"
-            ],
-            description: "Grande maison ouverte sur le jardin, associant pierre locale et varangues fraîches."
-        }
-    ];
+    const archTrack = document.getElementById('archTrack');
+    const archGallery = document.getElementById('archGallery');
+    const mobileDotsContainer = document.getElementById('mobileCarouselDots');
 
-    function getProjects() {
-        const raw = localStorage.getItem('GRAFRIKA_PROJECTS') || localStorage.getItem('GRAFIKA_PROJECTS');
-        if (raw) {
-            try {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-            } catch (e) {}
-        }
-        localStorage.setItem('GRAFRIKA_PROJECTS', JSON.stringify(DEFAULT_PROJECTS));
-        return DEFAULT_PROJECTS;
-    }
-
-    const projects = getProjects();
-
-    // Incrémenter les statistiques de visite pour le tableau de bord /admin
-    try {
-        const rawStats = localStorage.getItem('GRAFRIKA_STATS') || localStorage.getItem('GRAFIKA_STATS');
-        const stats = rawStats ? JSON.parse(rawStats) : { views: 248, whatsapp: 39, leads: 12 };
-        stats.views = (stats.views || 0) + 1;
-        localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
-    } catch (e) {}
+    // Récupérer les projets
+    let projects = await apiClient.getProjects();
+    renderCards(projects);
 
     // Synchroniser dynamiquement les coordonnées avec les réglages de l'admin
-    function syncSettingsWithUI() {
+    async function syncSettingsWithUI() {
         try {
-            const raw = localStorage.getItem('GRAFRIKA_SETTINGS') || localStorage.getItem('GRAFIKA_SETTINGS');
-            if (!raw) return;
-            const settings = JSON.parse(raw);
+            const settings = await apiClient.getSettings();
+            if (!settings) return;
 
             // Boutons d'appel direct
             if (settings.phone) {
@@ -219,92 +75,93 @@ document.addEventListener('DOMContentLoaded', () => {
                 const x = document.querySelector('a[aria-label="X (Twitter)"]');
                 if (x) x.href = settings.x;
             }
-        } catch (e) {}
+        } catch (e) {
+            console.warn('Erreur syncSettingsWithUI:', e);
+        }
     }
     syncSettingsWithUI();
 
     // =========================================================================
     // 2. DISPOSITION EN ARCHE (PC) / CAROUSEL TOUCH SNAP AVEC POINTS (MOBILE)
     // =========================================================================
-    const archTrack = document.getElementById('archTrack');
-    const archGallery = document.getElementById('archGallery');
-    const mobileDotsContainer = document.getElementById('mobileCarouselDots');
-    const total = projects.length;
-    const centerIdx = Math.floor(total / 2); // Projet au centre (idx = 3)
+    function renderCards(projectList) {
+        if (!archTrack) return;
+        archTrack.innerHTML = '';
 
-    // Générer les points de pagination mobile
-    if (mobileDotsContainer) {
-        mobileDotsContainer.innerHTML = '';
-        projects.forEach((_, idx) => {
-            const dot = document.createElement('div');
-            dot.className = `dot-indicator ${idx === 0 ? 'active' : ''}`;
-            dot.dataset.index = idx;
-            dot.addEventListener('click', () => {
-                scrollToProject(idx);
+        const total = projectList.length;
+        const centerIdx = Math.floor(total / 2);
+
+        // Points de pagination mobile
+        if (mobileDotsContainer) {
+            mobileDotsContainer.innerHTML = '';
+            projectList.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `dot-indicator ${idx === 0 ? 'active' : ''}`;
+                dot.dataset.index = idx;
+                dot.addEventListener('click', () => {
+                    scrollToProject(idx);
+                });
+                mobileDotsContainer.appendChild(dot);
             });
-            mobileDotsContainer.appendChild(dot);
+        }
+
+        // Générer les cartes
+        projectList.forEach((proj, idx) => {
+            const card = document.createElement('div');
+            card.className = 'arch-card';
+            card.dataset.id = proj.id;
+            card.dataset.index = idx;
+
+            const dist = idx - centerIdx;
+            const absDist = Math.abs(dist);
+            const side = dist >= 0 ? 1 : -1;
+
+            // Courbure en arche sur PC uniquement
+            const yOffset = Math.pow(absDist, 1.65) * 12;
+            const rotZ = side * (absDist * 2.2);
+
+            if (window.innerWidth > 768) {
+                card.style.transform = `translateY(${yOffset}px) rotate(${rotZ}deg)`;
+            }
+
+            card.innerHTML = `
+                <span class="card-arch-chip">${escapeHtml(proj.category)}</span>
+                <img src="${escapeHtml(proj.photos[0])}" alt="${escapeHtml(proj.title)}" loading="lazy">
+                <div class="card-title-scrim">
+                    <div class="card-meta-line">
+                        <span class="card-spec-surface">${escapeHtml(proj.surface || "Sur-mesure")}</span>
+                        <span class="card-spec-sep">•</span>
+                        <span class="card-spec-dur">${escapeHtml(proj.duration || "Étude personnalisée")}</span>
+                    </div>
+                    <h3 class="card-project-title">${escapeHtml(proj.title)}</h3>
+                    <span class="card-project-loc">${escapeHtml(proj.location)}</span>
+                </div>
+            `;
+
+            card.addEventListener('mouseenter', () => {
+                if (window.innerWidth > 768) {
+                    card.style.transform = `translateY(${yOffset - 12}px) rotate(0deg) scale(1.05)`;
+                }
+            });
+
+            card.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 768) {
+                    card.style.transform = `translateY(${yOffset}px) rotate(${rotZ}deg) scale(1)`;
+                }
+            });
+
+            card.addEventListener('click', () => {
+                openDetailModal(proj);
+            });
+
+            archTrack.appendChild(card);
         });
     }
 
-    // Générer les cartes
-    projects.forEach((proj, idx) => {
-        const card = document.createElement('div');
-        card.className = 'arch-card';
-        card.dataset.id = proj.id;
-        card.dataset.index = idx;
-
-        const dist = idx - centerIdx;
-        const absDist = Math.abs(dist);
-        const side = dist >= 0 ? 1 : -1;
-
-        // Courbure en arche uniquement calculée pour PC
-        const yOffset = Math.pow(absDist, 1.65) * 12;
-        const rotZ = side * (absDist * 2.2);
-
-        // Sur PC uniquement (> 768px), on applique l'arche
-        if (window.innerWidth > 768) {
-            card.style.transform = `translateY(${yOffset}px) rotate(${rotZ}deg)`;
-        }
-
-        // Carte visuelle avec spécifications nettes (Zéro bouton)
-        card.innerHTML = `
-            <span class="card-arch-chip">${escapeHtml(proj.category)}</span>
-            <img src="${escapeHtml(proj.photos[0])}" alt="${escapeHtml(proj.title)}" loading="lazy">
-            <div class="card-title-scrim">
-                <div class="card-meta-line">
-                    <span class="card-spec-surface">${escapeHtml(proj.surface || "Sur-mesure")}</span>
-                    <span class="card-spec-sep">•</span>
-                    <span class="card-spec-dur">${escapeHtml(proj.duration || "Étude personnalisée")}</span>
-                </div>
-                <h3 class="card-project-title">${escapeHtml(proj.title)}</h3>
-                <span class="card-project-loc">${escapeHtml(proj.location)}</span>
-            </div>
-        `;
-
-        // Événements de survol PC (élargissement et redressement fluide)
-        card.addEventListener('mouseenter', () => {
-            if (window.innerWidth > 768) {
-                card.style.transform = `translateY(${yOffset - 12}px) rotate(0deg) scale(1.05)`;
-            }
-        });
-
-        card.addEventListener('mouseleave', () => {
-            if (window.innerWidth > 768) {
-                card.style.transform = `translateY(${yOffset}px) rotate(${rotZ}deg) scale(1)`;
-            }
-        });
-
-        card.addEventListener('click', () => {
-            openDetailModal(proj);
-        });
-
-        archTrack.appendChild(card);
-    });
-
-    // Fonction de défilement vers un projet précis
     function scrollToProject(index) {
+        if (!archTrack || !archGallery) return;
         const cards = archTrack.querySelectorAll('.arch-card');
-        if (cards[index] && archGallery) {
+        if (cards[index]) {
             const cardLeft = cards[index].offsetLeft;
             const cardWidth = cards[index].offsetWidth;
             const containerWidth = archGallery.offsetWidth;
@@ -315,45 +172,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Mise à jour de l'indicateur de points pendant le défilement mobile
     if (archGallery) {
         archGallery.addEventListener('scroll', () => {
-            if (window.innerWidth <= 768) {
-                const scrollPos = archGallery.scrollLeft + (archGallery.offsetWidth / 2);
-                const cards = archTrack.querySelectorAll('.arch-card');
-                let closestIdx = 0;
-                let minDiff = Infinity;
+            const cards = archTrack.querySelectorAll('.arch-card');
+            const centerPoint = archGallery.scrollLeft + (archGallery.offsetWidth / 2);
+            let closestIdx = 0;
+            let minDistance = Infinity;
 
-                cards.forEach((c, i) => {
-                    const cardCenter = c.offsetLeft + (c.offsetWidth / 2);
-                    const diff = Math.abs(scrollPos - cardCenter);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        closestIdx = i;
-                    }
-                });
+            cards.forEach((card, idx) => {
+                const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+                const distance = Math.abs(centerPoint - cardCenter);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIdx = idx;
+                }
+            });
 
+            if (mobileDotsContainer) {
                 const dots = mobileDotsContainer.querySelectorAll('.dot-indicator');
-                dots.forEach((d, i) => {
-                    d.classList.toggle('active', i === closestIdx);
+                dots.forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === closestIdx);
                 });
             }
-        }, { passive: true });
+        });
     }
 
-    // Recalcul en cas de redimensionnement d'écran (Passage PC <-> Mobile)
     window.addEventListener('resize', () => {
+        const total = projects.length;
+        const centerIdx = Math.floor(total / 2);
         const cards = archTrack.querySelectorAll('.arch-card');
-        const isDesktop = window.innerWidth > 768;
-
+        
         cards.forEach((card, idx) => {
-            const dist = idx - centerIdx;
-            const absDist = Math.abs(dist);
-            const side = dist >= 0 ? 1 : -1;
-            const yOffset = Math.pow(absDist, 1.65) * 12;
-            const rotZ = side * (absDist * 2.2);
-
-            if (isDesktop) {
+            if (window.innerWidth > 768) {
+                const dist = idx - centerIdx;
+                const absDist = Math.abs(dist);
+                const side = dist >= 0 ? 1 : -1;
+                const yOffset = Math.pow(absDist, 1.65) * 12;
+                const rotZ = side * (absDist * 2.2);
                 card.style.transform = `translateY(${yOffset}px) rotate(${rotZ}deg)`;
             } else {
                 card.style.transform = 'none';
@@ -362,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 3. GESTION DE LA GALERIE DE 7 PHOTOS DANS LE MODAL
+    // 3. GESTION DU MODAL DE DÉTAIL DU PROJET (GALERIE 7 PHOTOS)
     // =========================================================================
     const quoteModal = document.getElementById('quoteModal');
     const detailModal = document.getElementById('detailModal');
@@ -372,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCloseDetail = document.getElementById('btnCloseDetail');
     const quoteForm = document.getElementById('quoteForm');
 
-    // Éléments du visualiseur de galerie
     const detailImg = document.getElementById('detailImg');
     const thumbnailsStrip = document.getElementById('thumbnailsStrip');
 
@@ -385,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         detailImg.src = currentProjectPhotos[currentPhotoIndex];
 
-        // Mettre à jour la miniature active
         const thumbItems = thumbnailsStrip.querySelectorAll('.thumb-item');
         thumbItems.forEach((t, i) => {
             if (i === currentPhotoIndex) {
@@ -397,8 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function openDetailModal(proj) {
-        currentProjectPhotos = proj.photos;
+    async function openDetailModal(proj) {
+        currentProjectPhotos = proj.photos || [];
         currentPhotoIndex = 0;
 
         document.getElementById('detailCategory').textContent = proj.category;
@@ -408,9 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('detailDur').textContent = proj.duration || 'Étude personnalisée';
         document.getElementById('detailDesc').textContent = proj.description || '';
 
-        // Générer les 7 miniatures
         thumbnailsStrip.innerHTML = '';
-        proj.photos.forEach((photoUrl, pIdx) => {
+        currentProjectPhotos.forEach((photoUrl, pIdx) => {
             const thumb = document.createElement('div');
             thumb.className = `thumb-item ${pIdx === 0 ? 'active' : ''}`;
             thumb.innerHTML = `<img src="${escapeHtml(photoUrl)}" alt="Photo ${pIdx + 1}" loading="lazy">`;
@@ -420,27 +272,23 @@ document.addEventListener('DOMContentLoaded', () => {
             thumbnailsStrip.appendChild(thumb);
         });
 
-        // Afficher la première photo
         renderPhoto(0);
 
-        // Lien WhatsApp personnalisé au ton naturel avec le numéro configuré
+        // Lien WhatsApp personnalisé
+        const settings = await apiClient.getSettings();
         let targetWa = '22900000000';
-        try {
-            const set = JSON.parse(localStorage.getItem('GRAFRIKA_SETTINGS') || '{}');
-            if (set.whatsapp) targetWa = set.whatsapp.replace(/[^0-9]/g, '');
-        } catch (e) {}
+        if (settings && settings.whatsapp) {
+            targetWa = settings.whatsapp.replace(/[^0-9]/g, '');
+        }
 
         const whatsappMsg = encodeURIComponent(`Bonjour l'équipe Atelier Grafrika ! J'ai vu votre réalisation "${proj.title}" à ${proj.location} et j'aimerais échanger avec vous pour un projet similaire.`);
-        document.getElementById('detailWhatsAppBtn').href = `https://wa.me/${targetWa}?text=${whatsappMsg}`;
-
-        // Incrémenter les stats lors du clic
-        document.getElementById('detailWhatsAppBtn').onclick = () => {
-            try {
-                const stats = JSON.parse(localStorage.getItem('GRAFRIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
-                stats.whatsapp = (stats.whatsapp || 0) + 1;
-                localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
-            } catch (e) {}
-        };
+        const waBtn = document.getElementById('detailWhatsAppBtn');
+        if (waBtn) {
+            waBtn.href = `https://wa.me/${targetWa}?text=${whatsappMsg}`;
+            waBtn.onclick = () => {
+                apiClient.recordWhatsAppClick();
+            };
+        }
 
         detailModal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -454,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnCloseDetail) btnCloseDetail.addEventListener('click', closeDetail);
 
     // =========================================================================
-    // 4. MODAL DEVIS & FORMULAIRE
+    // 4. MODAL DEVIS & FORMULAIRE DE PROSPECTS (CONNECTÉ À /api/leads)
     // =========================================================================
     function openQuote() {
         if (quoteModal) {
@@ -467,7 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (quoteModal) {
             quoteModal.classList.remove('active');
             document.body.style.overflow = '';
-            closeCustomSelect();
         }
     }
 
@@ -475,18 +322,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnMainQuote) btnMainQuote.addEventListener('click', openQuote);
     if (btnCloseQuote) btnCloseQuote.addEventListener('click', closeQuote);
 
-    window.addEventListener('click', (e) => {
-        if (e.target === quoteModal) closeQuote();
-        if (e.target === detailModal) closeDetail();
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
     });
 
-    window.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            closeCustomSelect();
             closeQuote();
             closeDetail();
         }
-        // Flèches gauche/droite pour naviguer dans les photos du modal
         if (detailModal && detailModal.classList.contains('active')) {
             if (e.key === 'ArrowLeft') renderPhoto(currentPhotoIndex - 1);
             if (e.key === 'ArrowRight') renderPhoto(currentPhotoIndex + 1);
@@ -496,112 +345,55 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // 5. SELECT ARCHITECTURAL SUR-MESURE (DROPDOWN TYPE DE PROJET)
     // =========================================================================
-    const customSelect = document.getElementById('customSelect');
+    const customSelect = document.getElementById('customSelectDomain');
     const customSelectTrigger = document.getElementById('customSelectTrigger');
-    const customSelectLabel = document.getElementById('customSelectLabel');
-    const customSelectDropdown = document.getElementById('customSelectDropdown');
-    const hiddenDomainInput = document.getElementById('cDomain');
-    const customOptions = customSelect ? customSelect.querySelectorAll('.custom-option') : [];
+    const customSelectOptions = document.getElementById('customSelectOptions');
+    const realDomainInput = document.getElementById('cDomain');
 
-    function toggleCustomSelect() {
-        if (!customSelect) return;
-        const isOpen = customSelect.classList.toggle('open');
-        if (customSelectTrigger) {
-            customSelectTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-            customSelectTrigger.classList.remove('field-error');
-        }
-    }
-
-    function closeCustomSelect() {
-        if (!customSelect) return;
-        customSelect.classList.remove('open');
-        if (customSelectTrigger) {
-            customSelectTrigger.setAttribute('aria-expanded', 'false');
-        }
-    }
-
-    function selectCustomOption(optionEl) {
-        if (!optionEl || !hiddenDomainInput || !customSelectLabel) return;
-        const val = optionEl.dataset.value;
-        const titleEl = optionEl.querySelector('.option-title');
-        const titleText = titleEl ? titleEl.textContent : val;
-
-        hiddenDomainInput.value = val;
-        customSelectLabel.textContent = titleText;
-        customSelectLabel.classList.add('has-value');
-
-        customOptions.forEach(opt => opt.classList.remove('selected'));
-        optionEl.classList.add('selected');
-
-        if (customSelectTrigger) {
-            customSelectTrigger.classList.remove('field-error');
-        }
-
-        closeCustomSelect();
-    }
-
-    if (customSelectTrigger) {
+    if (customSelect && customSelectTrigger && customSelectOptions) {
         customSelectTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            toggleCustomSelect();
+            customSelect.classList.toggle('open');
+            customSelectTrigger.setAttribute('aria-expanded', customSelect.classList.contains('open'));
         });
 
-        customSelectTrigger.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleCustomSelect();
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (!customSelect.classList.contains('open')) {
-                    toggleCustomSelect();
-                } else if (customOptions.length > 0) {
-                    customOptions[0].focus();
-                }
+        const options = customSelectOptions.querySelectorAll('.custom-option');
+        options.forEach(opt => {
+            opt.addEventListener('click', () => {
+                const val = opt.getAttribute('data-value');
+                const title = opt.querySelector('.option-title').textContent.trim();
+
+                realDomainInput.value = val;
+                const valueDisplay = customSelectTrigger.querySelector('.custom-select-value');
+                valueDisplay.textContent = title;
+                valueDisplay.classList.add('has-value');
+
+                options.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+
+                customSelect.classList.remove('open');
+                customSelectTrigger.setAttribute('aria-expanded', 'false');
+                customSelectTrigger.classList.remove('field-error');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!customSelect.contains(e.target)) {
+                customSelect.classList.remove('open');
+                customSelectTrigger.setAttribute('aria-expanded', 'false');
             }
         });
     }
 
-    customOptions.forEach((optionEl, idx) => {
-        optionEl.setAttribute('tabindex', '0');
-        optionEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            selectCustomOption(optionEl);
-        });
-
-        optionEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                selectCustomOption(optionEl);
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                const next = customOptions[idx + 1] || customOptions[0];
-                next.focus();
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                const prev = customOptions[idx - 1] || customOptions[customOptions.length - 1];
-                prev.focus();
-            } else if (e.key === 'Escape') {
-                closeCustomSelect();
-                if (customSelectTrigger) customSelectTrigger.focus();
-            }
-        });
-    });
-
-    // Fermer le dropdown en cliquant à l'extérieur
-    document.addEventListener('click', (e) => {
-        if (customSelect && !customSelect.contains(e.target)) {
-            closeCustomSelect();
-        }
-    });
-
-    // Envoi WhatsApp au ton naturel et enregistrement du prospect dans le CRM
+    // Envoi de la demande de devis : Enregistrement API Backend + Redirection WhatsApp
     if (quoteForm) {
-        quoteForm.addEventListener('submit', (e) => {
+        quoteForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const name = document.getElementById('cName').value.trim();
             const phone = document.getElementById('cPhone').value.trim();
             const city = document.getElementById('cCity').value.trim();
-            const domain = document.getElementById('cDomain').value;
+            const domain = realDomainInput ? realDomainInput.value : '';
             const message = document.getElementById('cMessage').value.trim();
 
             if (!domain) {
@@ -615,39 +407,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Enregistrer la demande de devis dans le CRM de l'administration (/admin)
+            // 1. Enregistrement asynchrone direct dans l'API Serverless Vercel (/api/leads)
             try {
-                const leads = JSON.parse(localStorage.getItem('GRAFRIKA_LEADS') || localStorage.getItem('GRAFIKA_LEADS') || '[]');
-                leads.unshift({
-                    id: Date.now(),
-                    date: new Date().toISOString(),
+                await apiClient.createLead({
                     name,
                     phone,
                     city: city || 'Non renseignée',
                     domain,
-                    message: message || 'À définir ensemble',
-                    status: 'Nouveau'
+                    message: message || 'À définir ensemble'
                 });
-                localStorage.setItem('GRAFRIKA_LEADS', JSON.stringify(leads));
+            } catch (err) {
+                console.warn('Envoi lead backend:', err);
+            }
 
-                // Mettre à jour les compteurs de statistiques
-                const stats = JSON.parse(localStorage.getItem('GRAFRIKA_STATS') || localStorage.getItem('GRAFIKA_STATS') || '{"views": 248, "whatsapp": 39, "leads": 12}');
-                stats.leads = (stats.leads || 0) + 1;
-                stats.whatsapp = (stats.whatsapp || 0) + 1;
-                localStorage.setItem('GRAFRIKA_STATS', JSON.stringify(stats));
-            } catch (err) {}
-
-            // Récupérer le numéro WhatsApp cible depuis les réglages admin
+            // 2. Redirection WhatsApp fluide vers le numéro configuré dans les réglages
             let targetWa = '22900000000';
             try {
-                const set = JSON.parse(localStorage.getItem('GRAFRIKA_SETTINGS') || localStorage.getItem('GRAFIKA_SETTINGS') || '{}');
-                if (set.whatsapp) targetWa = set.whatsapp.replace(/[^0-9]/g, '');
+                const settings = await apiClient.getSettings();
+                if (settings && settings.whatsapp) {
+                    targetWa = settings.whatsapp.replace(/[^0-9]/g, '');
+                }
             } catch (e) {}
 
             const text = `Bonjour Atelier Grafrika !%0A%0AJe souhaite demander un devis pour un projet :%0A- *Nom :* ${encodeURIComponent(name)}%0A- *Téléphone :* ${encodeURIComponent(phone)}%0A- *Localisation :* ${encodeURIComponent(city || 'À préciser')}%0A- *Prestation :* ${encodeURIComponent(domain)}%0A- *Détails :* ${encodeURIComponent(message || 'À définir ensemble')}`;
 
             window.open(`https://wa.me/${targetWa}?text=${text}`, '_blank');
             closeQuote();
+            quoteForm.reset();
+            if (customSelectTrigger) {
+                const valDisplay = customSelectTrigger.querySelector('.custom-select-value');
+                if (valDisplay) {
+                    valDisplay.textContent = 'Sélectionnez le type de projet...';
+                    valDisplay.classList.remove('has-value');
+                }
+            }
         });
     }
 
@@ -660,8 +453,4 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
-
-    const yr = document.getElementById('currentYear');
-    if (yr) yr.textContent = new Date().getFullYear();
-
 });

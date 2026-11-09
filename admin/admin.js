@@ -1,312 +1,29 @@
 /**
  * ATELIER GRAFRIKA - LOGIQUE D'ADMINISTRATION COMPLÈTE
  * Gestion du portfolio, des demandes de devis, des coordonnées et des statistiques
+ * Architecture asynchrone connectée au backend Vercel Serverless / SQLite (@libsql)
  * 0 émoji - 100% vectoriel SVG
  */
 
-// =========================================================================
-// 1. GESTION DES CLÉS & VALEURS PAR DÉFAUT (LOCALSTORAGE)
-// =========================================================================
-const KEYS = {
-    PROJECTS: 'GRAFRIKA_PROJECTS',
-    SETTINGS: 'GRAFRIKA_SETTINGS',
-    LEADS: 'GRAFRIKA_LEADS',
-    STATS: 'GRAFRIKA_STATS',
-    AUTH: 'GRAFRIKA_AUTH',
-    SESSION: 'GRAFRIKA_ADMIN_SESSION'
-};
-
-const LEGACY_KEYS = {
-    PROJECTS: 'GRAFIKA_PROJECTS',
-    SETTINGS: 'GRAFIKA_SETTINGS',
-    LEADS: 'GRAFIKA_LEADS',
-    STATS: 'GRAFIKA_STATS',
-    AUTH: 'GRAFIKA_AUTH',
-    SESSION: 'GRAFIKA_ADMIN_SESSION'
-};
-
-// 7 Projets officiels par défaut
-const DEFAULT_PROJECTS = [
-    {
-        id: 1,
-        title: "Villa Océane & Claustras",
-        category: "Architecture",
-        location: "Fidjrossè, Cotonou",
-        surface: "360 m²",
-        duration: "12 mois",
-        photos: [
-            "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=85"
-        ],
-        description: "Une villa claire et aérée face à la mer, pensée pour laisser circuler la brise naturelle avec piscine et claustras protecteurs."
-    },
-    {
-        id: 2,
-        title: "Résidence de Prestige & Iroko",
-        category: "Design d'Espace",
-        location: "Les Cocotiers, Cotonou",
-        surface: "280 m²",
-        duration: "5 mois",
-        photos: [
-            "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1616137466211-f939a420be84?auto=format&fit=crop&w=1000&q=85"
-        ],
-        description: "Un intérieur sobre et chaleureux où le bois d'iroko local habille les espaces sur-mesure."
-    },
-    {
-        id: 3,
-        title: "Chantier BTP & Structure Béton",
-        category: "BTP & Gros Œuvre",
-        location: "Ganhi, Cotonou",
-        surface: "650 m²",
-        duration: "9 mois",
-        photos: [
-            "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=1000&q=85"
-        ],
-        description: "Supervision complète du gros œuvre et coulage de la structure béton pour un bâtiment d'affaires."
-    },
-    {
-        id: 4,
-        title: "Villa Duplex Contemporaine",
-        category: "Architecture & Permis",
-        location: "Abomey-Calavi",
-        surface: "320 m²",
-        duration: "10 mois",
-        photos: [
-            "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=1000&q=85"
-        ],
-        description: "Du premier coup de crayon en plan 3D jusqu'à la remise des clés de ce duplex contemporain."
-    },
-    {
-        id: 5,
-        title: "Penthouse & Rooftop Végétalisé",
-        category: "Design d'Espace",
-        location: "Haie Vive, Cotonou",
-        surface: "220 m²",
-        duration: "4 mois",
-        photos: [
-            "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1000&q=85"
-        ],
-        description: "Rénovation d'un dernier étage transformé en espace ouvert avec terrasse et pergola ombragée."
-    },
-    {
-        id: 6,
-        title: "Immeuble R+3 Résidentiel",
-        category: "BTP & Chantier",
-        location: "Porto-Novo",
-        surface: "720 m²",
-        duration: "14 mois",
-        photos: [
-            "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1000&q=85"
-        ],
-        description: "Chantier complet pour cet immeuble résidentiel, des fondations jusqu'aux finitions intérieures."
-    },
-    {
-        id: 7,
-        title: "Domaine & Résidence Tropicale",
-        category: "Architecture & BTP",
-        location: "Ouidah",
-        surface: "450 m²",
-        duration: "16 mois",
-        photos: [
-            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=1000&q=85",
-            "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=85"
-        ],
-        description: "Grande maison ouverte sur le jardin, associant pierre locale et varangues fraîches."
-    }
-];
-
-// Leads de démonstration initiaux au style de la capture
-const SAMPLE_LEADS = [
-    {
-        id: 101,
-        date: new Date(Date.now() - 3600000 * 4).toISOString(),
-        name: "Carlos Mendes",
-        phone: "+229 01 45 88 12",
-        city: "Calavi, Arconville",
-        domain: "Plans 3D & Permis",
-        message: "Villa R+1 moderne de 350 m² sur terrain sécurisé.",
-        status: "En contact"
-    },
-    {
-        id: 102,
-        date: new Date(Date.now() - 3600000 * 12).toISOString(),
-        name: "Liam Brooks",
-        phone: "+229 01 77 23 90",
-        city: "Cotonou, Haie Vive",
-        domain: "Construction BTP",
-        message: "Immeuble d'affaires, supervision de gros œuvre.",
-        status: "Devis validé"
-    },
-    {
-        id: 103,
-        date: new Date(Date.now() - 3600000 * 28).toISOString(),
-        name: "Diego Alvarez",
-        phone: "+33 6 12 34 56 78",
-        city: "Diaspora / Ouidah",
-        domain: "Rénovation & Design",
-        message: "Aménagement d'une maison de vacances familiale.",
-        status: "En contact"
-    },
-    {
-        id: 104,
-        date: new Date(Date.now() - 3600000 * 48).toISOString(),
-        name: "Tommy Clarke",
-        phone: "+229 01 99 10 20",
-        city: "Porto-Novo",
-        domain: "Aménagement Pro",
-        message: "Agencement de bureaux commerciaux de 220 m².",
-        status: "Nouveau"
-    }
-];
-
-// Coordonnées par défaut
-const DEFAULT_SETTINGS = {
-    whatsapp: "+229 01 00 00 00",
-    phone: "+229 01 00 00 00",
-    email: "contact@ateliergrafrika.com",
-    location: "Abomey-Calavi, Bénin",
-    instagram: "https://instagram.com",
-    tiktok: "https://tiktok.com",
-    facebook: "https://facebook.com",
-    linkedin: "https://linkedin.com",
-    x: "https://x.com"
-};
-
-// Accès administrateur par défaut
-const DEFAULT_AUTH = {
-    email: "admin@ateliergrafrika.com",
-    legacyEmail: "admin@ateliergrafika.com",
-    password: "grafrika2026",
-    legacyPassword: "grafika2026"
-};
-
-// Fonctions d'accès au stockage
-function getStoredProjects() {
-    const raw = localStorage.getItem(KEYS.PROJECTS) || localStorage.getItem(LEGACY_KEYS.PROJECTS);
-    if (!raw) {
-        localStorage.setItem(KEYS.PROJECTS, JSON.stringify(DEFAULT_PROJECTS));
-        return DEFAULT_PROJECTS;
-    }
-    try {
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PROJECTS;
-    } catch (e) {
-        return DEFAULT_PROJECTS;
-    }
-}
-
-function saveStoredProjects(projects) {
-    localStorage.setItem(KEYS.PROJECTS, JSON.stringify(projects));
-}
-
-function getStoredSettings() {
-    const raw = localStorage.getItem(KEYS.SETTINGS) || localStorage.getItem(LEGACY_KEYS.SETTINGS);
-    if (!raw) {
-        localStorage.setItem(KEYS.SETTINGS, JSON.stringify(DEFAULT_SETTINGS));
-        return DEFAULT_SETTINGS;
-    }
-    try {
-        return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
-    } catch (e) {
-        return DEFAULT_SETTINGS;
-    }
-}
-
-function saveStoredSettings(settings) {
-    localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
-}
-
-function getStoredLeads() {
-    const raw = localStorage.getItem(KEYS.LEADS) || localStorage.getItem(LEGACY_KEYS.LEADS);
-    if (!raw) {
-        localStorage.setItem(KEYS.LEADS, JSON.stringify(SAMPLE_LEADS));
-        return SAMPLE_LEADS;
-    }
-    try {
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : SAMPLE_LEADS;
-    } catch (e) {
-        return SAMPLE_LEADS;
-    }
-}
-
-function saveStoredLeads(leads) {
-    localStorage.setItem(KEYS.LEADS, JSON.stringify(leads));
-}
-
-function getStoredStats() {
-    const raw = localStorage.getItem(KEYS.STATS) || localStorage.getItem(LEGACY_KEYS.STATS);
-    if (!raw) return { views: 248, whatsapp: 39, leads: 12 };
-    try {
-        return JSON.parse(raw);
-    } catch (e) {
-        return { views: 248, whatsapp: 39, leads: 12 };
-    }
-}
-
-function getStoredAuth() {
-    const raw = localStorage.getItem(KEYS.AUTH) || localStorage.getItem(LEGACY_KEYS.AUTH);
-    if (!raw) {
-        localStorage.setItem(KEYS.AUTH, JSON.stringify(DEFAULT_AUTH));
-        return DEFAULT_AUTH;
-    }
-    try {
-        return JSON.parse(raw);
-    } catch (e) {
-        return DEFAULT_AUTH;
-    }
-}
-
-function saveStoredAuth(auth) {
-    localStorage.setItem(KEYS.AUTH, JSON.stringify(auth));
-}
-
+import { apiClient } from '../api-client.js';
+import { DEFAULT_PROJECTS, DEFAULT_SETTINGS, SAMPLE_LEADS } from '../data/initial-data.js';
 
 // =========================================================================
-// 2. GESTION DE L'AUTHENTIFICATION (ADMIN UNIQUE)
+// ÉTAT LOCAL EN MÉMOIRE
 // =========================================================================
-document.addEventListener('DOMContentLoaded', () => {
+let currentProjects = [];
+let currentLeads = [];
+let currentSettings = { ...DEFAULT_SETTINGS };
+let currentStats = { views: 248, whatsapp: 39, leads: 12 };
 
+let currentEditingPhotos = [];
+let activeLeadFilter = 'all';
+let leadSearchQuery = '';
+
+// =========================================================================
+// 1. INITIALISATION & AUTHENTIFICATION
+// =========================================================================
+document.addEventListener('DOMContentLoaded', async () => {
     const loginScreen = document.getElementById('loginScreen');
     const adminApp = document.getElementById('adminApp');
     const loginForm = document.getElementById('loginForm');
@@ -314,12 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logoutBtn');
     const togglePasswordBtn = document.getElementById('togglePasswordBtn');
     const loginPassword = document.getElementById('loginPassword');
+    const btnQuickFillDemo = document.getElementById('btnQuickFillDemo');
 
-    function checkAuth() {
-        const isLoggedSession = sessionStorage.getItem(KEYS.SESSION) || sessionStorage.getItem(LEGACY_KEYS.SESSION);
-        const isLoggedLocal = localStorage.getItem(KEYS.SESSION) || localStorage.getItem(LEGACY_KEYS.SESSION);
-
-        if (isLoggedSession === 'true' || isLoggedLocal === 'true') {
+    async function checkAuth() {
+        const isAuth = await apiClient.checkAuth();
+        if (isAuth) {
             showAdminApp();
         } else {
             showLogin();
@@ -331,10 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (adminApp) adminApp.style.display = 'none';
     }
 
-    function showAdminApp() {
+    async function showAdminApp() {
         if (loginScreen) loginScreen.style.display = 'none';
         if (adminApp) adminApp.style.display = 'flex';
-        initAdminDashboard();
+        await initAdminDashboard();
     }
 
     if (togglePasswordBtn && loginPassword) {
@@ -344,41 +60,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const btnQuickFillDemo = document.getElementById('btnQuickFillDemo');
     if (btnQuickFillDemo) {
         btnQuickFillDemo.addEventListener('click', () => {
             const emailInput = document.getElementById('loginEmail');
             const passwordInput = document.getElementById('loginPassword');
-            const auth = getStoredAuth();
-            if (emailInput) emailInput.value = auth.email;
-            if (passwordInput) passwordInput.value = auth.password;
+            if (emailInput) emailInput.value = 'admin@ateliergrafrika.com';
+            if (passwordInput) passwordInput.value = 'grafrika2026';
             if (loginError) loginError.style.display = 'none';
-            showToast("Identifiants pré-remplis.");
+            showToast("Identifiants de démonstration pré-remplis.");
         });
     }
 
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const emailInput = document.getElementById('loginEmail').value.trim();
             const passwordInput = document.getElementById('loginPassword').value.trim();
             const rememberMe = document.getElementById('rememberMe').checked;
 
-            const auth = getStoredAuth();
+            const submitBtn = loginForm.querySelector('.login-submit-btn');
+            const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span>Connexion en cours...</span>`;
+            }
 
-            if (emailInput.toLowerCase() === auth.email.toLowerCase() && passwordInput === auth.password) {
-                if (rememberMe) {
-                    localStorage.setItem(KEYS.SESSION, 'true');
-                } else {
-                    sessionStorage.setItem(KEYS.SESSION, 'true');
-                }
+            try {
+                await apiClient.login(emailInput, passwordInput, rememberMe);
                 if (loginError) loginError.style.display = 'none';
-                showAdminApp();
+                await showAdminApp();
                 showToast("Connexion réussie. Bienvenue sur votre dashboard.");
-            } else {
+            } catch (err) {
                 if (loginError) {
-                    loginError.textContent = "Identifiants incorrects. Veuillez vérifier votre adresse e-mail et votre mot de passe.";
+                    loginError.textContent = err.message || "Identifiants incorrects. Veuillez vérifier votre adresse e-mail et votre mot de passe.";
                     loginError.style.display = 'block';
+                }
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
                 }
             }
         });
@@ -386,36 +106,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            sessionStorage.removeItem(KEYS.SESSION);
-            localStorage.removeItem(KEYS.SESSION);
+            apiClient.clearToken();
             showLogin();
             showToast("Vous êtes déconnecté.");
         });
     }
 
-    checkAuth();
+    await checkAuth();
 });
 
-
 // =========================================================================
-// 3. LOGIQUE GLOBALE DU DASHBOARD (NOUVEAU DESIGN FLOATING CARD)
+// 2. LOGIQUE GLOBALE DU DASHBOARD (DONNÉES ASYNCHRONES)
 // =========================================================================
-let currentEditingPhotos = [];
-let activeLeadFilter = 'all';
-
-function initAdminDashboard() {
+async function initAdminDashboard() {
     setupNavigation();
     setupMobileDrawer();
-    renderDashboardOverview();
-    renderProjectsList();
-    renderLeadsList();
-    loadSettingsForm();
     setupProjectModal();
     setupSettingsForms();
+    setupLeadFilters();
+
+    await refreshAllData();
+}
+
+async function refreshAllData() {
+    try {
+        const [projects, leads, settings, stats] = await Promise.all([
+            apiClient.getProjects(),
+            apiClient.getLeads(),
+            apiClient.getSettings(),
+            apiClient.getStats()
+        ]);
+
+        currentProjects = projects || [];
+        currentLeads = leads || [];
+        currentSettings = settings || { ...DEFAULT_SETTINGS };
+        currentStats = stats || { views: 248, whatsapp: 39, leads: 12 };
+
+        renderDashboardOverview();
+        renderProjectsList();
+        renderLeadsList();
+        loadSettingsForm();
+    } catch (err) {
+        console.error("Erreur de chargement des données dashboard:", err);
+        showToast("Impossible de synchroniser certaines données avec le serveur.", "alert");
+    }
 }
 
 // =========================================================================
-// 4. NAVIGATION ENTRE ONGLETS
+// 3. NAVIGATION ENTRE ONGLETS
 // =========================================================================
 function setupNavigation() {
     const navItems = document.querySelectorAll('.dash-nav-btn');
@@ -524,7 +262,6 @@ function setupMobileDrawer() {
             });
         }
 
-        // Fermer automatiquement le tiroir sur mobile lors du choix d'un onglet
         sidebar.querySelectorAll('.dash-nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (window.innerWidth <= 1024) {
@@ -535,38 +272,31 @@ function setupMobileDrawer() {
     }
 }
 
-
 // =========================================================================
-// 5. RENDU DU DASHBOARD (STYLE CAPTURE AVEC STATUS PILLS & INITIALES)
+// 4. RENDU DU DASHBOARD
 // =========================================================================
 function renderDashboardOverview() {
-    const projects = getStoredProjects();
-    const leads = getStoredLeads();
-    const stats = getStoredStats();
-
-    // KPIs
     const statViews = document.getElementById('statViews');
     const statWhatsapp = document.getElementById('statWhatsapp');
     const statLeads = document.getElementById('statLeads');
     const statProjects = document.getElementById('statProjects');
 
-    if (statViews) statViews.textContent = stats.views || 248;
-    if (statWhatsapp) statWhatsapp.textContent = stats.whatsapp || 39;
-    if (statLeads) statLeads.textContent = leads.length;
-    if (statProjects) statProjects.textContent = projects.length;
+    if (statViews) statViews.textContent = currentStats.views || 248;
+    if (statWhatsapp) statWhatsapp.textContent = currentStats.whatsapp || 39;
+    if (statLeads) statLeads.textContent = currentLeads.length;
+    if (statProjects) statProjects.textContent = currentProjects.length;
 
-    // Badges sidebar
     const badgeProjectCount = document.getElementById('badgeProjectCount');
     const badgeLeadsCount = document.getElementById('badgeLeadsCount');
 
-    if (badgeProjectCount) badgeProjectCount.textContent = projects.length;
-    if (badgeLeadsCount) badgeLeadsCount.textContent = leads.filter(l => l.status === 'Nouveau').length;
+    if (badgeProjectCount) badgeProjectCount.textContent = currentProjects.length;
+    if (badgeLeadsCount) badgeLeadsCount.textContent = currentLeads.filter(l => l.status === 'Nouveau').length;
 
-    // Liste des leads récents (Team Collaboration style)
+    // Récents leads
     const recentLeadsContainer = document.getElementById('dashRecentLeadsList');
     if (recentLeadsContainer) {
         recentLeadsContainer.innerHTML = '';
-        const recentLeads = [...leads].slice(0, 4);
+        const recentLeads = [...currentLeads].slice(0, 4);
 
         recentLeads.forEach(lead => {
             const item = document.createElement('div');
@@ -574,19 +304,20 @@ function renderDashboardOverview() {
             const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
             const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${encodeURIComponent(lead.name)},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`;
 
-            // Initiales pour le badge avatar
             const names = (lead.name || 'Client').trim().split(' ');
             const initials = (names[0][0] + (names[1] ? names[1][0] : '')).toUpperCase();
 
-            // Classes status
             let statusClass = 'orange';
-            let statusText = 'In progress';
+            let statusText = 'En cours';
             if (lead.status === 'Devis validé' || lead.status === 'Completed') {
                 statusClass = 'green';
-                statusText = 'Completed';
+                statusText = 'Validé';
             } else if (lead.status === 'Nouveau' || lead.status === 'In pending') {
                 statusClass = 'red';
-                statusText = 'In pending';
+                statusText = 'Nouveau';
+            } else if (lead.status === 'Archivé') {
+                statusClass = 'gray';
+                statusText = 'Archivé';
             }
 
             item.innerHTML = `
@@ -610,15 +341,15 @@ function renderDashboardOverview() {
         });
     }
 
-    // Aperçu du portfolio en ligne sur le dashboard
+    // Mini grille réalisations sur dashboard
     const miniGrid = document.getElementById('dashProjectsMiniGrid');
     if (miniGrid) {
         miniGrid.innerHTML = '';
-        const showcaseProjects = projects.slice(0, 3);
+        const showcaseProjects = currentProjects.slice(0, 3);
         showcaseProjects.forEach(p => {
             const tile = document.createElement('div');
             tile.className = 'mini-project-tile';
-            const firstPhoto = (p.photos && p.photos[0]) ? p.photos[0] : '../assets/logo.png';
+            const firstPhoto = (p.photos && p.photos[0]) ? p.photos[0] : 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80';
             tile.innerHTML = `
                 <img src="${escapeHtml(firstPhoto)}" alt="${escapeHtml(p.title)}" class="mini-project-thumb">
                 <div class="mini-project-meta">
@@ -635,20 +366,18 @@ function renderDashboardOverview() {
     }
 }
 
-
 // =========================================================================
-// 6. GESTION DES PROJETS (CMS PORTFOLIO)
+// 5. GESTION DES PROJETS (CMS PORTFOLIO)
 // =========================================================================
 function renderProjectsList() {
     const container = document.getElementById('projectsAdminGrid');
     if (!container) return;
 
-    const projects = getStoredProjects();
     const searchVal = (document.getElementById('projectSearchInput')?.value || '').toLowerCase();
     const catVal = document.getElementById('projectCategoryFilter')?.value || 'all';
 
-    const filtered = projects.filter(p => {
-        const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.location.toLowerCase().includes(searchVal);
+    const filtered = currentProjects.filter(p => {
+        const matchesSearch = (p.title || '').toLowerCase().includes(searchVal) || (p.location || '').toLowerCase().includes(searchVal);
         const matchesCat = (catVal === 'all') || (p.category === catVal);
         return matchesSearch && matchesCat;
     });
@@ -681,7 +410,7 @@ function renderProjectsList() {
                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
                         <polyline points="21 15 16 10 5 21"></polyline>
                     </svg>
-                    ${photoCount}
+                    ${photoCount} photo${photoCount > 1 ? 's' : ''}
                 </span>
             </div>
             <div class="proj-card-body">
@@ -717,16 +446,16 @@ function renderProjectsList() {
 
     container.querySelectorAll('.btn-edit-proj').forEach(btn => {
         btn.addEventListener('click', () => {
-            const id = parseInt(btn.dataset.id, 10);
-            const proj = projects.find(p => p.id === id);
+            const id = btn.dataset.id;
+            const proj = currentProjects.find(p => String(p.id) === String(id));
             if (proj) openProjectModal(proj);
         });
     });
 
     container.querySelectorAll('.btn-delete-proj').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = parseInt(btn.dataset.id, 10);
-            deleteProject(id);
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            await deleteProject(id);
         });
     });
 }
@@ -734,9 +463,8 @@ function renderProjectsList() {
 document.getElementById('projectSearchInput')?.addEventListener('input', renderProjectsList);
 document.getElementById('projectCategoryFilter')?.addEventListener('change', renderProjectsList);
 
-
 // =========================================================================
-// 7. MODAL DE PROJET & GESTION DES PHOTOS
+// 6. MODAL DE PROJET & GESTION DES PHOTOS
 // =========================================================================
 function setupProjectModal() {
     const projectModal = document.getElementById('projectModal');
@@ -791,7 +519,7 @@ function setupProjectModal() {
     }
 
     if (projectForm) {
-        projectForm.addEventListener('submit', (e) => {
+        projectForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const idInput = document.getElementById('projId').value;
             const title = document.getElementById('projTitle').value.trim();
@@ -806,44 +534,49 @@ function setupProjectModal() {
                 return;
             }
 
-            const projects = getStoredProjects();
-
-            if (idInput) {
-                const id = parseInt(idInput, 10);
-                const index = projects.findIndex(p => p.id === id);
-                if (index !== -1) {
-                    projects[index] = {
-                        ...projects[index],
-                        title,
-                        category,
-                        location,
-                        surface: surface || "Sur-mesure",
-                        duration: duration || "Non spécifié",
-                        description,
-                        photos: [...currentEditingPhotos]
-                    };
-                    showToast("Projet mis à jour avec succès !");
-                }
-            } else {
-                const newId = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
-                const newProject = {
-                    id: newId,
-                    title,
-                    category,
-                    location,
-                    surface: surface || "Sur-mesure",
-                    duration: duration || "Non spécifié",
-                    description,
-                    photos: [...currentEditingPhotos]
-                };
-                projects.unshift(newProject);
-                showToast("Nouveau projet ajouté avec succès !");
+            if (currentEditingPhotos.length < 7) {
+                showToast(`Note : ${currentEditingPhotos.length}/7 photos ajoutées. Pour une expérience optimale type galerie de prestige, 7 photos sont recommandées.`, 'info');
             }
 
-            saveStoredProjects(projects);
-            closeProjectModal();
-            renderProjectsList();
-            renderDashboardOverview();
+            const projectData = {
+                title,
+                category,
+                location,
+                surface: surface || "Sur-mesure",
+                duration: duration || "Non spécifié",
+                description,
+                photos: [...currentEditingPhotos]
+            };
+
+            const submitBtn = projectForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span>Enregistrement...</span>`;
+            }
+
+            try {
+                if (idInput) {
+                    await apiClient.updateProject(idInput, projectData);
+                    showToast("Projet mis à jour avec succès !");
+                } else {
+                    await apiClient.createProject(projectData);
+                    showToast("Nouveau projet publié avec succès !");
+                }
+
+                currentProjects = await apiClient.getProjects();
+                closeProjectModal();
+                renderProjectsList();
+                renderDashboardOverview();
+            } catch (err) {
+                console.error("Erreur enregistrement projet:", err);
+                showToast(err.message || "Erreur lors de l'enregistrement du projet.", "alert");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            }
         });
     }
 }
@@ -931,40 +664,103 @@ function renderEditingPhotosThumbnails() {
     });
 }
 
-function deleteProject(id) {
+async function deleteProject(id) {
     if (confirm("Êtes-vous certain de vouloir supprimer cette réalisation du portfolio ?")) {
-        let projects = getStoredProjects();
-        projects = projects.filter(p => p.id !== id);
-        saveStoredProjects(projects);
-        renderProjectsList();
-        renderDashboardOverview();
-        showToast("Projet supprimé du portfolio.");
+        try {
+            await apiClient.deleteProject(id);
+            currentProjects = await apiClient.getProjects();
+            renderProjectsList();
+            renderDashboardOverview();
+            showToast("Projet supprimé du portfolio.");
+        } catch (err) {
+            console.error("Erreur suppression projet:", err);
+            showToast(err.message || "Erreur lors de la suppression.", "alert");
+        }
     }
 }
 
+// =========================================================================
+// 7. GESTION DES LEADS (CRM)
+// =========================================================================
+function setupLeadFilters() {
+    const searchInput = document.getElementById('leadSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            leadSearchQuery = e.target.value.toLowerCase().trim();
+            renderLeadsList();
+        });
+    }
 
-// =========================================================================
-// 8. GESTION DES LEADS (CRM)
-// =========================================================================
+    document.querySelectorAll('[data-lead-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-lead-filter]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeLeadFilter = btn.dataset.leadFilter;
+            renderLeadsList();
+        });
+    });
+
+    document.getElementById('btnExportLeadsCsv')?.addEventListener('click', () => {
+        if (currentLeads.length === 0) {
+            showToast("Aucun lead à exporter.", 'alert');
+            return;
+        }
+
+        let csvContent = "\uFEFFDate;Nom;Telephone;Prestation;Ville;Message;Statut\n";
+        currentLeads.forEach(l => {
+            const row = [
+                `"${formatDate(l.date)}"`,
+                `"${(l.name || '').replace(/"/g, '""')}"`,
+                `"${(l.phone || '').replace(/"/g, '""')}"`,
+                `"${(l.domain || '').replace(/"/g, '""')}"`,
+                `"${(l.city || '').replace(/"/g, '""')}"`,
+                `"${(l.message || '').replace(/"/g, '""')}"`,
+                `"${l.status || 'Nouveau'}"`
+            ];
+            csvContent += row.join(';') + '\n';
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `leads_atelier_grafrika_${new Date().toISOString().slice(0, 10)}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast("Fichier CSV téléchargé.");
+    });
+}
+
 function renderLeadsList() {
     const tbody = document.getElementById('leadsTableBody');
     if (!tbody) return;
 
-    const leads = getStoredLeads();
-    const filtered = leads.filter(l => {
-        if (activeLeadFilter === 'all') return true;
-        return l.status === activeLeadFilter;
+    const filtered = currentLeads.filter(l => {
+        // Filtre par onglet
+        const matchesTab = (activeLeadFilter === 'all') || (l.status === activeLeadFilter);
+
+        // Filtre par recherche texte
+        const nameMatch = (l.name || '').toLowerCase().includes(leadSearchQuery);
+        const cityMatch = (l.city || '').toLowerCase().includes(leadSearchQuery);
+        const phoneMatch = (l.phone || '').toLowerCase().includes(leadSearchQuery);
+        const domainMatch = (l.domain || '').toLowerCase().includes(leadSearchQuery);
+        const matchesSearch = !leadSearchQuery || (nameMatch || cityMatch || phoneMatch || domainMatch);
+
+        return matchesTab && matchesSearch;
     });
 
+    // Compteurs de statut
     const countAll = document.getElementById('countLeadsAll');
     const countNew = document.getElementById('countLeadsNew');
     const countContact = document.getElementById('countLeadsContact');
     const countDone = document.getElementById('countLeadsDone');
+    const countArchived = document.getElementById('countLeadsArchived');
 
-    if (countAll) countAll.textContent = leads.length;
-    if (countNew) countNew.textContent = leads.filter(l => l.status === 'Nouveau').length;
-    if (countContact) countContact.textContent = leads.filter(l => l.status === 'En contact').length;
-    if (countDone) countDone.textContent = leads.filter(l => l.status === 'Devis validé').length;
+    if (countAll) countAll.textContent = currentLeads.length;
+    if (countNew) countNew.textContent = currentLeads.filter(l => l.status === 'Nouveau').length;
+    if (countContact) countContact.textContent = currentLeads.filter(l => l.status === 'En contact').length;
+    if (countDone) countDone.textContent = currentLeads.filter(l => l.status === 'Devis validé').length;
+    if (countArchived) countArchived.textContent = currentLeads.filter(l => l.status === 'Archivé').length;
 
     tbody.innerHTML = '';
 
@@ -972,7 +768,7 @@ function renderLeadsList() {
         tbody.innerHTML = `
             <tr>
                 <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-subtle);">
-                    Aucune demande de devis dans cette catégorie.
+                    Aucune demande de devis correspondante.
                 </td>
             </tr>
         `;
@@ -1014,88 +810,48 @@ function renderLeadsList() {
     });
 
     tbody.querySelectorAll('.status-select-pill').forEach(sel => {
-        sel.addEventListener('change', (e) => {
+        sel.addEventListener('change', async (e) => {
             const leadId = e.target.dataset.id;
             const newStatus = e.target.value;
-            updateLeadStatus(leadId, newStatus);
+            await updateLeadStatus(leadId, newStatus);
         });
     });
 }
 
-function updateLeadStatus(id, newStatus) {
-    const leads = getStoredLeads();
-    const lead = leads.find(l => l.id.toString() === id.toString());
-    if (lead) {
-        lead.status = newStatus;
-        saveStoredLeads(leads);
+async function updateLeadStatus(id, newStatus) {
+    try {
+        await apiClient.updateLeadStatus(id, newStatus);
+        const lead = currentLeads.find(l => String(l.id) === String(id));
+        if (lead) lead.status = newStatus;
         renderLeadsList();
         renderDashboardOverview();
         showToast(`Statut mis à jour : ${newStatus}`);
+    } catch (err) {
+        console.error("Erreur mise à jour prospect:", err);
+        showToast(err.message || "Erreur mise à jour statut", "alert");
     }
 }
 
-document.querySelectorAll('.filter-pill-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-pill-item').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeLeadFilter = btn.dataset.leadFilter;
-        renderLeadsList();
-    });
-});
-
-document.getElementById('btnExportLeadsCsv')?.addEventListener('click', () => {
-    const leads = getStoredLeads();
-    if (leads.length === 0) {
-        showToast("Aucun lead à exporter.", 'alert');
-        return;
-    }
-
-    let csvContent = "\uFEFFDate;Nom;Telephone;Prestation;Ville;Message;Statut\n";
-    leads.forEach(l => {
-        const row = [
-            `"${formatDate(l.date)}"`,
-            `"${(l.name || '').replace(/"/g, '""')}"`,
-            `"${(l.phone || '').replace(/"/g, '""')}"`,
-            `"${(l.domain || '').replace(/"/g, '""')}"`,
-            `"${(l.city || '').replace(/"/g, '""')}"`,
-            `"${(l.message || '').replace(/"/g, '""')}"`,
-            `"${l.status || 'Nouveau'}"`
-        ];
-        csvContent += row.join(';') + '\n';
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `leads_atelier_grafika_${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-    showToast("Fichier CSV téléchargé.");
-});
-
-
 // =========================================================================
-// 9. COORDONNÉES & RÉGLAGES
+// 8. COORDONNÉES & RÉGLAGES
 // =========================================================================
 function loadSettingsForm() {
-    const settings = getStoredSettings();
-    const auth = getStoredAuth();
+    const authUser = JSON.parse(localStorage.getItem('GRAFRIKA_AUTH_USER') || sessionStorage.getItem('GRAFRIKA_AUTH_USER') || '{"email":"admin@ateliergrafrika.com"}');
 
     const topProfileEmail = document.getElementById('topProfileEmail');
-    if (topProfileEmail && auth.email) topProfileEmail.textContent = auth.email;
+    if (topProfileEmail && authUser.email) topProfileEmail.textContent = authUser.email;
 
-    if (document.getElementById('setWhatsapp')) document.getElementById('setWhatsapp').value = settings.whatsapp || '';
-    if (document.getElementById('setPhone')) document.getElementById('setPhone').value = settings.phone || '';
-    if (document.getElementById('setEmail')) document.getElementById('setEmail').value = settings.email || '';
-    if (document.getElementById('setLocation')) document.getElementById('setLocation').value = settings.location || '';
-    if (document.getElementById('setInstagram')) document.getElementById('setInstagram').value = settings.instagram || '';
-    if (document.getElementById('setTiktok')) document.getElementById('setTiktok').value = settings.tiktok || '';
-    if (document.getElementById('setFacebook')) document.getElementById('setFacebook').value = settings.facebook || '';
-    if (document.getElementById('setLinkedin')) document.getElementById('setLinkedin').value = settings.linkedin || '';
-    if (document.getElementById('setX')) document.getElementById('setX').value = settings.x || '';
+    if (document.getElementById('setWhatsapp')) document.getElementById('setWhatsapp').value = currentSettings.whatsapp || '';
+    if (document.getElementById('setPhone')) document.getElementById('setPhone').value = currentSettings.phone || '';
+    if (document.getElementById('setEmail')) document.getElementById('setEmail').value = currentSettings.email || '';
+    if (document.getElementById('setLocation')) document.getElementById('setLocation').value = currentSettings.location || '';
+    if (document.getElementById('setInstagram')) document.getElementById('setInstagram').value = currentSettings.instagram || '';
+    if (document.getElementById('setTiktok')) document.getElementById('setTiktok').value = currentSettings.tiktok || '';
+    if (document.getElementById('setFacebook')) document.getElementById('setFacebook').value = currentSettings.facebook || '';
+    if (document.getElementById('setLinkedin')) document.getElementById('setLinkedin').value = currentSettings.linkedin || '';
+    if (document.getElementById('setX')) document.getElementById('setX').value = currentSettings.x || '';
 
-    if (document.getElementById('setAdminEmail')) document.getElementById('setAdminEmail').value = auth.email || '';
+    if (document.getElementById('setAdminEmail')) document.getElementById('setAdminEmail').value = authUser.email || '';
 }
 
 function setupSettingsForms() {
@@ -1103,7 +859,7 @@ function setupSettingsForms() {
     const securityForm = document.getElementById('settingsSecurityForm');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const updated = {
                 whatsapp: document.getElementById('setWhatsapp').value.trim(),
@@ -1117,13 +873,31 @@ function setupSettingsForms() {
                 x: document.getElementById('setX').value.trim()
             };
 
-            saveStoredSettings(updated);
-            showToast("Coordonnées sauvegardées avec succès !");
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const orig = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span>Sauvegarde en cours...</span>`;
+            }
+
+            try {
+                await apiClient.saveSettings(updated);
+                currentSettings = updated;
+                showToast("Coordonnées de l'Atelier sauvegardées avec succès !");
+            } catch (err) {
+                console.error("Erreur enregistrement réglages:", err);
+                showToast(err.message || "Erreur de sauvegarde.", "alert");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = orig;
+                }
+            }
         });
     }
 
     if (securityForm) {
-        securityForm.addEventListener('submit', (e) => {
+        securityForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('setAdminEmail').value.trim();
             const newPass = document.getElementById('setAdminNewPass').value.trim();
@@ -1134,26 +908,36 @@ function setupSettingsForms() {
                 return;
             }
 
-            const currentAuth = getStoredAuth();
-            currentAuth.email = email;
-            if (newPass) {
-                currentAuth.password = newPass;
+            const submitBtn = securityForm.querySelector('button[type="submit"]');
+            const orig = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span>Mise à jour...</span>`;
             }
 
-            saveStoredAuth(currentAuth);
-            const topProfileEmail = document.getElementById('topProfileEmail');
-            if (topProfileEmail) topProfileEmail.textContent = email;
+            try {
+                await apiClient.updateCredentials(email, newPass || undefined);
+                const topProfileEmail = document.getElementById('topProfileEmail');
+                if (topProfileEmail) topProfileEmail.textContent = email;
 
-            document.getElementById('setAdminNewPass').value = '';
-            document.getElementById('setAdminConfirmPass').value = '';
-            showToast("Identifiants de sécurité mis à jour !");
+                document.getElementById('setAdminNewPass').value = '';
+                document.getElementById('setAdminConfirmPass').value = '';
+                showToast("Identifiants de sécurité mis à jour !");
+            } catch (err) {
+                console.error("Erreur mise à jour identifiants:", err);
+                showToast(err.message || "Erreur mise à jour de sécurité.", "alert");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = orig;
+                }
+            }
         });
     }
 }
 
-
 // =========================================================================
-// 10. UTILITAIRES
+// 9. UTILITAIRES
 // =========================================================================
 function showToast(message, type = 'info') {
     const toast = document.getElementById('toastMessage');

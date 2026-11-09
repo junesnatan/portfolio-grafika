@@ -587,11 +587,22 @@
                      ============================================================= -->
                 <div class="tab-pane" id="tabLeads">
                     <div class="pane-action-bar">
-                        <div class="filter-pills-cluster">
-                            <button class="filter-pill-item active" data-lead-filter="all">Toutes (<span id="countLeadsAll">0</span>)</button>
-                            <button class="filter-pill-item" data-lead-filter="Nouveau">Nouveau (<span id="countLeadsNew">0</span>)</button>
-                            <button class="filter-pill-item" data-lead-filter="En contact">En cours (<span id="countLeadsContact">0</span>)</button>
-                            <button class="filter-pill-item" data-lead-filter="Devis validé">Validé (<span id="countLeadsDone">0</span>)</button>
+                        <div class="search-filter-cluster">
+                            <div class="clean-search-box">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" id="leadSearchInput" placeholder="Rechercher par nom, ville ou téléphone...">
+                            </div>
+
+                            <div class="filter-pills-cluster">
+                                <button class="filter-pill-item active" data-lead-filter="all">Toutes (<span id="countLeadsAll">0</span>)</button>
+                                <button class="filter-pill-item" data-lead-filter="Nouveau">Nouveau (<span id="countLeadsNew">0</span>)</button>
+                                <button class="filter-pill-item" data-lead-filter="En contact">En cours (<span id="countLeadsContact">0</span>)</button>
+                                <button class="filter-pill-item" data-lead-filter="Devis validé">Validé (<span id="countLeadsDone">0</span>)</button>
+                                <button class="filter-pill-item" data-lead-filter="Archivé">Archivé (<span id="countLeadsArchived">0</span>)</button>
+                            </div>
                         </div>
 
                         <button class="btn-outline-pill-small" id="btnExportLeadsCsv">
