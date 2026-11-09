@@ -83,46 +83,9 @@ export async function initDb() {
         );
     `);
 
-    // SEED INITIAL SI TABLES VIDES
-    const projectCount = await db.execute('SELECT COUNT(*) as count FROM projects;');
-    if (Number(projectCount.rows[0].count) === 0) {
-        for (const proj of DEFAULT_PROJECTS) {
-            await db.execute({
-                sql: `INSERT INTO projects (id, title, category, location, surface, duration, description, photos)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
-                args: [
-                    proj.id,
-                    proj.title,
-                    proj.category,
-                    proj.location,
-                    proj.surface,
-                    proj.duration,
-                    proj.description,
-                    JSON.stringify(proj.photos)
-                ]
-            });
-        }
-    }
-
-    const leadCount = await db.execute('SELECT COUNT(*) as count FROM leads;');
-    if (Number(leadCount.rows[0].count) === 0) {
-        for (const lead of SAMPLE_LEADS) {
-            await db.execute({
-                sql: `INSERT INTO leads (id, name, phone, domain, city, message, status, date)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
-                args: [
-                    lead.id,
-                    lead.name,
-                    lead.phone,
-                    lead.domain,
-                    lead.city,
-                    lead.message,
-                    lead.status,
-                    lead.date
-                ]
-            });
-        }
-    }
+    // Purge de tout vestige de projets ou leads fictifs / démo
+    await db.execute("DELETE FROM projects WHERE id IN ('proj-1', 'proj-2', 'proj-3', 'proj-4', 'proj-5', 'proj-6', 'proj-7', '1', '2', '3', '4', '5', '6', '7');");
+    await db.execute("DELETE FROM leads WHERE id IN ('lead-1', 'lead-2', 'lead-3', '101', '102', '103', '104');");
 
     const settingsCount = await db.execute("SELECT COUNT(*) as count FROM settings WHERE id = 'default';");
     if (Number(settingsCount.rows[0].count) === 0) {
@@ -134,7 +97,7 @@ export async function initDb() {
 
     const statsCount = await db.execute("SELECT COUNT(*) as count FROM stats WHERE id = 'default';");
     if (Number(statsCount.rows[0].count) === 0) {
-        await db.execute(`INSERT INTO stats (id, views, whatsapp, leads) VALUES ('default', 248, 39, 12);`);
+        await db.execute(`INSERT INTO stats (id, views, whatsapp, leads) VALUES ('default', 0, 0, 0);`);
     }
 
     initialized = true;

@@ -6,6 +6,13 @@
 
 import { DEFAULT_PROJECTS, DEFAULT_SETTINGS, SAMPLE_LEADS } from './data/initial-data.js';
 
+// Purge prompte de tout résidu de données fictives du localStorage
+try {
+    ['GRAFRIKA_PROJECTS', 'GRAFIKA_PROJECTS', 'GRAFRIKA_PROJECTS_CACHE', 'GRAFRIKA_LEADS', 'GRAFRIKA_LEADS_CACHE'].forEach(k => {
+        localStorage.removeItem(k);
+    });
+} catch {}
+
 const TOKEN_KEY = 'GRAFRIKA_JWT_TOKEN';
 const USER_KEY = 'GRAFRIKA_AUTH_USER';
 
@@ -112,82 +119,48 @@ export const apiClient = {
     async getProjects() {
         try {
             const res = await fetch('/api/projects');
-            if (!res.ok) throw new Error('API non joignable');
-            const data = await res.json();
-            if (Array.isArray(data) && data.length > 0) {
-                localStorage.setItem('GRAFRIKA_PROJECTS_CACHE', JSON.stringify(data));
-                return data;
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    return data;
+                }
             }
         } catch (err) {
-            console.warn('API getProjects indisponible, utilisation du cache local:', err.message);
+            console.warn('API getProjects indisponible:', err.message);
         }
-
-        // Cache local ou données par défaut
-        const cached = localStorage.getItem('GRAFRIKA_PROJECTS_CACHE') || localStorage.getItem('GRAFRIKA_PROJECTS');
-        if (cached) {
-            try { return JSON.parse(cached); } catch {}
-        }
-        return DEFAULT_PROJECTS;
+        return [];
     },
 
     async createProject(project) {
-        try {
-            const res = await fetch('/api/projects', {
-                method: 'POST',
-                headers: this.getAuthHeaders(),
-                body: JSON.stringify(project)
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Erreur création projet');
-            return data;
-        } catch (err) {
-            console.warn('Fallback local createProject:', err.message);
-            const projects = await this.getProjects();
-            const newProj = { ...project, id: 'proj-' + Date.now() };
-            projects.unshift(newProj);
-            localStorage.setItem('GRAFRIKA_PROJECTS_CACHE', JSON.stringify(projects));
-            return { success: true, id: newProj.id };
-        }
+        const res = await fetch('/api/projects', {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify(project)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erreur création projet');
+        return data;
     },
 
     async updateProject(id, project) {
-        try {
-            const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
-                method: 'PUT',
-                headers: this.getAuthHeaders(),
-                body: JSON.stringify(project)
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Erreur mise à jour projet');
-            return data;
-        } catch (err) {
-            console.warn('Fallback local updateProject:', err.message);
-            const projects = await this.getProjects();
-            const idx = projects.findIndex(p => p.id === id);
-            if (idx !== -1) {
-                projects[idx] = { ...project, id };
-                localStorage.setItem('GRAFRIKA_PROJECTS_CACHE', JSON.stringify(projects));
-            }
-            return { success: true };
-        }
+        const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
+            method: 'PUT',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify(project)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erreur mise à jour projet');
+        return data;
     },
 
     async deleteProject(id) {
-        try {
-            const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
-                method: 'DELETE',
-                headers: this.getAuthHeaders()
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Erreur suppression projet');
-            return data;
-        } catch (err) {
-            console.warn('Fallback local deleteProject:', err.message);
-            let projects = await this.getProjects();
-            projects = projects.filter(p => p.id !== id);
-            localStorage.setItem('GRAFRIKA_PROJECTS_CACHE', JSON.stringify(projects));
-            return { success: true };
-        }
+        const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
+            method: 'DELETE',
+            headers: this.getAuthHeaders()
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erreur suppression projet');
+        return data;
     },
 
     // -------------------------------------------------------------
@@ -198,21 +171,16 @@ export const apiClient = {
             const res = await fetch('/api/leads', {
                 headers: this.getAuthHeaders()
             });
-            if (!res.ok) throw new Error('API leads indisponible');
-            const data = await res.json();
-            if (Array.isArray(data)) {
-                localStorage.setItem('GRAFRIKA_LEADS_CACHE', JSON.stringify(data));
-                return data;
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    return data;
+                }
             }
         } catch (err) {
-            console.warn('Fallback local getLeads:', err.message);
+            console.warn('API getLeads indisponible:', err.message);
         }
-
-        const cached = localStorage.getItem('GRAFRIKA_LEADS_CACHE') || localStorage.getItem('GRAFRIKA_LEADS');
-        if (cached) {
-            try { return JSON.parse(cached); } catch {}
-        }
-        return SAMPLE_LEADS;
+        return [];
     },
 
     async createLead(lead) {

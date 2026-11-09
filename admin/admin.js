@@ -281,8 +281,8 @@ function renderDashboardOverview() {
     const statLeads = document.getElementById('statLeads');
     const statProjects = document.getElementById('statProjects');
 
-    if (statViews) statViews.textContent = currentStats.views || 248;
-    if (statWhatsapp) statWhatsapp.textContent = currentStats.whatsapp || 39;
+    if (statViews) statViews.textContent = currentStats.views || 0;
+    if (statWhatsapp) statWhatsapp.textContent = currentStats.whatsapp || 0;
     if (statLeads) statLeads.textContent = currentLeads.length;
     if (statProjects) statProjects.textContent = currentProjects.length;
 
@@ -296,9 +296,17 @@ function renderDashboardOverview() {
     const recentLeadsContainer = document.getElementById('dashRecentLeadsList');
     if (recentLeadsContainer) {
         recentLeadsContainer.innerHTML = '';
-        const recentLeads = [...currentLeads].slice(0, 4);
 
-        recentLeads.forEach(lead => {
+        if (currentLeads.length === 0) {
+            recentLeadsContainer.innerHTML = `
+                <div style="padding: 1.5rem; text-align: center; color: var(--text-subtle); font-size: 0.85rem;">
+                    Aucune demande de devis reçue pour le moment.
+                </div>
+            `;
+        } else {
+            const recentLeads = [...currentLeads].slice(0, 4);
+
+            recentLeads.forEach(lead => {
             const item = document.createElement('div');
             item.className = 'lead-row-card';
             const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
@@ -339,30 +347,40 @@ function renderDashboardOverview() {
             `;
             recentLeadsContainer.appendChild(item);
         });
+        }
     }
 
     // Mini grille réalisations sur dashboard
     const miniGrid = document.getElementById('dashProjectsMiniGrid');
     if (miniGrid) {
         miniGrid.innerHTML = '';
-        const showcaseProjects = currentProjects.slice(0, 3);
-        showcaseProjects.forEach(p => {
-            const tile = document.createElement('div');
-            tile.className = 'mini-project-tile';
-            const firstPhoto = (p.photos && p.photos[0]) ? p.photos[0] : 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80';
-            tile.innerHTML = `
-                <img src="${escapeHtml(firstPhoto)}" alt="${escapeHtml(p.title)}" class="mini-project-thumb">
-                <div class="mini-project-meta">
-                    <span class="mini-project-title">${escapeHtml(p.title)}</span>
-                    <span class="mini-project-sub">${escapeHtml(p.category || 'Architecture')} • ${escapeHtml(p.location || 'Bénin')}</span>
+
+        if (currentProjects.length === 0) {
+            miniGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; padding: 2rem 1rem; text-align: center; color: var(--text-subtle); font-size: 0.85rem; background: #ffffff; border-radius: 14px; border: 1.5px dashed var(--border-subtle);">
+                    Aucune réalisation en ligne. Cliquez sur <strong>"Ajouter un projet"</strong> ci-dessus pour publier.
                 </div>
             `;
-            tile.addEventListener('click', () => {
-                const projectsTabBtn = document.querySelector('.dash-nav-btn[data-tab="projects"]');
-                if (projectsTabBtn) projectsTabBtn.click();
+        } else {
+            const showcaseProjects = currentProjects.slice(0, 3);
+            showcaseProjects.forEach(p => {
+                const tile = document.createElement('div');
+                tile.className = 'mini-project-tile';
+                const firstPhoto = (p.photos && p.photos[0]) ? p.photos[0] : '';
+                tile.innerHTML = `
+                    <img src="${escapeHtml(firstPhoto)}" alt="${escapeHtml(p.title)}" class="mini-project-thumb">
+                    <div class="mini-project-meta">
+                        <span class="mini-project-title">${escapeHtml(p.title)}</span>
+                        <span class="mini-project-sub">${escapeHtml(p.category || 'Architecture')} • ${escapeHtml(p.location || 'Bénin')}</span>
+                    </div>
+                `;
+                tile.addEventListener('click', () => {
+                    const projectsTabBtn = document.querySelector('.dash-nav-btn[data-tab="projects"]');
+                    if (projectsTabBtn) projectsTabBtn.click();
+                });
+                miniGrid.appendChild(tile);
             });
-            miniGrid.appendChild(tile);
-        });
+        }
     }
 }
 
@@ -385,12 +403,28 @@ function renderProjectsList() {
     container.innerHTML = '';
 
     if (filtered.length === 0) {
-        container.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: #ffffff; border-radius: 20px; border: 1.5px dashed var(--border-subtle); color: var(--text-secondary);">
-                <p style="font-weight: 700; margin-bottom: 0.4rem;">Aucun projet correspondant</p>
-                <p style="font-size: 0.82rem; color: var(--text-subtle);">Modifiez vos filtres ou ajoutez une nouvelle réalisation.</p>
-            </div>
-        `;
+        if (currentProjects.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1.5rem; background: #ffffff; border-radius: 20px; border: 1.5px dashed var(--border-subtle); color: var(--text-secondary);">
+                    <p style="font-weight: 700; font-size: 1.05rem; margin-bottom: 0.4rem; color: var(--navy);">Aucune réalisation publiée pour le moment</p>
+                    <p style="font-size: 0.85rem; color: var(--text-subtle); margin-bottom: 1.2rem;">Votre portfolio est vierge. Cliquez sur le bouton ci-dessous pour ajouter votre premier projet d'architecture.</p>
+                    <button type="button" class="btn-primary-pill" onclick="document.getElementById('btnAddNewProject')?.click()" style="display: inline-flex; margin: 0 auto;">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Ajouter mon premier projet</span>
+                    </button>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: #ffffff; border-radius: 20px; border: 1.5px dashed var(--border-subtle); color: var(--text-secondary);">
+                    <p style="font-weight: 700; margin-bottom: 0.4rem;">Aucun projet correspondant</p>
+                    <p style="font-size: 0.82rem; color: var(--text-subtle);">Modifiez vos filtres ou ajoutez une nouvelle réalisation.</p>
+                </div>
+            `;
+        }
         return;
     }
 

@@ -88,6 +88,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!archTrack) return;
         archTrack.innerHTML = '';
 
+        if (!projectList || projectList.length === 0) {
+            archTrack.innerHTML = `
+                <div class="empty-portfolio-state" style="padding: 3.5rem 1.5rem; text-align: center; width: 100%; max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.85rem;">
+                    <div style="width: 52px; height: 52px; border-radius: 50%; background: #ffffff; border: 1.5px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem;">Réalisations en cours de mise en ligne</h3>
+                        <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5;">Atelier Grafrika intègre actuellement ses dernières réalisations. Contactez-nous directement pour consulter notre portfolio sur-mesure.</p>
+                    </div>
+                    <button type="button" class="btn-hero-solid" onclick="document.getElementById('openQuoteModalBtn')?.click()" style="margin-top: 0.4rem; padding: 0.65rem 1.4rem; font-size: 0.85rem;">
+                        <span>Demander une étude de projet</span>
+                    </button>
+                </div>
+            `;
+            if (mobileDotsContainer) mobileDotsContainer.innerHTML = '';
+            return;
+        }
+
         const total = projectList.length;
         const centerIdx = Math.floor(total / 2);
 

@@ -11,7 +11,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { getDb, initDb } from './api/_db.js';
 import { signToken, verifyToken, comparePassword, hashPassword } from './api/_auth.js';
-import { DEFAULT_SETTINGS, DEFAULT_PROJECTS } from './data/initial-data.js';
+import { DEFAULT_SETTINGS } from './data/initial-data.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
