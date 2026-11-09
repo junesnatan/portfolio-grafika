@@ -6,7 +6,10 @@ let initialized = false;
 
 export function getDb() {
     if (!client) {
-        const url = process.env.TURSO_DATABASE_URL || 'file:grafrika.db';
+        const defaultLocalDb = (typeof process !== 'undefined' && process.env && process.env.VERCEL)
+            ? 'file:/tmp/grafrika.db'
+            : 'file:grafrika.db';
+        const url = process.env.TURSO_DATABASE_URL || defaultLocalDb;
         const authToken = process.env.TURSO_AUTH_TOKEN || undefined;
 
         client = createClient({
