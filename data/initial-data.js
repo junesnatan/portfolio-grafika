@@ -27,15 +27,15 @@ export const DEFAULT_PROJECTS = [
 
 // Coordonnées officielles du studio Atelier Grafrika
 export const DEFAULT_SETTINGS = {
-    whatsapp: "+229 01 00 00 00", // Remplacez par votre vrai numéro WhatsApp (ex: "+229 97 00 00 00")
-    phone: "+229 01 00 00 00",
-    email: "contact@ateliergrafrika.com",
-    address: "Abomey-Calavi, République du Bénin",
-    instagram: "https://instagram.com/ateliergrafrika",
+    whatsapp: "+229 01 97 93 23 25",
+    phone: "+229 01 97 93 23 25",
+    email: "ateliergrafrika.me@gmail.com",
+    address: "Abomey-Calavi & Cotonou, République du Bénin",
+    instagram: "https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=n55byrf",
     tiktok: "https://tiktok.com/@ateliergrafrika",
-    facebook: "https://facebook.com/ateliergrafrika",
-    linkedin: "https://linkedin.com/company/ateliergrafrika",
-    x: "https://x.com/ateliergrafrika"
+    facebook: "https://www.facebook.com/share/14yYvD9ULWL/",
+    linkedin: "https://linkedin.com",
+    x: "https://x.com"
 };
 
 export const SAMPLE_LEADS = [];

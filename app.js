@@ -39,6 +39,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             const settings = await apiClient.getSettings();
             if (!settings) return;
 
+            // Bouton principal WhatsApp
+            if (settings.whatsapp) {
+                let waDigits = settings.whatsapp.replace(/[^0-9]/g, '');
+                if (waDigits.startsWith('01') && waDigits.length === 10) {
+                    waDigits = '229' + waDigits;
+                }
+                const linkWa = document.getElementById('linkWhatsapp');
+                if (linkWa) {
+                    linkWa.href = `https://wa.me/${waDigits}?text=Bonjour%20Atelier%20Grafrika%2C%20je%20souhaite%20%C3%A9changer%20avec%20vous%20pour%20un%20projet.`;
+                }
+            }
+
             // Boutons d'appel direct
             if (settings.phone) {
                 const phoneDigits = settings.phone.replace(/[^0-9+]/g, '');
@@ -56,23 +68,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Liens réseaux sociaux
             if (settings.instagram) {
-                const ig = document.querySelector('a[aria-label="Instagram"]');
+                const ig = document.getElementById('linkInstagram') || document.querySelector('a[aria-label="Instagram"]');
                 if (ig) ig.href = settings.instagram;
             }
             if (settings.tiktok) {
-                const tt = document.querySelector('a[aria-label="TikTok"]');
+                const tt = document.getElementById('linkTiktok') || document.querySelector('a[aria-label="TikTok"]');
                 if (tt) tt.href = settings.tiktok;
             }
             if (settings.facebook) {
-                const fb = document.querySelector('a[aria-label="Facebook"]');
+                const fb = document.getElementById('linkFacebook') || document.querySelector('a[aria-label="Facebook"]');
                 if (fb) fb.href = settings.facebook;
             }
             if (settings.linkedin) {
-                const li = document.querySelector('a[aria-label="LinkedIn"]');
+                const li = document.getElementById('linkLinkedin') || document.querySelector('a[aria-label="LinkedIn"]');
                 if (li) li.href = settings.linkedin;
             }
             if (settings.x) {
-                const x = document.querySelector('a[aria-label="X (Twitter)"]');
+                const x = document.getElementById('linkX') || document.querySelector('a[aria-label="X (Twitter)"]');
                 if (x) x.href = settings.x;
             }
         } catch (e) {
@@ -329,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Lien WhatsApp personnalisé
         const settings = await apiClient.getSettings();
-        let targetWa = '22900000000';
+        let targetWa = '2290197932325';
         if (settings && settings.whatsapp) {
             targetWa = settings.whatsapp.replace(/[^0-9]/g, '');
         }
@@ -474,7 +486,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // 2. Redirection WhatsApp fluide vers le numéro configuré dans les réglages
-            let targetWa = '22900000000';
+            let targetWa = '2290197932325';
             try {
                 const settings = await apiClient.getSettings();
                 if (settings && settings.whatsapp) {
