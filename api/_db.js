@@ -104,17 +104,6 @@ export async function initDb() {
                 });
             }
         }
-    } else {
-        const cur = await db.execute("SELECT data FROM settings WHERE id = 'default' LIMIT 1;");
-        if (cur.rows.length > 0 && cur.rows[0].data) {
-            const parsed = typeof cur.rows[0].data === 'string' ? JSON.parse(cur.rows[0].data) : cur.rows[0].data;
-            if (!parsed.whatsapp || parsed.whatsapp.includes('00 00 00') || (parsed.email && parsed.email.includes('contact@ateliergrafrika.com'))) {
-                await db.execute({
-                    sql: `UPDATE settings SET data = ? WHERE id = 'default';`,
-                    args: [JSON.stringify(DEFAULT_SETTINGS)]
-                });
-            }
-        }
     }
 
     const statsCount = await db.execute("SELECT COUNT(*) as count FROM stats WHERE id = 'default';");
