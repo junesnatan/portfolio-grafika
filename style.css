@@ -634,6 +634,99 @@ body {
     min-width: max-content;
 }
 
+/* ==========================================================================
+   ÉTAT PORTFOLIO EN COURS DE MISE EN LIGNE (ZÉRO PROJET)
+   ========================================================================== */
+.arch-gallery-container.is-empty {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    padding: 0.5rem 1.2rem 1.2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.arch-gallery-container.is-empty .arch-track {
+    min-width: 0;
+    width: 100%;
+    max-width: 580px;
+    padding: 0;
+    display: block;
+}
+
+.empty-showcase-box {
+    background: #ffffff;
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 1.6rem 1.5rem;
+    box-shadow: 0 4px 18px rgba(0, 59, 115, 0.04);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.empty-icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 1px solid var(--border-subtle);
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.4rem;
+}
+
+.empty-box-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+}
+
+.empty-box-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 440px;
+    margin: 0 auto;
+}
+
+.empty-pillars-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 0.2rem;
+    width: 100%;
+}
+
+.pillar-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0.42rem 0.95rem;
+    background: var(--cream);
+    border: 1px solid rgba(0, 59, 115, 0.1);
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--navy);
+}
+
+.pillar-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-blue);
+    flex-shrink: 0;
+}
+
 /* Cartes individuelles : visuels majestueux au format BrandLyft */
 .arch-card {
     position: relative;
@@ -861,6 +954,57 @@ body {
         padding: 0 8vw;
         gap: 12px;
         align-items: center;
+    }
+
+    .arch-gallery-container.is-empty {
+        padding: 0.2rem 1.1rem 1rem !important;
+        scroll-snap-type: none !important;
+        scroll-padding: 0 !important;
+        justify-content: center !important;
+    }
+
+    .arch-gallery-container.is-empty .arch-track {
+        padding: 0 !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .empty-showcase-box {
+        padding: 1.35rem 1.15rem;
+        border-radius: 18px;
+        gap: 0.85rem;
+    }
+
+    .empty-icon-circle {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 0.35rem;
+    }
+
+    .empty-icon-circle svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .empty-box-title {
+        font-size: 1.05rem;
+    }
+
+    .empty-box-desc {
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+
+    .empty-pillars-list {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .pillar-chip {
+        justify-content: center;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.76rem;
+        width: 100%;
     }
 
     .arch-card {
