@@ -1,5 +1,6 @@
 import { getDb, initDb } from '../_db.js';
 import { verifyToken } from '../_auth.js';
+import { DEFAULT_PROJECTS } from '../../data/initial-data.js';
 
 export default async function handler(req, res) {
     await initDb();
@@ -19,9 +20,12 @@ export default async function handler(req, res) {
                 description: row.description,
                 photos: typeof row.photos === 'string' ? JSON.parse(row.photos) : row.photos
             }));
-            return res.status(200).json(projects);
+            if (projects.length > 0) {
+                return res.status(200).json(projects);
+            }
+            return res.status(200).json(DEFAULT_PROJECTS || []);
         } catch (err) {
-            return res.status(500).json({ error: err.message });
+            return res.status(200).json(DEFAULT_PROJECTS || []);
         }
     }
 

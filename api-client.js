@@ -128,7 +128,7 @@ export const apiClient = {
         } catch (err) {
             console.warn('API getProjects indisponible:', err.message);
         }
-        return [];
+        return DEFAULT_PROJECTS || [];
     },
 
     async createProject(project) {

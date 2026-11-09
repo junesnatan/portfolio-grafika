@@ -11,7 +11,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { getDb, initDb } from './api/_db.js';
 import { signToken, verifyToken, comparePassword, hashPassword } from './api/_auth.js';
-import { DEFAULT_SETTINGS } from './data/initial-data.js';
+import { DEFAULT_SETTINGS, DEFAULT_PROJECTS } from './data/initial-data.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -148,9 +148,12 @@ app.get('/api/projects', async (req, res) => {
             description: row.description,
             photos: typeof row.photos === 'string' ? JSON.parse(row.photos) : row.photos
         }));
-        return res.status(200).json(projects);
+        if (projects.length > 0) {
+            return res.status(200).json(projects);
+        }
+        return res.status(200).json(DEFAULT_PROJECTS || []);
     } catch (err) {
-        return res.status(500).json({ error: err.message });
+        return res.status(200).json(DEFAULT_PROJECTS || []);
     }
 });
 
