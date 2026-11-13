@@ -35,7 +35,7 @@ export const DEFAULT_SETTINGS = {
     tiktok: "https://www.tiktok.com/@atelier.grafrika?_r=1&_t=ZS-9BGWeK75ehr",
     facebook: "https://www.facebook.com/share/14yYvD9ULWL/",
     linkedin: "https://www.linkedin.com/in/m-principe-junior-zegue-aa1405246?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-    x: ""
+    x: "https://x.com/AtelierGrafrika"
 };
 
 export const SAMPLE_LEADS = [];
