@@ -819,7 +819,7 @@ function renderLeadsList() {
             <td style="font-size: 0.78rem; color: var(--text-subtle);">${formatDate(lead.date)}</td>
             <td>
                 <strong>${escapeHtml(lead.name)}</strong>
-                <div style="font-size: 0.75rem; color: var(--text-secondary);">${escapeHtml(lead.phone)}</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">${escapeHtml(lead.phone)}${lead.email ? ` • <a href="mailto:${escapeHtml(lead.email)}" style="color: var(--brand-blue); text-decoration: underline;">${escapeHtml(lead.email)}</a>` : ''}</div>
             </td>
             <td><strong>${escapeHtml(lead.domain || 'Sur-mesure')}</strong></td>
             <td>${escapeHtml(lead.city || 'Bénin')}</td>

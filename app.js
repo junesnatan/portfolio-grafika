@@ -456,6 +456,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
 
             const name = document.getElementById('cName').value.trim();
+            const email = document.getElementById('cEmail') ? document.getElementById('cEmail').value.trim() : '';
             const phone = document.getElementById('cPhone').value.trim();
             const city = document.getElementById('cCity').value.trim();
             const domain = realDomainInput ? realDomainInput.value : '';
@@ -476,6 +477,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 await apiClient.createLead({
                     name,
+                    email,
                     phone,
                     city: city || 'Non renseignée',
                     domain,
@@ -494,7 +496,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             } catch (e) {}
 
-            const text = `Bonjour Atelier Grafrika !%0A%0AJe souhaite demander un devis pour un projet :%0A- *Nom :* ${encodeURIComponent(name)}%0A- *Téléphone :* ${encodeURIComponent(phone)}%0A- *Localisation :* ${encodeURIComponent(city || 'À préciser')}%0A- *Prestation :* ${encodeURIComponent(domain)}%0A- *Détails :* ${encodeURIComponent(message || 'À définir ensemble')}`;
+            const text = `Bonjour Atelier Grafrika !%0A%0AJe souhaite demander un devis pour un projet :%0A- *Nom :* ${encodeURIComponent(name)}${email ? `%0A- *Email :* ${encodeURIComponent(email)}` : ''}%0A- *Téléphone :* ${encodeURIComponent(phone)}%0A- *Localisation :* ${encodeURIComponent(city || 'À préciser')}%0A- *Prestation :* ${encodeURIComponent(domain)}%0A- *Détails :* ${encodeURIComponent(message || 'À définir ensemble')}`;
 
             window.open(`https://wa.me/${targetWa}?text=${text}`, '_blank');
             closeQuote();

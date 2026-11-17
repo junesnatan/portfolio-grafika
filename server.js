@@ -250,7 +250,7 @@ app.get('/api/leads', requireAdmin, async (req, res) => {
 app.post('/api/leads', async (req, res) => {
     try {
         const db = getDb();
-        const { name, phone, domain, city, message } = req.body || {};
+        const { name, email, phone, domain, city, message } = req.body || {};
 
         if (!name || !phone) {
             return res.status(400).json({ error: 'Nom et téléphone requis' });
@@ -266,11 +266,12 @@ app.post('/api/leads', async (req, res) => {
         });
 
         await db.execute({
-            sql: `INSERT INTO leads (id, name, phone, domain, city, message, status, date)
-                  VALUES (?, ?, ?, ?, ?, ?, 'Nouveau', ?);`,
+            sql: `INSERT INTO leads (id, name, email, phone, domain, city, message, status, date)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, 'Nouveau', ?);`,
             args: [
                 id,
                 name.trim(),
+                email ? email.trim() : '',
                 phone.trim(),
                 domain ? domain.trim() : 'Projet Architectural',
                 city ? city.trim() : 'Bénin',

@@ -44,6 +44,7 @@ export async function initDb() {
         CREATE TABLE IF NOT EXISTS leads (
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
+            email TEXT,
             phone TEXT NOT NULL,
             domain TEXT,
             city TEXT,
@@ -85,6 +86,7 @@ export async function initDb() {
 
     // Purge de tout vestige de projets ou leads fictifs / démo
     await db.execute("DELETE FROM projects WHERE id IN ('proj-1', 'proj-2', 'proj-3', 'proj-4', 'proj-5', 'proj-6', 'proj-7', '1', '2', '3', '4', '5', '6', '7');");
+    try { await db.execute("ALTER TABLE leads ADD COLUMN email TEXT;"); } catch(e) {}
     await db.execute("DELETE FROM leads WHERE id IN ('lead-1', 'lead-2', 'lead-3', '101', '102', '103', '104');");
 
     const settingsCount = await db.execute("SELECT COUNT(*) as count FROM settings WHERE id = 'default';");

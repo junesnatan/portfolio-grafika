@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     // POST /api/leads : Nouveau devis depuis le site public (ouvert)
     if (req.method === 'POST') {
         try {
-            const { name, phone, domain, city, message } = req.body || {};
+            const { name, email, phone, domain, city, message } = req.body || {};
 
             if (!name || !phone) {
                 return res.status(400).json({ error: 'Nom et téléphone requis' });
@@ -36,11 +36,12 @@ export default async function handler(req, res) {
             });
 
             await db.execute({
-                sql: `INSERT INTO leads (id, name, phone, domain, city, message, status, date)
-                      VALUES (?, ?, ?, ?, ?, ?, 'Nouveau', ?);`,
+                sql: `INSERT INTO leads (id, name, email, phone, domain, city, message, status, date)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, 'Nouveau', ?);`,
                 args: [
                     id,
                     name.trim(),
+                    email ? email.trim() : '',
                     phone.trim(),
                     domain ? domain.trim() : 'Projet Architectural',
                     city ? city.trim() : 'Bénin',
