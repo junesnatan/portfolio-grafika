@@ -169,11 +169,11 @@ function setupNavigation() {
     const pageSubtitle = document.getElementById('pageSubtitle');
 
     const titles = {
-        dashboard: { title: "Dashboard", sub: "Supervisez vos projets d'architecture, devis et contacts en temps réel." },
-        projects: { title: "Projets & Portfolio", sub: "Gestion des réalisations et galeries photos" },
-        leads: { title: "Devis & Leads", sub: "Suivi des clients potentiels et prises de contact" },
-        stats: { title: "Analytics", sub: "Performances de votre Link in Bio et audience" },
-        settings: { title: "Réglages", sub: "Mise à jour des coordonnées et paramètres du site" }
+        dashboard: { title: "Vue d'ensemble", sub: "Supervisez vos projets d'architecture, devis et contacts en temps réel." },
+        settings: { title: "Infos du site visiteur", sub: "Modifiez vos coordonnées WhatsApp, téléphone, adresse et réseaux sociaux." },
+        projects: { title: "Projets & Réalisations", sub: "Ajoutez et gérez vos projets visibles sur le portfolio public." },
+        leads: { title: "Devis & Contacts", sub: "Suivi complet des demandes de devis et prospects." },
+        stats: { title: "Analytics", sub: "Performances de votre portfolio et audience." }
     };
 
     function switchTab(tabKey) {
@@ -273,18 +273,21 @@ function setupMobileDrawer() {
 }
 
 // =========================================================================
-// 4. RENDU DU DASHBOARD
+// 4. RENDU DU DASHBOARD (STYLE ÉLITE INSPIRÉ DE LA CAPTURE)
 // =========================================================================
 function renderDashboardOverview() {
     const statViews = document.getElementById('statViews');
-    const statWhatsapp = document.getElementById('statWhatsapp');
-    const statLeads = document.getElementById('statLeads');
     const statProjects = document.getElementById('statProjects');
+    const statLeadsDone = document.getElementById('statLeadsDone');
+    const statLeadsProgress = document.getElementById('statLeadsProgress');
+
+    const doneCount = currentLeads.filter(l => l.status === 'Devis validé' || l.status === 'Completed').length;
+    const inProgressCount = currentLeads.filter(l => l.status === 'Nouveau' || l.status === 'En contact' || l.status === 'In Progress').length;
 
     if (statViews) statViews.textContent = currentStats.views || 0;
-    if (statWhatsapp) statWhatsapp.textContent = currentStats.whatsapp || 0;
-    if (statLeads) statLeads.textContent = currentLeads.length;
     if (statProjects) statProjects.textContent = currentProjects.length;
+    if (statLeadsDone) statLeadsDone.textContent = doneCount;
+    if (statLeadsProgress) statLeadsProgress.textContent = inProgressCount;
 
     const badgeProjectCount = document.getElementById('badgeProjectCount');
     const badgeLeadsCount = document.getElementById('badgeLeadsCount');
@@ -292,62 +295,145 @@ function renderDashboardOverview() {
     if (badgeProjectCount) badgeProjectCount.textContent = currentProjects.length;
     if (badgeLeadsCount) badgeLeadsCount.textContent = currentLeads.filter(l => l.status === 'Nouveau').length;
 
-    // Récents leads
-    const recentLeadsContainer = document.getElementById('dashRecentLeadsList');
-    if (recentLeadsContainer) {
-        recentLeadsContainer.innerHTML = '';
+    // Rendu du grand tableau Elite (Style de la capture de référence)
+    const eliteTableBody = document.getElementById('eliteOverviewTableBody');
+    if (eliteTableBody) {
+        eliteTableBody.innerHTML = '';
 
         if (currentLeads.length === 0) {
-            recentLeadsContainer.innerHTML = `
-                <div style="padding: 1.5rem; text-align: center; color: var(--text-subtle); font-size: 0.85rem;">
-                    Aucune demande de devis reçue pour le moment.
-                </div>
+            eliteTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="padding: 2.5rem; text-align: center; color: var(--text-subtle); font-size: 0.88rem;">
+                        Aucune demande de devis reçue pour le moment. Dès qu'un client soumet le formulaire sur le site, elle apparaîtra ici en temps réel.
+                    </td>
+                </tr>
             `;
         } else {
-            const recentLeads = [...currentLeads].slice(0, 4);
+            currentLeads.forEach((lead, idx) => {
+                const tr = document.createElement('tr');
+                const taskNum = `Task00${idx + 1}`;
+                const clientName = (lead.name || 'Client').trim();
+                const domain = lead.domain || 'Architecture';
+                const city = lead.city || 'Bénin';
 
-            recentLeads.forEach(lead => {
-            const item = document.createElement('div');
-            item.className = 'lead-row-card';
-            const cleanPhone = (lead.phone || '').replace(/[^0-9+]/g, '');
-            const safeWaName = encodeURIComponent((lead.name || 'Client').trim());
-            const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${safeWaName},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`;
+                // Statut & Progression (%)
+                let statusLabel = 'In Progress';
+                let statusClass = 'status-blue';
+                let progressVal = 45;
+                let progressClass = '';
 
-            const names = (lead.name || 'Client').trim().split(' ');
-            const initials = (names[0][0] + (names[1] ? names[1][0] : '')).toUpperCase();
+                if (lead.status === 'Devis validé' || lead.status === 'Completed') {
+                    statusLabel = 'Completed';
+                    statusClass = 'status-green';
+                    progressVal = 100;
+                    progressClass = 'fill-green';
+                } else if (lead.status === 'Nouveau') {
+                    statusLabel = 'Nouveau';
+                    statusClass = 'status-slate';
+                    progressVal = 25;
+                } else if (lead.status === 'En contact') {
+                    statusLabel = 'In Progress';
+                    statusClass = 'status-blue';
+                    progressVal = 65;
+                } else if (lead.status === 'Archivé') {
+                    statusLabel = 'Archivé';
+                    statusClass = 'status-slate';
+                    progressVal = 10;
+                }
 
-            let statusClass = 'orange';
-            let statusText = 'En cours';
-            if (lead.status === 'Devis validé' || lead.status === 'Completed') {
-                statusClass = 'green';
-                statusText = 'Validé';
-            } else if (lead.status === 'Nouveau' || lead.status === 'In pending') {
-                statusClass = 'red';
-                statusText = 'Nouveau';
-            } else if (lead.status === 'Archivé') {
-                statusClass = 'gray';
-                statusText = 'Archivé';
-            }
+                // Priorité
+                let priorityLabel = 'MEDIUM';
+                let priorityClass = 'priority-medium';
+                const lowerDomain = domain.toLowerCase();
+                if (lowerDomain.includes('btp') || lowerDomain.includes('gros') || lowerDomain.includes('permis')) {
+                    priorityLabel = 'HIGH';
+                    priorityClass = 'priority-high';
+                } else if (lowerDomain.includes('autre')) {
+                    priorityLabel = 'LOW';
+                    priorityClass = 'priority-low';
+                }
 
-            item.innerHTML = `
-                <div class="lead-avatar-meta">
-                    <div class="lead-circle-avatar">${escapeHtml(initials)}</div>
-                    <div class="lead-names-col">
-                        <span class="lead-name-bold">${escapeHtml(lead.name)}</span>
-                        <span class="lead-sub-text">${escapeHtml(lead.domain || 'Projet')} — ${escapeHtml(lead.city || 'Bénin')}</span>
-                    </div>
-                </div>
-                <div class="lead-actions-cell">
-                    <span class="pill-status-badge ${statusClass}">${escapeHtml(statusText)}</span>
-                    <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="btn-wa-round" title="Contacter sur WhatsApp">
-                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                        </svg>
-                    </a>
-                </div>
-            `;
-            recentLeadsContainer.appendChild(item);
-        });
+                // Date
+                const dateDisplay = lead.date ? lead.date.split(',')[0] : 'Récent';
+
+                // Coordonnées & Liens
+                const cleanPhone = (lead.phone || '').replace(/[^0-9+]/g, '');
+                const safeWaName = encodeURIComponent(clientName);
+                const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${safeWaName},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande%20de%20devis...`;
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="elite-task-col">
+                            <span class="elite-task-name">${escapeHtml(taskNum)} — ${escapeHtml(clientName)}</span>
+                            <span class="elite-task-sub">${escapeHtml(domain)} • ${escapeHtml(city)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="elite-status-text ${statusClass}">
+                            <span>${escapeHtml(statusLabel)}</span>
+                            <span class="elite-status-date-sub">${escapeHtml(dateDisplay)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="elite-progress-wrap">
+                            <div class="elite-progress-track">
+                                <div class="elite-progress-fill ${progressClass}" style="width: ${progressVal}%;"></div>
+                            </div>
+                            <span class="elite-progress-val">${progressVal}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="elite-priority-pill ${priorityClass}">${priorityLabel}</span>
+                    </td>
+                    <td>
+                        <span style="font-size: 0.82rem; color: #475569; font-weight: 500;">${escapeHtml(dateDisplay)}</span>
+                    </td>
+                    <td>
+                        <div class="elite-actions-col">
+                            <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="elite-action-btn btn-wa" title="WhatsApp direct">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                                </svg>
+                            </a>
+                            ${cleanPhone ? `
+                            <a href="tel:${escapeHtml(cleanPhone)}" class="elite-action-btn btn-tel" title="Appeler">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                            </a>` : ''}
+                            <button class="elite-action-btn btn-status-toggle" data-lead-id="${escapeHtml(lead.id)}" title="Changer le statut">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 11 12 14 22 4"></polyline>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                // Clic pour changer statut directement
+                const toggleBtn = tr.querySelector('.btn-status-toggle');
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', async () => {
+                        let nextStatus = 'En contact';
+                        if (lead.status === 'En contact') nextStatus = 'Devis validé';
+                        else if (lead.status === 'Devis validé') nextStatus = 'Archivé';
+                        else if (lead.status === 'Archivé') nextStatus = 'Nouveau';
+
+                        try {
+                            await apiClient.updateLeadStatus(lead.id, nextStatus);
+                            lead.status = nextStatus;
+                            renderDashboardOverview();
+                            renderLeadsList();
+                            showToast(`Statut mis à jour : ${nextStatus}`);
+                        } catch (e) {
+                            showToast("Erreur lors de la mise à jour du statut.", "alert");
+                        }
+                    });
+                }
+
+                eliteTableBody.appendChild(tr);
+            });
         }
     }
 

@@ -188,10 +188,10 @@
                     </div>
                 </div>
 
-                <!-- NAVIGATION GROUPÉE -->
+                <!-- NAVIGATION PRINCIPALE (STYLE TEMPLATE ÉLITE) -->
                 <div class="dash-nav-scroll">
                     
-                    <div class="nav-group-label">MENU</div>
+                    <div class="nav-group-label">NAVIGATION</div>
                     <nav class="dash-nav-list">
                         <button class="dash-nav-btn active" data-tab="dashboard">
                             <svg class="nav-svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -200,18 +200,24 @@
                                 <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
                                 <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
                             </svg>
-                            <span>Dashboard</span>
+                            <span class="nav-text">VUE D'ENSEMBLE</span>
+                        </button>
+
+                        <button class="dash-nav-btn" data-tab="settings">
+                            <svg class="nav-svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            <span class="nav-text">INFOS DU SITE</span>
                         </button>
 
                         <button class="dash-nav-btn" data-tab="projects">
                             <svg class="nav-svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                <polyline points="2 17 12 22 22 17"></polyline>
+                                <polyline points="2 12 12 17 22 12"></polyline>
                             </svg>
-                            <span>Projets</span>
+                            <span class="nav-text">PROJETS RÉALISÉS</span>
                             <span class="nav-counter-pill" id="badgeProjectCount">0</span>
                         </button>
 
@@ -222,37 +228,20 @@
                                 <line x1="8" y1="2" x2="8" y2="6"></line>
                                 <line x1="3" y1="10" x2="21" y2="10"></line>
                             </svg>
-                            <span>Devis & Leads</span>
+                            <span class="nav-text">DEVIS &amp; CONTACTS</span>
                             <span class="nav-counter-pill red" id="badgeLeadsCount">0</span>
-                        </button>
-
-                        <button class="dash-nav-btn" data-tab="stats">
-                            <svg class="nav-svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="20" x2="18" y2="10"></line>
-                                <line x1="12" y1="20" x2="12" y2="4"></line>
-                                <line x1="6" y1="20" x2="6" y2="14"></line>
-                            </svg>
-                            <span>Analytics</span>
                         </button>
                     </nav>
 
-                    <div class="nav-group-label" style="margin-top: 1.8rem;">GÉNÉRAL</div>
+                    <div class="nav-group-label" style="margin-top: 1.8rem;">LIENS &amp; SESSION</div>
                     <nav class="dash-nav-list">
-                        <button class="dash-nav-btn" data-tab="settings">
-                            <svg class="nav-svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                            </svg>
-                            <span>Réglages</span>
-                        </button>
-
                         <a href="../" target="_blank" rel="noopener" class="dash-nav-btn link-external">
                             <svg class="nav-svg" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="2" y1="12" x2="22" y2="12"></line>
                                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                             </svg>
-                            <span>Site Public</span>
+                            <span class="nav-text">Site Public</span>
                         </a>
 
                         <button id="logoutBtn" class="dash-nav-btn btn-logout-subtle">
@@ -261,7 +250,7 @@
                                 <polyline points="16 17 21 12 16 7"></polyline>
                                 <line x1="21" y1="12" x2="9" y2="12"></line>
                             </svg>
-                            <span>Déconnexion</span>
+                            <span class="nav-text">Déconnexion</span>
                         </button>
                     </nav>
 
@@ -340,155 +329,118 @@
                      ============================================================= -->
                 <div class="tab-pane active" id="tabDashboard">
                     
-                    <!-- CARTES KPI DU HAUT (HERO CARD EN BLEU SOLIDE + CARTES BLANCHES - ZÉRO DÉGRADÉ) -->
-                    <div class="hero-kpi-row">
-                        
-                        <!-- CARTE 1 : HERO CARTE BLEU ARCHITECTURAL SOLIDE #003B73 -->
-                        <div class="kpi-pill-card hero-solid-blue" data-tab-switch="projects">
-                            <div class="kpi-card-top-row">
-                                <span class="kpi-card-label">Total Projets</span>
-                                <div class="kpi-arrow-circle">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="7" y1="17" x2="17" y2="7"></line>
-                                        <polyline points="7 7 17 7 17 17"></polyline>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="kpi-card-number" id="statProjects">0</div>
-                            <div class="kpi-trend-note">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                    <polyline points="17 6 23 6 23 12"></polyline>
-                                </svg>
-                                <span>Réalisations en ligne</span>
-                            </div>
-                        </div>
-
-                        <!-- CARTE 2 : DEMANDES DE DEVIS (CARTE BLANCHE ÉPURÉE) -->
-                        <div class="kpi-pill-card white-kpi" data-tab-switch="leads">
-                            <div class="kpi-card-top-row">
-                                <span class="kpi-card-label">Demandes de Devis</span>
-                                <div class="kpi-arrow-circle dark">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="7" y1="17" x2="17" y2="7"></line>
-                                        <polyline points="7 7 17 7 17 17"></polyline>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="kpi-card-number text-dark" id="statLeads">0</div>
-                            <div class="kpi-trend-note dark">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                    <polyline points="17 6 23 6 23 12"></polyline>
-                                </svg>
-                                <span>Prospects qualifiés</span>
-                            </div>
-                        </div>
-
-                        <!-- CARTE 3 : CLICS WHATSAPP -->
-                        <div class="kpi-pill-card white-kpi">
-                            <div class="kpi-card-top-row">
-                                <span class="kpi-card-label">Clics WhatsApp</span>
-                                <div class="kpi-arrow-circle dark">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="7" y1="17" x2="17" y2="7"></line>
-                                        <polyline points="7 7 17 7 17 17"></polyline>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="kpi-card-number text-dark" id="statWhatsapp">0</div>
-                            <div class="kpi-trend-note dark">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                    <polyline points="17 6 23 6 23 12"></polyline>
-                                </svg>
-                                <span>Prises de contact directes</span>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <!-- SECTION INTERMÉDIAIRE : PROJECT ANALYTICS (GRAPHIQUE EN BÂTONNETS ÉLÉGANTS) -->
-                    <div class="analytics-card-widget">
-                        <div class="analytics-head-row">
-                            <h3 class="widget-section-title">Project Analytics</h3>
-                            <span class="analytics-badge-tag">Activité de la semaine</span>
-                        </div>
-
-                        <!-- BÂTONNETS GÉOMÉTRIQUES PILL STYLE CAPTURE -->
-                        <div class="pill-chart-container">
+                    <!-- BANDEAU BLEU SUPÉRIEUR AVEC LES 4 CARTES BLANCHES (COPIE DU TEMPLATE) -->
+                    <div class="elite-hero-banner">
+                        <div class="elite-banner-title">WEEKLY TASKS &amp; STUDIO STATUS UPDATE</div>
+                        <div class="elite-kpi-row">
                             
-                            <div class="chart-col">
-                                <div class="pill-bar-track">
-                                    <div class="pill-bar-fill hatched" style="height: 48%;"></div>
+                            <!-- CARTE 1 : COMPLETED / VALIDÉS -->
+                            <div class="elite-kpi-card" data-tab-switch="leads">
+                                <div class="elite-kpi-info">
+                                    <span class="elite-kpi-label">COMPLETED</span>
+                                    <span class="elite-kpi-num" id="statLeadsDone">0</span>
                                 </div>
-                                <span class="chart-day-label">Mon</span>
+                                <div class="elite-kpi-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                        <polyline points="9 14 11 16 15 11"></polyline>
+                                    </svg>
+                                </div>
                             </div>
 
-                            <div class="chart-col">
-                                <div class="pill-bar-track">
-                                    <div class="pill-bar-fill solid-blue" style="height: 68%;"></div>
+                            <!-- CARTE 2 : IN PROGRESS / EN COURS -->
+                            <div class="elite-kpi-card" data-tab-switch="leads">
+                                <div class="elite-kpi-info">
+                                    <span class="elite-kpi-label">IN PROGRESS</span>
+                                    <span class="elite-kpi-num" id="statLeadsProgress">0</span>
                                 </div>
-                                <span class="chart-day-label">Tue</span>
+                                <div class="elite-kpi-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                        <path d="M12 11h4"></path>
+                                        <path d="M12 16h4"></path>
+                                        <path d="M8 11h.01"></path>
+                                        <path d="M8 16h.01"></path>
+                                    </svg>
+                                </div>
                             </div>
 
-                            <div class="chart-col">
-                                <div class="pill-bar-track">
-                                    <div class="pill-bar-fill solid-blue" style="height: 82%;"></div>
+                            <!-- CARTE 3 : NOT STARTED / PROJETS PUBLIÉS -->
+                            <div class="elite-kpi-card" data-tab-switch="projects">
+                                <div class="elite-kpi-info">
+                                    <span class="elite-kpi-label">PROJETS ACTIFS</span>
+                                    <span class="elite-kpi-num" id="statProjects">0</span>
                                 </div>
-                                <span class="chart-day-label">Wed</span>
+                                <div class="elite-kpi-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                        <polyline points="2 17 12 22 22 17"></polyline>
+                                        <polyline points="2 12 12 17 22 12"></polyline>
+                                    </svg>
+                                </div>
                             </div>
 
-                            <div class="chart-col">
-                                <div class="pill-bar-track">
-                                    <div class="pill-bar-fill hatched" style="height: 38%;"></div>
+                            <!-- CARTE 4 : TOTAL TASKS / VISITES & CONTACTS -->
+                            <div class="elite-kpi-card">
+                                <div class="elite-kpi-info">
+                                    <span class="elite-kpi-label">TOTAL VISITES</span>
+                                    <span class="elite-kpi-num" id="statViews">0</span>
                                 </div>
-                                <span class="chart-day-label">Thr</span>
-                            </div>
-
-                            <div class="chart-col">
-                                <div class="pill-bar-track">
-                                    <div class="pill-bar-fill solid-blue" style="height: 64%;"></div>
+                                <div class="elite-kpi-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
                                 </div>
-                                <span class="chart-day-label">Fri</span>
-                            </div>
-
-                            <div class="chart-col">
-                                <div class="pill-bar-track">
-                                    <div class="pill-bar-fill hatched" style="height: 44%;"></div>
-                                </div>
-                                <span class="chart-day-label">Sat</span>
-                            </div>
-
-                            <div class="chart-col">
-                                <div class="pill-bar-track peak-track">
-                                    <div class="peak-badge-bubble">98%</div>
-                                    <div class="pill-bar-fill solid-red-accent" style="height: 94%;"></div>
-                                </div>
-                                <span class="chart-day-label">Sun</span>
                             </div>
 
                         </div>
                     </div>
-
-
-                    <!-- SECTION DU BAS : DEMANDES DE DEVIS (TEAM COLLABORATION STYLE) -->
-                    <div class="leads-list-widget">
-                        <div class="leads-widget-header">
-                            <h3 class="widget-section-title">Dernières demandes de devis</h3>
-                            <button class="btn-outline-pill-small" id="btnDashNewProj">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                                <span>Ajouter un projet</span>
-                            </button>
+                        
+                    <!-- GRAND TABLEAU CENTRAL AVEC BARRES DE PROGRESSION & PRIORITÉS (STYLE DE LA CAPTURE) -->
+                    <div class="elite-table-card">
+                        <div class="elite-table-toolbar">
+                            <div class="elite-toolbar-left">
+                                <h3 class="elite-table-heading">SUIVI DES DEVIS &amp; TÂCHES CLIENTS</h3>
+                                <p class="elite-table-sub">Progression en temps réel des demandes reçues via le site public.</p>
+                            </div>
+                            <div class="elite-toolbar-actions">
+                                <button class="btn-primary-pill" data-tab-switch="projects">
+                                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    <span>Ajouter un projet</span>
+                                </button>
+                                <button class="btn-outline-pill-small" data-tab-switch="settings">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                    </svg>
+                                    <span>Infos du site</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- LISTE DE PROSPECTS STYLE LIGNES FIDÈLES -->
-                        <div class="leads-rows-container" id="dashRecentLeadsList">
-                            <!-- Rempli dynamiquement en JS -->
+                        <!-- CONTENEUR DU TABLEAU AVEC DÉFILEMENT HORIZONTAL MOBILE -->
+                        <div class="elite-table-responsive">
+                            <table class="elite-table">
+                                <thead>
+                                    <tr>
+                                        <th>TASK / CLIENT</th>
+                                        <th>STATUS</th>
+                                        <th>% PROGRESS</th>
+                                        <th>PRIORITY</th>
+                                        <th>DATE</th>
+                                        <th style="text-align: right;">CONTACT / ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eliteOverviewTableBody">
+                                    <!-- Rempli dynamiquement en JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
