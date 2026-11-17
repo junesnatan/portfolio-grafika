@@ -26,6 +26,11 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Nom et téléphone requis' });
             }
 
+            const cleanPhone = phone.trim().replace(/[^0-9+\s\-().]/g, '');
+            if (!cleanPhone || cleanPhone.length < 6) {
+                return res.status(400).json({ error: 'Numéro de téléphone invalide' });
+            }
+
             const id = 'lead-' + Date.now();
             const dateStr = new Date().toLocaleDateString('fr-FR', {
                 day: '2-digit',
@@ -40,12 +45,12 @@ export default async function handler(req, res) {
                       VALUES (?, ?, ?, ?, ?, ?, ?, 'Nouveau', ?);`,
                 args: [
                     id,
-                    name.trim(),
-                    email ? email.trim() : '',
-                    phone.trim(),
-                    domain ? domain.trim() : 'Projet Architectural',
-                    city ? city.trim() : 'Bénin',
-                    message ? message.trim() : '',
+                    name.trim().slice(0, 150),
+                    email ? email.trim().slice(0, 120) : '',
+                    cleanPhone.slice(0, 40),
+                    domain ? domain.trim().slice(0, 100) : 'Projet Architectural',
+                    city ? city.trim().slice(0, 100) : 'Bénin',
+                    message ? message.trim().slice(0, 2000) : '',
                     dateStr
                 ]
             });

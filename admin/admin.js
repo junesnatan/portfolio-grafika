@@ -309,8 +309,9 @@ function renderDashboardOverview() {
             recentLeads.forEach(lead => {
             const item = document.createElement('div');
             item.className = 'lead-row-card';
-            const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
-            const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${encodeURIComponent(lead.name)},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`;
+            const cleanPhone = (lead.phone || '').replace(/[^0-9+]/g, '');
+            const safeWaName = encodeURIComponent((lead.name || 'Client').trim());
+            const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${safeWaName},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`;
 
             const names = (lead.name || 'Client').trim().split(' ');
             const initials = (names[0][0] + (names[1] ? names[1][0] : '')).toUpperCase();
@@ -330,15 +331,15 @@ function renderDashboardOverview() {
 
             item.innerHTML = `
                 <div class="lead-avatar-meta">
-                    <div class="lead-circle-avatar">${initials}</div>
+                    <div class="lead-circle-avatar">${escapeHtml(initials)}</div>
                     <div class="lead-names-col">
                         <span class="lead-name-bold">${escapeHtml(lead.name)}</span>
                         <span class="lead-sub-text">${escapeHtml(lead.domain || 'Projet')} — ${escapeHtml(lead.city || 'Bénin')}</span>
                     </div>
                 </div>
                 <div class="lead-actions-cell">
-                    <span class="pill-status-badge ${statusClass}">${statusText}</span>
-                    <a href="${waUrl}" target="_blank" rel="noopener" class="btn-wa-round" title="Contacter sur WhatsApp">
+                    <span class="pill-status-badge ${statusClass}">${escapeHtml(statusText)}</span>
+                    <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="btn-wa-round" title="Contacter sur WhatsApp">
                         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                         </svg>
@@ -740,16 +741,24 @@ function setupLeadFilters() {
             return;
         }
 
+        function sanitizeCsvField(str) {
+            let clean = (str || '').toString().replace(/"/g, '""');
+            if (/^[=+\-@\t\r]/.test(clean)) {
+                clean = "'" + clean;
+            }
+            return `"${clean}"`;
+        }
+
         let csvContent = "\uFEFFDate;Nom;Telephone;Prestation;Ville;Message;Statut\n";
         currentLeads.forEach(l => {
             const row = [
-                `"${formatDate(l.date)}"`,
-                `"${(l.name || '').replace(/"/g, '""')}"`,
-                `"${(l.phone || '').replace(/"/g, '""')}"`,
-                `"${(l.domain || '').replace(/"/g, '""')}"`,
-                `"${(l.city || '').replace(/"/g, '""')}"`,
-                `"${(l.message || '').replace(/"/g, '""')}"`,
-                `"${l.status || 'Nouveau'}"`
+                sanitizeCsvField(formatDate(l.date)),
+                sanitizeCsvField(l.name),
+                sanitizeCsvField(l.phone),
+                sanitizeCsvField(l.domain),
+                sanitizeCsvField(l.city),
+                sanitizeCsvField(l.message),
+                sanitizeCsvField(l.status || 'Nouveau')
             ];
             csvContent += row.join(';') + '\n';
         });
@@ -811,8 +820,8 @@ function renderLeadsList() {
 
     filtered.forEach(lead => {
         const tr = document.createElement('tr');
-        const cleanPhone = (lead.phone || '').replace(/\s+/g, '');
-        const waMsg = encodeURIComponent(`Bonjour ${lead.name} ! Atelier Grafrika fait suite à votre demande de devis.`);
+        const cleanPhone = (lead.phone || '').replace(/[^0-9+]/g, '');
+        const waMsg = encodeURIComponent(`Bonjour ${lead.name || 'Client'} ! Atelier Grafrika fait suite à votre demande de devis.`);
         const waUrl = `https://wa.me/${cleanPhone}?text=${waMsg}`;
 
         tr.innerHTML = `
@@ -824,7 +833,7 @@ function renderLeadsList() {
             <td><strong>${escapeHtml(lead.domain || 'Sur-mesure')}</strong></td>
             <td>${escapeHtml(lead.city || 'Bénin')}</td>
             <td>
-                <select class="status-select-pill" data-id="${lead.id}">
+                <select class="status-select-pill" data-id="${escapeHtml(lead.id)}">
                     <option value="Nouveau" ${lead.status === 'Nouveau' ? 'selected' : ''}>Nouveau</option>
                     <option value="En contact" ${lead.status === 'En contact' ? 'selected' : ''}>En cours</option>
                     <option value="Devis validé" ${lead.status === 'Devis validé' ? 'selected' : ''}>Validé</option>
@@ -832,7 +841,7 @@ function renderLeadsList() {
                 </select>
             </td>
             <td style="text-align: right;">
-                <a href="${waUrl}" target="_blank" rel="noopener" class="btn-wa-round" style="display: inline-flex;" title="Ouvrir WhatsApp">
+                <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="btn-wa-round" style="display: inline-flex;" title="Ouvrir WhatsApp">
                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                     </svg>

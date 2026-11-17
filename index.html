@@ -3,11 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atelier Grafrika | Architecture, Design d'Espace & BTP au Bénin et à l'International</title>
+    <title>Atelier Grafrika | Architecture, Design d'Espace & BTP au Bénin</title>
     
-    <meta name="description" content="Atelier Grafrika - Architecture, plans 3D et exécution de chantiers au Bénin et à l'international.">
-    <meta property="og:title" content="Atelier Grafrika | Architecture & BTP Bénin & International">
-    <meta property="og:image" content="assets/logo.png">
+    <meta name="description" content="Atelier Grafrika - Cabinet d'architecture, plans 3D et suivi rigoureux de chantiers BTP au Bénin (Cotonou, Abomey-Calavi) et à l'international. Devis gratuit sous 48h.">
+    <link rel="canonical" href="https://atelier-grafrika.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://atelier-grafrika.vercel.app/">
+    <meta property="og:title" content="Atelier Grafrika | Architecture, Design d'Espace & BTP au Bénin">
+    <meta property="og:description" content="Architecture, plans 3D et exécution de chantiers au Bénin et à l'international. Devis gratuit sous 48h.">
+    <meta property="og:image" content="https://atelier-grafrika.vercel.app/assets/cover.jpg">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@AtelierGrafrika">
+    <meta name="twitter:title" content="Atelier Grafrika | Architecture & BTP au Bénin">
+    <meta name="twitter:description" content="Architecture, plans 3D et exécution de chantiers au Bénin et à l'international. Devis gratuit sous 48h.">
+    <meta name="twitter:image" content="https://atelier-grafrika.vercel.app/assets/cover.jpg">
+
+    <!-- Données structurées Schema.org JSON-LD (SEO Local & E-E-A-T) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ArchitecturalFirm",
+      "name": "Atelier Grafrika",
+      "url": "https://atelier-grafrika.vercel.app/",
+      "logo": "https://atelier-grafrika.vercel.app/assets/logo.png",
+      "image": "https://atelier-grafrika.vercel.app/assets/cover.jpg",
+      "description": "Cabinet d'architecture, design d'espace et suivi de chantiers BTP au Bénin et à l'international.",
+      "telephone": "+2290197932325",
+      "email": "ateliergrafrika.me@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Abomey-Calavi",
+        "addressRegion": "Atlantique",
+        "addressCountry": "BJ"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 6.4485,
+        "longitude": 2.3557
+      },
+      "sameAs": [
+        "https://x.com/AtelierGrafrika",
+        "https://www.tiktok.com/@atelier.grafrika",
+        "https://www.facebook.com/share/14yYvD9ULWL/",
+        "https://www.linkedin.com/in/m-principe-junior-zegue-aa1405246"
+      ],
+      "areaServed": ["Bénin", "Afrique de l'Ouest", "International"],
+      "priceRange": "$$"
+    }
+    </script>
 
     <link rel="icon" type="image/png" href="assets/logo.png">
 
@@ -45,7 +91,10 @@
 
             <!-- Bannière de couverture de profil (style Twitter / LinkedIn / Facebook) -->
             <div class="profile-cover">
-                <img src="assets/cover.jpg" alt="Couverture Atelier Grafrika" class="profile-cover-img" onerror="this.classList.add('no-cover')">
+                <picture>
+                    <source srcset="assets/cover.webp" type="image/webp">
+                    <img src="assets/cover.jpg" alt="Couverture Atelier Grafrika" class="profile-cover-img" onerror="this.classList.add('no-cover')">
+                </picture>
                 <div class="profile-cover-overlay" aria-hidden="true"></div>
             </div>
 
@@ -269,14 +318,14 @@
     <!-- ==============================================
          MODAL 1 : DEVIS EXPRESS REVU & SOIGNÉ
          ============================================== -->
-    <div class="modal-overlay" id="quoteModal" aria-hidden="true">
+    <div class="modal-overlay" id="quoteModal" role="dialog" aria-modal="true" aria-labelledby="modalQuoteTitle" aria-hidden="true">
         <div class="modal-box modal-quote-box">
             <button class="modal-close-btn" id="btnCloseQuote" aria-label="Fermer">&times;</button>
             <div class="modal-head">
                 <div class="modal-arch-tag">
                     <span>ÉTUDE PRÉALABLE • ESTIMATION BTP &amp; ARCHITECTURE</span>
                 </div>
-                <h3 class="modal-heading">Demande de devis gratuit</h3>
+                <h3 class="modal-heading" id="modalQuoteTitle">Demande de devis gratuit</h3>
                 <p class="modal-sub">Partagez-nous votre besoin, notre bureau d'études vous répond sous 48h sans engagement.</p>
                 <div class="modal-claustra-mini-bar" aria-hidden="true"></div>
             </div>
@@ -473,6 +522,10 @@
                     <span class="dot">•</span>
                     <span>Réponse sous 48h</span>
                 </div>
+
+                <p class="modal-privacy-note" style="font-size: 0.72rem; color: var(--text-subtle); text-align: center; margin-top: 0.8rem; line-height: 1.4;">
+                    Vos coordonnées sont protégées et utilisées exclusivement par Atelier Grafrika pour l'étude de votre devis.
+                </p>
             </form>
         </div>
     </div>
@@ -480,7 +533,7 @@
     <!-- ==============================================
          MODAL 2 : DÉTAIL DU PROJET AVEC GALERIE DE 7 PHOTOS
          ============================================== -->
-    <div class="modal-overlay" id="detailModal" aria-hidden="true">
+    <div class="modal-overlay" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle" aria-hidden="true">
         <div class="modal-box modal-detail-box">
             <button class="modal-close-btn" id="btnCloseDetail" aria-label="Fermer">&times;</button>
             

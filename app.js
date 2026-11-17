@@ -15,10 +15,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (splashScreen) {
         setTimeout(() => {
             splashScreen.classList.add('hide');
-        }, 1200);
+        }, 500);
 
         splashScreen.addEventListener('click', () => {
             splashScreen.classList.add('hide');
+        });
+    }
+
+    // Incrémenter les analytics de visite
+    apiClient.recordPageView();
+
+    // Tracker le clic WhatsApp principal
+    const mainWaLink = document.getElementById('linkWhatsapp');
+    if (mainWaLink) {
+        mainWaLink.addEventListener('click', () => {
+            apiClient.recordWhatsAppClick();
         });
     }
 
@@ -474,18 +485,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // 1. Enregistrement asynchrone direct dans l'API Serverless Vercel (/api/leads)
-            try {
-                await apiClient.createLead({
-                    name,
-                    email,
-                    phone,
-                    city: city || 'Non renseignée',
-                    domain,
-                    message: message || 'À définir ensemble'
-                });
-            } catch (err) {
-                console.warn('Envoi lead backend:', err);
-            }
+            apiClient.createLead({
+                name,
+                email,
+                phone,
+                city: city || 'Non renseignée',
+                domain,
+                message: message || 'À définir ensemble'
+            }).catch(err => console.warn('Envoi lead backend:', err));
 
             // 2. Redirection WhatsApp fluide vers le numéro configuré dans les réglages
             let targetWa = '2290197932325';
@@ -498,7 +505,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const text = `Bonjour Atelier Grafrika !%0A%0AJe souhaite demander un devis pour un projet :%0A- *Nom :* ${encodeURIComponent(name)}${email ? `%0A- *Email :* ${encodeURIComponent(email)}` : ''}%0A- *Téléphone :* ${encodeURIComponent(phone)}%0A- *Localisation :* ${encodeURIComponent(city || 'À préciser')}%0A- *Prestation :* ${encodeURIComponent(domain)}%0A- *Détails :* ${encodeURIComponent(message || 'À définir ensemble')}`;
 
-            window.open(`https://wa.me/${targetWa}?text=${text}`, '_blank');
+            const waUrl = `https://wa.me/${targetWa}?text=${text}`;
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = waUrl;
+            } else {
+                window.open(waUrl, '_blank');
+            }
+
             closeQuote();
             quoteForm.reset();
             if (customSelectTrigger) {

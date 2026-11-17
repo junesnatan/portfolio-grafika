@@ -300,6 +300,16 @@ export const apiClient = {
         return { views: 248, whatsapp: 39, leads: 12 };
     },
 
+    async recordPageView() {
+        try {
+            fetch('/api/stats', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ metric: 'views' })
+            }).catch(() => {});
+        } catch {}
+    },
+
     async recordWhatsAppClick() {
         try {
             fetch('/api/stats', {

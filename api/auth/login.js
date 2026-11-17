@@ -29,18 +29,22 @@ export default async function handler(req, res) {
             const user = userRes.rows[0];
             isValid = await comparePassword(password, user.password_hash);
         } else {
-            // 2. Compte d'initialisation par défaut si la table auth n'a pas encore été personnalisée
-            const isDefaultEmail = normalizedEmail === 'admin@ateliergrafrika.com' || normalizedEmail === 'admin@ateliergrafika.com';
-            const isDefaultPass = password === 'grafrika2026' || password === 'grafika2026';
+            // Initialisation contrôlée : UNIQUEMENT si la table auth est totalement vierge
+            const countRes = await db.execute('SELECT COUNT(*) as count FROM auth;');
+            const totalAdmins = Number(countRes.rows[0]?.count || 0);
 
-            if (isDefaultEmail && isDefaultPass) {
-                isValid = true;
-                // Enregistrer automatiquement le compte initial avec mot de passe haché
-                const hashed = await hashPassword('grafrika2026');
-                await db.execute({
-                    sql: 'INSERT INTO auth (id, email, password_hash) VALUES (?, ?, ?);',
-                    args: ['admin-root', 'admin@ateliergrafrika.com', hashed]
-                });
+            if (totalAdmins === 0) {
+                const initEmail = (process.env.INITIAL_ADMIN_EMAIL || 'admin@ateliergrafrika.com').toLowerCase();
+                const initPass = process.env.INITIAL_ADMIN_PASSWORD || 'grafrika2026';
+
+                if (normalizedEmail === initEmail && password === initPass) {
+                    isValid = true;
+                    const hashed = await hashPassword(initPass);
+                    await db.execute({
+                        sql: 'INSERT INTO auth (id, email, password_hash) VALUES (?, ?, ?);',
+                        args: ['admin-root', initEmail, hashed]
+                    });
+                }
             }
         }
 

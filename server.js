@@ -60,16 +60,22 @@ app.post('/api/auth/login', async (req, res) => {
             const user = userRes.rows[0];
             isValid = await comparePassword(password, user.password_hash);
         } else {
-            const isDefaultEmail = normalizedEmail === 'admin@ateliergrafrika.com' || normalizedEmail === 'admin@ateliergrafika.com';
-            const isDefaultPass = password === 'grafrika2026' || password === 'grafika2026';
+            // Initialisation contrôlée : UNIQUEMENT si la table auth est totalement vierge
+            const countRes = await db.execute('SELECT COUNT(*) as count FROM auth;');
+            const totalAdmins = Number(countRes.rows[0]?.count || 0);
 
-            if (isDefaultEmail && isDefaultPass) {
-                isValid = true;
-                const hashed = await hashPassword('grafrika2026');
-                await db.execute({
-                    sql: 'INSERT INTO auth (id, email, password_hash) VALUES (?, ?, ?);',
-                    args: ['admin-root', 'admin@ateliergrafrika.com', hashed]
-                });
+            if (totalAdmins === 0) {
+                const initEmail = (process.env.INITIAL_ADMIN_EMAIL || 'admin@ateliergrafrika.com').toLowerCase();
+                const initPass = process.env.INITIAL_ADMIN_PASSWORD || 'grafrika2026';
+
+                if (normalizedEmail === initEmail && password === initPass) {
+                    isValid = true;
+                    const hashed = await hashPassword(initPass);
+                    await db.execute({
+                        sql: 'INSERT INTO auth (id, email, password_hash) VALUES (?, ?, ?);',
+                        args: ['admin-root', initEmail, hashed]
+                    });
+                }
             }
         }
 
@@ -256,6 +262,11 @@ app.post('/api/leads', async (req, res) => {
             return res.status(400).json({ error: 'Nom et téléphone requis' });
         }
 
+        const cleanPhone = phone.trim().replace(/[^0-9+\s\-().]/g, '');
+        if (!cleanPhone || cleanPhone.length < 6) {
+            return res.status(400).json({ error: 'Numéro de téléphone invalide' });
+        }
+
         const id = 'lead-' + Date.now();
         const dateStr = new Date().toLocaleDateString('fr-FR', {
             day: '2-digit',
@@ -270,12 +281,12 @@ app.post('/api/leads', async (req, res) => {
                   VALUES (?, ?, ?, ?, ?, ?, ?, 'Nouveau', ?);`,
             args: [
                 id,
-                name.trim(),
-                email ? email.trim() : '',
-                phone.trim(),
-                domain ? domain.trim() : 'Projet Architectural',
-                city ? city.trim() : 'Bénin',
-                message ? message.trim() : '',
+                name.trim().slice(0, 150),
+                email ? email.trim().slice(0, 120) : '',
+                cleanPhone.slice(0, 40),
+                domain ? domain.trim().slice(0, 100) : 'Projet Architectural',
+                city ? city.trim().slice(0, 100) : 'Bénin',
+                message ? message.trim().slice(0, 2000) : '',
                 dateStr
             ]
         });
