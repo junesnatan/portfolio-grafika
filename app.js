@@ -410,9 +410,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =========================================================================
     // 5. SELECT ARCHITECTURAL SUR-MESURE (DROPDOWN TYPE DE PROJET)
     // =========================================================================
-    const customSelect = document.getElementById('customSelectDomain');
+    const customSelect = document.getElementById('customSelect') || document.getElementById('customSelectDomain');
     const customSelectTrigger = document.getElementById('customSelectTrigger');
-    const customSelectOptions = document.getElementById('customSelectOptions');
+    const customSelectOptions = document.getElementById('customSelectDropdown') || document.getElementById('customSelectOptions');
     const realDomainInput = document.getElementById('cDomain');
 
     if (customSelect && customSelectTrigger && customSelectOptions) {
@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const title = opt.querySelector('.option-title').textContent.trim();
 
                 realDomainInput.value = val;
-                const valueDisplay = customSelectTrigger.querySelector('.custom-select-value');
+                const valueDisplay = customSelectTrigger.querySelector('.custom-select-label') || customSelectTrigger.querySelector('.custom-select-value');
                 valueDisplay.textContent = title;
                 valueDisplay.classList.add('has-value');
 
@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeQuote();
             quoteForm.reset();
             if (customSelectTrigger) {
-                const valDisplay = customSelectTrigger.querySelector('.custom-select-value');
+                const valDisplay = customSelectTrigger.querySelector('.custom-select-label') || customSelectTrigger.querySelector('.custom-select-value');
                 if (valDisplay) {
                     valDisplay.textContent = 'Sélectionnez le type de projet...';
                     valDisplay.classList.remove('has-value');

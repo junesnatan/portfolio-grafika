@@ -41,19 +41,30 @@
         <!-- ==============================================
              1. LES CONTACTS EN HAUT (PROFIL BIO & LIENS LINKTREE)
              ============================================== -->
-        <header class="bio-header">
+        <header class="bio-header has-cover">
+
+            <!-- Bannière de couverture de profil (style Twitter / LinkedIn / Facebook) -->
+            <div class="profile-cover">
+                <img src="assets/cover.jpg" alt="Couverture Atelier Grafrika" class="profile-cover-img" onerror="this.classList.add('no-cover')">
+                <div class="profile-cover-overlay" aria-hidden="true"></div>
+            </div>
 
             <div class="brand-avatar">
                 <img src="assets/logo.png" alt="Atelier Grafrika" class="logo-img">
             </div>
 
-            <div class="location-tag">
+            <a href="https://www.google.com/maps?gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIKCAEQABixAxiABDINCAIQABiDARixAxiABDIHCAMQABiABDINCAQQLhjHARjRAxiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBCDU3OTdqMGo3qAIAsAIA&um=1&ie=UTF-8&fb=1&gl=bj&sa=X&geocode=KZ-az3Y5qSQQMT2tMzaeYKks&daddr=Abomey+Calavi" target="_blank" rel="noopener" class="location-tag" title="Voir l'emplacement sur Google Maps">
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>
                 </svg>
                 <span>Abomey-Calavi, Bénin</span>
-            </div>
+                <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" class="location-external-arrow">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+            </a>
 
             <h1 class="brand-title">
                 <span class="brand-red">ATELIER</span> <span class="brand-blue">GRAFRIKA</span>
@@ -303,27 +314,11 @@
                             </span>
                         </div>
 
-                        <!-- Menu déroulant sur-mesure architectural au clic -->
+                                                <!-- Menu déroulant sur-mesure architectural au clic -->
                         <div class="custom-select-dropdown" id="customSelectDropdown" role="listbox">
                             
-                            <div class="custom-option" data-value="Conception de plans 3D & Permis de construire" role="option">
-                                <div class="option-icon">
-                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                                        <polyline points="2 17 12 22 22 17"></polyline>
-                                        <polyline points="2 12 12 17 22 12"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="option-info">
-                                    <span class="option-title">Plans 3D & Permis de construire</span>
-                                    <span class="option-desc">Conception architecturale et dossier de permis</span>
-                                </div>
-                                <span class="option-check">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                </span>
-                            </div>
-
-                            <div class="custom-option" data-value="Construction complète (Villa, Immeuble, BTP)" role="option">
+                            <!-- 1. Projet de construction -->
+                            <div class="custom-option" data-value="Projet de construction" role="option">
                                 <div class="option-icon">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M3 21h18"></path>
@@ -335,33 +330,32 @@
                                     </svg>
                                 </div>
                                 <div class="option-info">
-                                    <span class="option-title">Construction complète (BTP)</span>
-                                    <span class="option-desc">Villa, immeuble ou résidence, clé en main</span>
+                                    <span class="option-title">Projet de construction</span>
+                                    <span class="option-desc">Villa, immeuble, résidence ou bâtiment professionnel</span>
                                 </div>
                                 <span class="option-check">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </span>
                             </div>
 
-                            <div class="custom-option" data-value="Rénovation & Design d'intérieur" role="option">
+                            <!-- 2. Rénovation -->
+                            <div class="custom-option" data-value="Rénovation" role="option">
                                 <div class="option-icon">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 2v4"></path>
-                                        <path d="m4.93 10.93 2.83-2.83"></path>
-                                        <path d="M2 18h20"></path>
-                                        <path d="M20 18v-3a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v3"></path>
+                                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
                                     </svg>
                                 </div>
                                 <div class="option-info">
-                                    <span class="option-title">Rénovation & Design d'intérieur</span>
-                                    <span class="option-desc">Modernisation d'espaces et mobilier sur-mesure</span>
+                                    <span class="option-title">Rénovation</span>
+                                    <span class="option-desc">Réhabilitation, réaménagement & modernisation d'espaces</span>
                                 </div>
                                 <span class="option-check">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </span>
                             </div>
 
-                            <div class="custom-option" data-value="Aménagement professionnel & Commercial" role="option">
+                            <!-- 3. Aménagement -->
+                            <div class="custom-option" data-value="Aménagement" role="option">
                                 <div class="option-icon">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -369,15 +363,34 @@
                                     </svg>
                                 </div>
                                 <div class="option-info">
-                                    <span class="option-title">Aménagement professionnel</span>
-                                    <span class="option-desc">Bureaux, commerces, boutiques et restaurants</span>
+                                    <span class="option-title">Aménagement</span>
+                                    <span class="option-desc">Design d'intérieur, agencement commercial & paysager</span>
                                 </div>
                                 <span class="option-check">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </span>
                             </div>
 
-                            <div class="custom-option" data-value="Suivi & Direction de chantier" role="option">
+                            <!-- 4. Design 3D -->
+                            <div class="custom-option" data-value="Design 3D" role="option">
+                                <div class="option-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                        <polyline points="2 17 12 22 22 17"></polyline>
+                                        <polyline points="2 12 12 17 22 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="option-info">
+                                    <span class="option-title">Design 3D</span>
+                                    <span class="option-desc">Modélisation 3D, plans architecturaux & rendus réalistes</span>
+                                </div>
+                                <span class="option-check">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </span>
+                            </div>
+
+                            <!-- 5. Expertise architecturale et ingénierie -->
+                            <div class="custom-option" data-value="Expertise architecturale et ingénierie" role="option">
                                 <div class="option-icon">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -386,15 +399,36 @@
                                     </svg>
                                 </div>
                                 <div class="option-info">
-                                    <span class="option-title">Suivi & Contrôle de chantier</span>
-                                    <span class="option-desc">Supervision, respect des délais et qualité d'exécution</span>
+                                    <span class="option-title">Expertise architecturale et ingénierie</span>
+                                    <span class="option-desc">Audit technique, calcul de structure & suivi de chantier</span>
                                 </div>
                                 <span class="option-check">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </span>
                             </div>
 
-                            <div class="custom-option" data-value="Autre demande sur-mesure" role="option">
+                            <!-- 6. Permis de construire -->
+                            <div class="custom-option" data-value="Permis de construire" role="option">
+                                <div class="option-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="option-info">
+                                    <span class="option-title">Permis de construire</span>
+                                    <span class="option-desc">Dossier administratif & plans de conformité réglementaire</span>
+                                </div>
+                                <span class="option-check">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </span>
+                            </div>
+
+                            <!-- 7. Autre prestation sur-mesure -->
+                            <div class="custom-option" data-value="Autre prestation sur-mesure" role="option">
                                 <div class="option-icon">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
