@@ -277,106 +277,106 @@ function setupMobileDrawer() {
 // =========================================================================
 const STUDIO_BENCHMARK_TASKS = [
     {
-        taskNum: "Task001",
+        taskNum: "Dossier #01",
         name: "Villa Océane & Claustras",
         sub: "Conception architecturale & Permis de construire",
-        status: "Completed",
+        status: "Terminé",
         dateSub: "20 Jan",
         statusClass: "status-green",
         progress: 100,
         progressClass: "fill-green",
-        priority: "HIGH",
+        priority: "URGENT",
         priorityClass: "priority-high",
         date: "20/01/2026",
         phone: "+2290196969696",
         isLead: false
     },
     {
-        taskNum: "Task002",
+        taskNum: "Dossier #02",
         name: "Résidence Moderne Calavi",
         sub: "Plans d'exécution & Modélisation 3D",
-        status: "In Progress",
+        status: "En cours",
         dateSub: "20 Jan",
         statusClass: "status-blue",
         progress: 80,
         progressClass: "",
-        priority: "MEDIUM",
+        priority: "MOYENNE",
         priorityClass: "priority-medium",
         date: "22/04/2026",
         phone: "+2290197979797",
         isLead: false
     },
     {
-        taskNum: "Task003",
+        taskNum: "Dossier #03",
         name: "Boutique Épurée Ganhi",
         sub: "Design d'intérieur & Claustras sur-mesure",
-        status: "In Progress",
+        status: "En cours",
         dateSub: "20 Jan",
         statusClass: "status-blue",
-        progress: 35,
+        progress: 50,
         progressClass: "",
-        priority: "LOW",
+        priority: "NORMALE",
         priorityClass: "priority-low",
         date: "30/05/2026",
         phone: "+2290195959595",
         isLead: false
     },
     {
-        taskNum: "Task004",
+        taskNum: "Dossier #04",
         name: "Immeuble R+3 Cadjèhoun",
         sub: "Suivi de chantier & Gros œuvre",
-        status: "In Progress",
+        status: "En cours",
         dateSub: "20 Jan",
         statusClass: "status-blue",
-        progress: 45,
+        progress: 65,
         progressClass: "",
-        priority: "LOW",
-        priorityClass: "priority-low",
+        priority: "URGENT",
+        priorityClass: "priority-high",
         date: "30/08/2026",
         phone: "+2290194949494",
         isLead: false
     },
     {
-        taskNum: "Task005",
+        taskNum: "Dossier #05",
         name: "Pavillon Tropical Ouidah",
         sub: "Dossier technique & Devis gros œuvre",
-        status: "In Progress",
+        status: "En cours",
         dateSub: "20 Jan",
         statusClass: "status-blue",
-        progress: 23,
+        progress: 25,
         progressClass: "",
-        priority: "HIGH",
-        priorityClass: "priority-high",
+        priority: "MOYENNE",
+        priorityClass: "priority-medium",
         date: "30/11/2026",
         phone: "+2290193939393",
         isLead: false
     },
     {
-        taskNum: "Task006",
+        taskNum: "Dossier #06",
         name: "Villa Contemporaine Togbin",
-        sub: "Métré structure & Fondations",
-        status: "Not Started",
+        sub: "Métré structure & Fondations spéciales",
+        status: "En étude",
         dateSub: "20 Jan",
         statusClass: "status-slate",
-        progress: 0,
+        progress: 10,
         progressClass: "",
-        priority: "MEDIUM",
+        priority: "MOYENNE",
         priorityClass: "priority-medium",
         date: "15/12/2026",
         phone: "+2290192929292",
         isLead: false
     },
     {
-        taskNum: "Task007",
+        taskNum: "Dossier #07",
         name: "Showroom Mobilier & Claustras",
-        sub: "Fabrication ateliers & Finitions",
-        status: "Not Started",
+        sub: "Fabrication ateliers & Finitions intérieures",
+        status: "En attente",
         dateSub: "20 Jan",
         statusClass: "status-slate",
         progress: 0,
         progressClass: "",
-        priority: "HIGH",
-        priorityClass: "priority-high",
+        priority: "NORMALE",
+        priorityClass: "priority-low",
         date: "05/01/2027",
         phone: "+2290191919191",
         isLead: false
@@ -391,7 +391,7 @@ function renderDashboardOverview() {
     const statNotStarted = document.getElementById('statNotStarted');
     const statTotalTasks = document.getElementById('statTotalTasks');
 
-    // Construire la liste combinée des tâches
+    // Construire la liste combinée des dossiers
     const allTasks = [];
 
     // Ajouter en priorité les vrais devis clients reçus
@@ -401,45 +401,45 @@ function renderDashboardOverview() {
             const domain = lead.domain || 'Architecture';
             const city = lead.city || 'Bénin';
 
-            let statusLabel = 'In Progress';
+            let statusLabel = 'En cours';
             let statusClass = 'status-blue';
-            let progressVal = 65;
+            let progressVal = 60;
             let progressClass = '';
 
-            if (lead.status === 'Devis validé' || lead.status === 'Completed') {
-                statusLabel = 'Completed';
+            if (lead.status === 'Devis validé' || lead.status === 'Completed' || lead.status === 'Terminé') {
+                statusLabel = 'Terminé';
                 statusClass = 'status-green';
                 progressVal = 100;
                 progressClass = 'fill-green';
-            } else if (lead.status === 'Nouveau' || lead.status === 'Not Started') {
-                statusLabel = 'Not Started';
+            } else if (lead.status === 'Nouveau' || lead.status === 'Not Started' || lead.status === 'En attente') {
+                statusLabel = 'Nouveau';
                 statusClass = 'status-slate';
-                progressVal = 0;
+                progressVal = 15;
             } else if (lead.status === 'Archivé') {
                 statusLabel = 'Archivé';
                 statusClass = 'status-slate';
-                progressVal = 10;
+                progressVal = 100;
             }
 
-            let priorityLabel = 'MEDIUM';
+            let priorityLabel = 'MOYENNE';
             let priorityClass = 'priority-medium';
             const lowerDomain = domain.toLowerCase();
             if (lowerDomain.includes('btp') || lowerDomain.includes('gros') || lowerDomain.includes('permis')) {
-                priorityLabel = 'HIGH';
+                priorityLabel = 'URGENT';
                 priorityClass = 'priority-high';
             } else if (lowerDomain.includes('autre')) {
-                priorityLabel = 'LOW';
+                priorityLabel = 'NORMALE';
                 priorityClass = 'priority-low';
             }
 
             const dateDisplay = lead.date ? lead.date.split(',')[0] : 'Récent';
 
             allTasks.push({
-                taskNum: `Task00${idx + 1}`,
+                taskNum: `Dossier #${idx + 1 < 10 ? '0' + (idx + 1) : (idx + 1)}`,
                 name: clientName,
                 sub: `${domain} • ${city}`,
                 status: statusLabel,
-                dateSub: "20 Jan",
+                dateSub: dateDisplay,
                 statusClass: statusClass,
                 progress: progressVal,
                 progressClass: progressClass,
@@ -454,19 +454,19 @@ function renderDashboardOverview() {
         });
     }
 
-    // Compléter avec les jalons réels du studio pour toujours avoir les 7 tâches du template
+    // Compléter avec les jalons réels du studio pour toujours afficher 7 dossiers
     STUDIO_BENCHMARK_TASKS.forEach((bt) => {
         if (allTasks.length < 7) {
             allTasks.push({
                 ...bt,
-                taskNum: `Task00${allTasks.length + 1}`
+                taskNum: `Dossier #${allTasks.length + 1 < 10 ? '0' + (allTasks.length + 1) : (allTasks.length + 1)}`
             });
         }
     });
 
-    const doneCount = allTasks.filter(t => t.status === 'Completed').length;
-    const inProgressCount = allTasks.filter(t => t.status === 'In Progress').length;
-    const notStartedCount = allTasks.filter(t => t.status === 'Not Started').length;
+    const doneCount = allTasks.filter(t => t.status === 'Terminé').length;
+    const inProgressCount = allTasks.filter(t => t.status === 'En cours').length;
+    const notStartedCount = allTasks.filter(t => t.status === 'En attente' || t.status === 'En étude' || t.status === 'Nouveau').length;
     const totalCount = allTasks.length;
 
     if (statLeadsDone) statLeadsDone.textContent = doneCount;
@@ -504,7 +504,7 @@ function renderDashboardOverview() {
                 <td>
                     <div class="elite-status-text ${task.statusClass}">
                         <span>${escapeHtml(task.status)}</span>
-                        <span class="elite-status-date-sub">${escapeHtml(task.dateSub || '20 Jan')}</span>
+                        <span class="elite-status-date-sub">${escapeHtml(task.dateSub || 'Récent')}</span>
                     </div>
                 </td>
                 <td>

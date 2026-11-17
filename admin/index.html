@@ -165,14 +165,17 @@
         
         <div class="dashboard-shell">
             
-            <!-- SIDEBAR TEMPLATE ÉLITE (COPIE CONFORME DU MODÈLE DE RÉFÉRENCE) -->
+            <!-- SIDEBAR ÉLITE ARCHITECTURE ATELIER GRAFRIKA -->
             <aside class="dash-sidebar" id="adminSidebar">
                 
-                <!-- ENTÊTE DE LA SIDEBAR (TITRE ÉLÉGANT SANS LOGO ENCOMBRANT) -->
+                <!-- ENTÊTE AVEC LOGO BIEN VISIBLE & SANS SCROLL -->
                 <div class="elite-sidebar-header">
                     <div class="elite-brand-block">
-                        <span class="elite-brand-title">Atelier Grafrika</span>
-                        <span class="elite-brand-sub">Studio Systems</span>
+                        <img src="../assets/logo.png" alt="Atelier Grafrika" class="elite-sidebar-logo">
+                        <div class="elite-brand-text">
+                            <span class="elite-brand-title">ATELIER GRAFRIKA</span>
+                            <span class="elite-brand-sub">ARCHITECTURE &amp; BTP</span>
+                        </div>
                     </div>
                     <button type="button" class="sidebar-mobile-close" id="btnCloseSidebar" aria-label="Fermer le menu">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -182,7 +185,7 @@
                     </button>
                 </div>
 
-                <!-- NAVIGATION TEXTE MINIMALISTE MAJUSCULE (SANS ICÔNE, AVEC ONGLET ACTIF ARRONDIS) -->
+                <!-- NAVIGATION TEXTE MINIMALISTE MAJUSCULE (SANS SCROLL, ACCÈS DIRECT) -->
                 <nav class="elite-nav-list">
                     <button class="dash-nav-btn elite-nav-btn active" data-tab="dashboard">
                         <span>VUE D'ENSEMBLE</span>
@@ -246,15 +249,15 @@
                      ============================================================= -->
                 <div class="tab-pane active" id="tabDashboard">
                     
-                    <!-- BANDEAU BLEU SUPÉRIEUR AVEC LES 4 CARTES BLANCHES (COPIE DU TEMPLATE) -->
+                    <!-- BANDEAU BLEU SUPÉRIEUR : SUIVI DES CHANTIERS & PROJETS (100% FRANÇAIS) -->
                     <div class="elite-hero-banner">
-                        <div class="elite-banner-title">WEEKLY TASKS &amp; STUDIO STATUS UPDATE</div>
+                        <div class="elite-banner-title">SUIVI D'ACTIVITÉ &amp; CHANTIERS DE L'ATELIER</div>
                         <div class="elite-kpi-row">
                             
-                            <!-- CARTE 1 : COMPLETED / VALIDÉS -->
+                            <!-- CARTE 1 : PROJETS TERMINÉS -->
                             <div class="elite-kpi-card" data-tab-switch="leads">
                                 <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">COMPLETED</span>
+                                    <span class="elite-kpi-label">PROJETS TERMINÉS</span>
                                     <span class="elite-kpi-num" id="statLeadsDone">0</span>
                                 </div>
                                 <div class="elite-kpi-icon">
@@ -266,10 +269,10 @@
                                 </div>
                             </div>
 
-                            <!-- CARTE 2 : IN PROGRESS / EN COURS -->
+                            <!-- CARTE 2 : CHANTIERS EN COURS -->
                             <div class="elite-kpi-card" data-tab-switch="leads">
                                 <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">IN PROGRESS</span>
+                                    <span class="elite-kpi-label">CHANTIERS EN COURS</span>
                                     <span class="elite-kpi-num" id="statLeadsProgress">0</span>
                                 </div>
                                 <div class="elite-kpi-icon">
@@ -284,10 +287,10 @@
                                 </div>
                             </div>
 
-                            <!-- CARTE 3 : NOT STARTED -->
+                            <!-- CARTE 3 : EN ÉTUDE & PLANS -->
                             <div class="elite-kpi-card" data-tab-switch="projects">
                                 <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">NOT STARTED</span>
+                                    <span class="elite-kpi-label">EN ÉTUDE &amp; PLANS</span>
                                     <span class="elite-kpi-num" id="statNotStarted">2</span>
                                 </div>
                                 <div class="elite-kpi-icon">
@@ -300,10 +303,10 @@
                                 </div>
                             </div>
 
-                            <!-- CARTE 4 : TOTAL TASKS -->
+                            <!-- CARTE 4 : TOTAL DES DOSSIERS -->
                             <div class="elite-kpi-card">
                                 <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">TOTAL TASKS</span>
+                                    <span class="elite-kpi-label">TOTAL DES DOSSIERS</span>
                                     <span class="elite-kpi-num" id="statTotalTasks">7</span>
                                 </div>
                                 <div class="elite-kpi-icon">
@@ -324,8 +327,8 @@
                     <div class="elite-table-card">
                         <div class="elite-table-toolbar">
                             <div class="elite-toolbar-left">
-                                <h3 class="elite-table-heading">SUIVI DES DEVIS &amp; TÂCHES CLIENTS</h3>
-                                <p class="elite-table-sub">Progression en temps réel des demandes reçues via le site public.</p>
+                                <h3 class="elite-table-heading">SUIVI OPÉRATIONNEL DES CHANTIERS &amp; DEVIS</h3>
+                                <p class="elite-table-sub">Progression en temps réel des études de plans, permis et travaux du studio.</p>
                             </div>
                             <div class="elite-toolbar-actions">
                                 <button class="btn-primary-pill" data-tab-switch="projects">
@@ -350,12 +353,12 @@
                             <table class="elite-table">
                                 <thead>
                                     <tr>
-                                        <th>TASK / CLIENT</th>
-                                        <th>STATUS</th>
-                                        <th>% PROGRESS</th>
-                                        <th>PRIORITY</th>
+                                        <th>DOSSIER / CLIENT</th>
+                                        <th>STATUT</th>
+                                        <th>PROGRESSION</th>
+                                        <th>PRIORITÉ</th>
                                         <th>DATE</th>
-                                        <th style="text-align: right;">CONTACT / ACTION</th>
+                                        <th style="text-align: right;">CONTACT &amp; ACTIONS</th>
                                     </tr>
                                 </thead>
                                 <tbody id="eliteOverviewTableBody">

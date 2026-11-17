@@ -604,7 +604,7 @@ body.admin-body {
     box-shadow: none;
     border: none;
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 250px 1fr;
 }
 
 
@@ -612,69 +612,89 @@ body.admin-body {
    3. SIDEBAR ANCRÉE PLEINE HAUTEUR (STYLE TEMPLATE ÉLITE BLEU PROFOND)
    ========================================================================== */
 .dash-sidebar {
-    width: 240px;
-    min-width: 240px;
+    width: 250px;
+    min-width: 250px;
     background-color: #104c91;
     color: #ffffff;
     border-right: none;
-    padding: 2.4rem 0 1.8rem 1.4rem;
+    padding: 1.3rem 0 1.2rem 1.2rem;
     display: flex;
     flex-direction: column;
     height: 100vh;
+    max-height: 100vh;
     position: sticky;
     top: 0;
     left: 0;
-    overflow-y: auto;
+    overflow-y: hidden;
     z-index: 50;
 }
 
 .elite-sidebar-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    padding-right: 1.4rem;
-    margin-bottom: 2.4rem;
+    padding-right: 1.2rem;
+    margin-bottom: 1.4rem;
 }
 
 .elite-brand-block {
     display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.elite-sidebar-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+}
+
+.elite-brand-text {
+    display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
 }
 
 .elite-brand-title {
     font-family: var(--font-heading);
-    font-size: 1.05rem;
+    font-size: 0.88rem;
     font-weight: 800;
     color: #ffffff;
-    letter-spacing: -0.01em;
-    line-height: 1.25;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
 }
 
 .elite-brand-sub {
     font-family: inherit;
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.72);
-    font-weight: 400;
-    letter-spacing: 0.02em;
+    font-size: 0.62rem;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
-/* NAVIGATION TEXTE MINIMALISTE MAJUSCULE CONFORME AU MODÈLE */
+/* NAVIGATION TEXTE MINIMALISTE MAJUSCULE CONFORME AU MODÈLE (SANS SCROLL) */
 .elite-nav-list {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.35rem;
     flex: 1;
 }
 
 .dash-nav-btn,
 .elite-nav-btn {
     width: 100%;
-    padding: 0.85rem 1.4rem;
+    padding: 0.72rem 1.2rem;
     border: none;
     background: transparent;
     font-family: var(--font-heading);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -692,7 +712,7 @@ body.admin-body {
 .dash-nav-btn:hover,
 .elite-nav-btn:hover {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
 }
 
 /* L'onglet actif blanc signature avec les courbes inversées du template */
@@ -735,7 +755,7 @@ body.admin-body {
 }
 
 .elite-logout-btn {
-    margin-top: auto;
+    margin-top: 0.8rem;
     color: rgba(255, 255, 255, 0.7);
 }
 
@@ -2155,7 +2175,7 @@ body.admin-body {
     }
 
     .dashboard-shell {
-        grid-template-columns: 240px 1fr;
+        grid-template-columns: 250px 1fr;
         border-radius: 0;
     }
 
