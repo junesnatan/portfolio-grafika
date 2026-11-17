@@ -273,295 +273,174 @@ function setupMobileDrawer() {
 }
 
 // =========================================================================
-// 4. RENDU DU DASHBOARD (STYLE ÉLITE INSPIRÉ DE LA CAPTURE)
+// 4. RENDU DU DASHBOARD (100% SYNCHRONISÉ AVEC LA BASE DE DONNÉES TIDB)
 // =========================================================================
-const STUDIO_BENCHMARK_TASKS = [
-    {
-        taskNum: "Dossier #01",
-        name: "Villa Océane & Claustras",
-        sub: "Conception architecturale & Permis de construire",
-        status: "Terminé",
-        dateSub: "20 Jan",
-        statusClass: "status-green",
-        progress: 100,
-        progressClass: "fill-green",
-        priority: "URGENT",
-        priorityClass: "priority-high",
-        date: "20/01/2026",
-        phone: "+2290196969696",
-        isLead: false
-    },
-    {
-        taskNum: "Dossier #02",
-        name: "Résidence Moderne Calavi",
-        sub: "Plans d'exécution & Modélisation 3D",
-        status: "En cours",
-        dateSub: "20 Jan",
-        statusClass: "status-blue",
-        progress: 80,
-        progressClass: "",
-        priority: "MOYENNE",
-        priorityClass: "priority-medium",
-        date: "22/04/2026",
-        phone: "+2290197979797",
-        isLead: false
-    },
-    {
-        taskNum: "Dossier #03",
-        name: "Boutique Épurée Ganhi",
-        sub: "Design d'intérieur & Claustras sur-mesure",
-        status: "En cours",
-        dateSub: "20 Jan",
-        statusClass: "status-blue",
-        progress: 50,
-        progressClass: "",
-        priority: "NORMALE",
-        priorityClass: "priority-low",
-        date: "30/05/2026",
-        phone: "+2290195959595",
-        isLead: false
-    },
-    {
-        taskNum: "Dossier #04",
-        name: "Immeuble R+3 Cadjèhoun",
-        sub: "Suivi de chantier & Gros œuvre",
-        status: "En cours",
-        dateSub: "20 Jan",
-        statusClass: "status-blue",
-        progress: 65,
-        progressClass: "",
-        priority: "URGENT",
-        priorityClass: "priority-high",
-        date: "30/08/2026",
-        phone: "+2290194949494",
-        isLead: false
-    },
-    {
-        taskNum: "Dossier #05",
-        name: "Pavillon Tropical Ouidah",
-        sub: "Dossier technique & Devis gros œuvre",
-        status: "En cours",
-        dateSub: "20 Jan",
-        statusClass: "status-blue",
-        progress: 25,
-        progressClass: "",
-        priority: "MOYENNE",
-        priorityClass: "priority-medium",
-        date: "30/11/2026",
-        phone: "+2290193939393",
-        isLead: false
-    },
-    {
-        taskNum: "Dossier #06",
-        name: "Villa Contemporaine Togbin",
-        sub: "Métré structure & Fondations spéciales",
-        status: "En étude",
-        dateSub: "20 Jan",
-        statusClass: "status-slate",
-        progress: 10,
-        progressClass: "",
-        priority: "MOYENNE",
-        priorityClass: "priority-medium",
-        date: "15/12/2026",
-        phone: "+2290192929292",
-        isLead: false
-    },
-    {
-        taskNum: "Dossier #07",
-        name: "Showroom Mobilier & Claustras",
-        sub: "Fabrication ateliers & Finitions intérieures",
-        status: "En attente",
-        dateSub: "20 Jan",
-        statusClass: "status-slate",
-        progress: 0,
-        progressClass: "",
-        priority: "NORMALE",
-        priorityClass: "priority-low",
-        date: "05/01/2027",
-        phone: "+2290191919191",
-        isLead: false
-    }
-];
-
 function renderDashboardOverview() {
-    const statViews = document.getElementById('statViews');
-    const statProjects = document.getElementById('statProjects');
-    const statLeadsDone = document.getElementById('statLeadsDone');
+    // 1. Mise à jour des cartes KPI avec les vraies données de la BDD
+    const statProjectsKpi = document.getElementById('statProjectsKpi') || document.getElementById('statProjects');
+    const statTotalLeadsKpi = document.getElementById('statTotalLeadsKpi') || document.getElementById('statTotalTasks');
+    const statNewLeadsKpi = document.getElementById('statNewLeadsKpi') || document.getElementById('statNotStarted');
+    const statDoneLeadsKpi = document.getElementById('statDoneLeadsKpi') || document.getElementById('statLeadsDone');
     const statLeadsProgress = document.getElementById('statLeadsProgress');
-    const statNotStarted = document.getElementById('statNotStarted');
-    const statTotalTasks = document.getElementById('statTotalTasks');
 
-    // Construire la liste combinée des dossiers
-    const allTasks = [];
+    const totalProjects = currentProjects ? currentProjects.length : 0;
+    const totalLeads = currentLeads ? currentLeads.length : 0;
+    const newLeads = currentLeads ? currentLeads.filter(l => l.status === 'Nouveau' || !l.status).length : 0;
+    const inProgressLeads = currentLeads ? currentLeads.filter(l => l.status === 'En contact' || l.status === 'En cours').length : 0;
+    const doneLeads = currentLeads ? currentLeads.filter(l => l.status === 'Devis validé' || l.status === 'Terminé').length : 0;
 
-    // Ajouter en priorité les vrais devis clients reçus
-    if (currentLeads && currentLeads.length > 0) {
-        currentLeads.forEach((lead, idx) => {
-            const clientName = (lead.name || 'Client').trim();
-            const domain = lead.domain || 'Architecture';
-            const city = lead.city || 'Bénin';
+    if (statProjectsKpi) statProjectsKpi.textContent = totalProjects;
+    if (statTotalLeadsKpi) statTotalLeadsKpi.textContent = totalLeads;
+    if (statNewLeadsKpi) statNewLeadsKpi.textContent = newLeads;
+    if (statDoneLeadsKpi) statDoneLeadsKpi.textContent = doneLeads;
+    if (statLeadsProgress) statLeadsProgress.textContent = inProgressLeads;
 
-            let statusLabel = 'En cours';
-            let statusClass = 'status-blue';
-            let progressVal = 60;
-            let progressClass = '';
-
-            if (lead.status === 'Devis validé' || lead.status === 'Completed' || lead.status === 'Terminé') {
-                statusLabel = 'Terminé';
-                statusClass = 'status-green';
-                progressVal = 100;
-                progressClass = 'fill-green';
-            } else if (lead.status === 'Nouveau' || lead.status === 'Not Started' || lead.status === 'En attente') {
-                statusLabel = 'Nouveau';
-                statusClass = 'status-slate';
-                progressVal = 15;
-            } else if (lead.status === 'Archivé') {
-                statusLabel = 'Archivé';
-                statusClass = 'status-slate';
-                progressVal = 100;
-            }
-
-            let priorityLabel = 'MOYENNE';
-            let priorityClass = 'priority-medium';
-            const lowerDomain = domain.toLowerCase();
-            if (lowerDomain.includes('btp') || lowerDomain.includes('gros') || lowerDomain.includes('permis')) {
-                priorityLabel = 'URGENT';
-                priorityClass = 'priority-high';
-            } else if (lowerDomain.includes('autre')) {
-                priorityLabel = 'NORMALE';
-                priorityClass = 'priority-low';
-            }
-
-            const dateDisplay = lead.date ? lead.date.split(',')[0] : 'Récent';
-
-            allTasks.push({
-                taskNum: `Dossier #${idx + 1 < 10 ? '0' + (idx + 1) : (idx + 1)}`,
-                name: clientName,
-                sub: `${domain} • ${city}`,
-                status: statusLabel,
-                dateSub: dateDisplay,
-                statusClass: statusClass,
-                progress: progressVal,
-                progressClass: progressClass,
-                priority: priorityLabel,
-                priorityClass: priorityClass,
-                date: dateDisplay,
-                phone: lead.phone || '',
-                isLead: true,
-                leadId: lead.id,
-                leadRef: lead
-            });
-        });
-    }
-
-    // Compléter avec les jalons réels du studio pour toujours afficher 7 dossiers
-    STUDIO_BENCHMARK_TASKS.forEach((bt) => {
-        if (allTasks.length < 7) {
-            allTasks.push({
-                ...bt,
-                taskNum: `Dossier #${allTasks.length + 1 < 10 ? '0' + (allTasks.length + 1) : (allTasks.length + 1)}`
-            });
-        }
-    });
-
-    const doneCount = allTasks.filter(t => t.status === 'Terminé').length;
-    const inProgressCount = allTasks.filter(t => t.status === 'En cours').length;
-    const notStartedCount = allTasks.filter(t => t.status === 'En attente' || t.status === 'En étude' || t.status === 'Nouveau').length;
-    const totalCount = allTasks.length;
-
-    if (statLeadsDone) statLeadsDone.textContent = doneCount;
-    if (statLeadsProgress) statLeadsProgress.textContent = inProgressCount;
-    if (statNotStarted) statNotStarted.textContent = notStartedCount;
-    if (statTotalTasks) statTotalTasks.textContent = totalCount;
-    if (statProjects) statProjects.textContent = currentProjects.length;
-    if (statViews) statViews.textContent = currentStats.views || 248;
-
+    // Badges barre d'outils et navigation
+    const dashToolbarLeadsCount = document.getElementById('dashToolbarLeadsCount');
+    const dashProjectsCountBadge = document.getElementById('dashProjectsCountBadge');
     const badgeProjectCount = document.getElementById('badgeProjectCount');
     const badgeLeadsCount = document.getElementById('badgeLeadsCount');
-    if (badgeProjectCount) badgeProjectCount.textContent = currentProjects.length;
-    if (badgeLeadsCount) badgeLeadsCount.textContent = currentLeads.filter(l => l.status === 'Nouveau').length;
 
-    // Rendu du grand tableau Elite
+    if (dashToolbarLeadsCount) dashToolbarLeadsCount.textContent = totalLeads;
+    if (dashProjectsCountBadge) dashProjectsCountBadge.textContent = totalProjects;
+    if (badgeProjectCount) badgeProjectCount.textContent = totalProjects;
+    if (badgeLeadsCount) badgeLeadsCount.textContent = newLeads;
+
+    // 2. Rendu du grand tableau Elite : UNIQUEMENT LES VRAIS LEADS DE LA BASE DE DONNÉES
     const eliteTableBody = document.getElementById('eliteOverviewTableBody');
     if (eliteTableBody) {
         eliteTableBody.innerHTML = '';
 
-        allTasks.forEach((task) => {
-            const tr = document.createElement('tr');
-            const cleanPhone = (task.phone || '').replace(/[^0-9+]/g, '');
-            const safeName = encodeURIComponent(task.name);
-            const waUrl = cleanPhone 
-                ? `https://wa.me/${cleanPhone}?text=Bonjour%20${safeName},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`
-                : `https://wa.me/2290196969696?text=Bonjour%20Atelier%20Grafrika...`;
-
-            tr.innerHTML = `
-                <td>
-                    <div class="elite-task-col">
-                        <span class="elite-task-name">${escapeHtml(task.taskNum)} — ${escapeHtml(task.name)}</span>
-                        <span class="elite-task-sub">${escapeHtml(task.sub)}</span>
-                    </div>
-                </td>
-                <td>
-                    <div class="elite-status-text ${task.statusClass}">
-                        <span>${escapeHtml(task.status)}</span>
-                        <span class="elite-status-date-sub">${escapeHtml(task.dateSub || 'Récent')}</span>
-                    </div>
-                </td>
-                <td>
-                    <div class="elite-progress-wrap">
-                        <div class="elite-progress-track">
-                            <div class="elite-progress-fill ${task.progressClass}" style="width: ${task.progress}%;"></div>
+        if (!currentLeads || currentLeads.length === 0) {
+            eliteTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 3.5rem 1.5rem; background: #ffffff;">
+                        <div style="max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; text-align: center;">
+                            <div style="width: 52px; height: 52px; border-radius: 50%; background: #f0f7ff; color: #104c91; display: flex; align-items: center; justify-content: center;">
+                                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                            </div>
+                            <strong style="font-size: 1rem; color: #0f172a; font-family: var(--font-heading);">Aucune demande enregistrée dans la base de données</strong>
+                            <p style="font-size: 0.82rem; color: #64748b; line-height: 1.5; margin: 0;">
+                                Les demandes de devis et dossiers soumis par vos clients sur le site vitrine apparaîtront ici automatiquement avec leurs coordonnées réelles.
+                            </p>
+                            <a href="../" target="_blank" rel="noopener" class="btn-outline-pill-small" style="margin-top: 0.4rem;">
+                                <span>Voir le site public</span>
+                            </a>
                         </div>
-                        <span class="elite-progress-val">${task.progress}%</span>
-                    </div>
-                </td>
-                <td>
-                    <span class="elite-priority-pill ${task.priorityClass}">${task.priority}</span>
-                </td>
-                <td>
-                    <span style="font-size: 0.82rem; color: #475569; font-weight: 500;">${escapeHtml(task.date)}</span>
-                </td>
-                <td>
-                    <div class="elite-actions-col">
-                        <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="elite-action-btn btn-wa" title="WhatsApp direct">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                            </svg>
-                        </a>
-                        ${cleanPhone ? `
-                        <a href="tel:${escapeHtml(cleanPhone)}" class="elite-action-btn btn-tel" title="Appeler">
-                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                            </svg>
-                        </a>` : ''}
-                        ${task.isLead ? `
-                        <button class="elite-action-btn btn-status-toggle" data-lead-id="${escapeHtml(task.leadId)}" title="Changer le statut">
-                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="9 11 12 14 22 4"></polyline>
-                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                            </svg>
-                        </button>` : `
-                        <button class="elite-action-btn btn-status-toggle" title="Phase studio validée">
-                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </button>`}
-                    </div>
-                </td>
+                    </td>
+                </tr>
             `;
+        } else {
+            currentLeads.forEach((lead, idx) => {
+                const tr = document.createElement('tr');
+                const clientName = (lead.name || 'Client').trim();
+                const domain = lead.domain || 'Architecture';
+                const city = lead.city || 'Bénin';
 
-            if (task.isLead) {
+                let statusLabel = 'Nouveau';
+                let statusClass = 'status-slate';
+                let progressVal = 20;
+                let progressClass = '';
+
+                if (lead.status === 'Devis validé' || lead.status === 'Completed' || lead.status === 'Terminé') {
+                    statusLabel = 'Validé';
+                    statusClass = 'status-green';
+                    progressVal = 100;
+                    progressClass = 'fill-green';
+                } else if (lead.status === 'En contact' || lead.status === 'En cours') {
+                    statusLabel = 'En cours';
+                    statusClass = 'status-blue';
+                    progressVal = 60;
+                } else if (lead.status === 'Archivé') {
+                    statusLabel = 'Archivé';
+                    statusClass = 'status-slate';
+                    progressVal = 100;
+                }
+
+                let priorityLabel = 'MOYENNE';
+                let priorityClass = 'priority-medium';
+                const lowerDomain = domain.toLowerCase();
+                if (lowerDomain.includes('btp') || lowerDomain.includes('gros') || lowerDomain.includes('permis')) {
+                    priorityLabel = 'URGENT';
+                    priorityClass = 'priority-high';
+                } else if (lowerDomain.includes('autre')) {
+                    priorityLabel = 'NORMALE';
+                    priorityClass = 'priority-low';
+                }
+
+                const dateDisplay = lead.date ? lead.date.split(',')[0] : 'Récent';
+                const cleanPhone = (lead.phone || '').replace(/[^0-9+]/g, '');
+                const safeName = encodeURIComponent(clientName);
+                const waUrl = cleanPhone 
+                    ? `https://wa.me/${cleanPhone}?text=Bonjour%20${safeName},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`
+                    : `https://wa.me/2290197932325?text=Bonjour%20Atelier%20Grafrika...`;
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="elite-task-col">
+                            <span class="elite-task-name">Dossier #${idx + 1 < 10 ? '0' + (idx + 1) : (idx + 1)} — ${escapeHtml(clientName)}</span>
+                            <span class="elite-task-sub">${escapeHtml(domain)} • ${escapeHtml(city)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="elite-status-text ${statusClass}">
+                            <span>${escapeHtml(statusLabel)}</span>
+                            <span class="elite-status-date-sub">${escapeHtml(dateDisplay)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="elite-progress-wrap">
+                            <div class="elite-progress-track">
+                                <div class="elite-progress-fill ${progressClass}" style="width: ${progressVal}%;"></div>
+                            </div>
+                            <span class="elite-progress-val">${progressVal}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="elite-priority-pill ${priorityClass}">${priorityLabel}</span>
+                    </td>
+                    <td>
+                        <span style="font-size: 0.82rem; color: #475569; font-weight: 500;">${escapeHtml(dateDisplay)}</span>
+                    </td>
+                    <td>
+                        <div class="elite-actions-col">
+                            <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="elite-action-btn btn-wa" title="WhatsApp direct">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                                </svg>
+                            </a>
+                            ${cleanPhone ? `
+                            <a href="tel:${escapeHtml(cleanPhone)}" class="elite-action-btn btn-tel" title="Appeler">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                            </a>` : ''}
+                            <button class="elite-action-btn btn-status-toggle" data-lead-id="${escapeHtml(lead.id)}" title="Changer le statut en BDD">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 11 12 14 22 4"></polyline>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+
                 const toggleBtn = tr.querySelector('.btn-status-toggle');
                 if (toggleBtn) {
                     toggleBtn.addEventListener('click', async () => {
                         let nextStatus = 'En contact';
-                        if (task.leadRef.status === 'En contact') nextStatus = 'Devis validé';
-                        else if (task.leadRef.status === 'Devis validé') nextStatus = 'Archivé';
-                        else if (task.leadRef.status === 'Archivé') nextStatus = 'Nouveau';
+                        if (lead.status === 'En contact') nextStatus = 'Devis validé';
+                        else if (lead.status === 'Devis validé') nextStatus = 'Archivé';
+                        else if (lead.status === 'Archivé') nextStatus = 'Nouveau';
 
                         try {
-                            await apiClient.updateLeadStatus(task.leadId, nextStatus);
-                            task.leadRef.status = nextStatus;
+                            await apiClient.updateLeadStatus(lead.id, nextStatus);
+                            lead.status = nextStatus;
                             renderDashboardOverview();
                             renderLeadsList();
                             showToast(`Statut mis à jour : ${nextStatus}`);
@@ -570,21 +449,29 @@ function renderDashboardOverview() {
                         }
                     });
                 }
-            }
 
-            eliteTableBody.appendChild(tr);
-        });
+                eliteTableBody.appendChild(tr);
+            });
+        }
     }
 
-    // Mini grille réalisations sur dashboard
+    // 3. Mini grille réalisations réelles sur le dashboard (Table projects)
     const miniGrid = document.getElementById('dashProjectsMiniGrid');
     if (miniGrid) {
         miniGrid.innerHTML = '';
 
-        if (currentProjects.length === 0) {
+        if (!currentProjects || currentProjects.length === 0) {
             miniGrid.innerHTML = `
-                <div style="grid-column: 1 / -1; padding: 2rem 1rem; text-align: center; color: var(--text-subtle); font-size: 0.85rem; background: #ffffff; border-radius: 14px; border: 1.5px dashed var(--border-subtle);">
-                    Aucune réalisation en ligne. Cliquez sur <strong>"Ajouter un projet"</strong> ci-dessus pour publier.
+                <div style="grid-column: 1 / -1; padding: 2.2rem 1.2rem; text-align: center; color: var(--text-secondary); background: #ffffff; border-radius: 14px; border: 1.5px dashed var(--border-subtle);">
+                    <p style="font-weight: 700; color: #0f172a; margin-bottom: 0.35rem; font-size: 0.95rem;">Aucune réalisation dans la base de données</p>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 1rem;">Votre portfolio est actuellement vierge. Ajoutez vos projets pour les afficher sur le site public.</p>
+                    <button type="button" class="btn-primary-pill" onclick="document.querySelector('.dash-nav-btn[data-tab=\\'projects\\']')?.click(); setTimeout(() => openProjectModal(), 100);" style="display: inline-flex; margin: 0 auto;">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Ajouter un projet</span>
+                    </button>
                 </div>
             `;
         } else {

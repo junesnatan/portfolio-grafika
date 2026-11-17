@@ -249,65 +249,31 @@
                      ============================================================= -->
                 <div class="tab-pane active" id="tabDashboard">
                     
-                    <!-- BANDEAU BLEU SUPÉRIEUR : SUIVI DES CHANTIERS & PROJETS (100% FRANÇAIS) -->
+                    <!-- BANDEAU BLEU SUPÉRIEUR : SUIVI EN TEMPS RÉEL DE LA BASE DE DONNÉES -->
                     <div class="elite-hero-banner">
-                        <div class="elite-banner-title">SUIVI D'ACTIVITÉ &amp; CHANTIERS DE L'ATELIER</div>
+                        <div class="elite-banner-title">SUIVI D'ACTIVITÉ &amp; DOSSIERS DE L'ATELIER</div>
                         <div class="elite-kpi-row">
                             
-                            <!-- CARTE 1 : PROJETS TERMINÉS -->
-                            <div class="elite-kpi-card" data-tab-switch="leads">
-                                <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">PROJETS TERMINÉS</span>
-                                    <span class="elite-kpi-num" id="statLeadsDone">0</span>
-                                </div>
-                                <div class="elite-kpi-icon">
-                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                                        <polyline points="9 14 11 16 15 11"></polyline>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <!-- CARTE 2 : CHANTIERS EN COURS -->
-                            <div class="elite-kpi-card" data-tab-switch="leads">
-                                <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">CHANTIERS EN COURS</span>
-                                    <span class="elite-kpi-num" id="statLeadsProgress">0</span>
-                                </div>
-                                <div class="elite-kpi-icon">
-                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                                        <path d="M12 11h4"></path>
-                                        <path d="M12 16h4"></path>
-                                        <path d="M8 11h.01"></path>
-                                        <path d="M8 16h.01"></path>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <!-- CARTE 3 : EN ÉTUDE & PLANS -->
+                            <!-- CARTE 1 : PROJETS EN LIGNE (BASE DE DONNÉES) -->
                             <div class="elite-kpi-card" data-tab-switch="projects">
                                 <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">EN ÉTUDE &amp; PLANS</span>
-                                    <span class="elite-kpi-num" id="statNotStarted">2</span>
+                                    <span class="elite-kpi-label">PROJETS EN LIGNE</span>
+                                    <span class="elite-kpi-num" id="statProjectsKpi">0</span>
                                 </div>
                                 <div class="elite-kpi-icon">
                                     <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
                                     </svg>
                                 </div>
                             </div>
 
-                            <!-- CARTE 4 : TOTAL DES DOSSIERS -->
-                            <div class="elite-kpi-card">
+                            <!-- CARTE 2 : TOTAL DES DEVIS (BASE DE DONNÉES) -->
+                            <div class="elite-kpi-card" data-tab-switch="leads">
                                 <div class="elite-kpi-info">
-                                    <span class="elite-kpi-label">TOTAL DES DOSSIERS</span>
-                                    <span class="elite-kpi-num" id="statTotalTasks">7</span>
+                                    <span class="elite-kpi-label">TOTAL DES DEVIS</span>
+                                    <span class="elite-kpi-num" id="statTotalLeadsKpi">0</span>
                                 </div>
                                 <div class="elite-kpi-icon">
                                     <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -315,7 +281,34 @@
                                         <polyline points="14 2 14 8 20 8"></polyline>
                                         <line x1="16" y1="13" x2="8" y2="13"></line>
                                         <line x1="16" y1="17" x2="8" y2="17"></line>
-                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- CARTE 3 : NOUVEAUX DEVIS EN ATTENTE -->
+                            <div class="elite-kpi-card" data-tab-switch="leads">
+                                <div class="elite-kpi-info">
+                                    <span class="elite-kpi-label">NOUVEAUX DEVIS</span>
+                                    <span class="elite-kpi-num" id="statNewLeadsKpi">0</span>
+                                </div>
+                                <div class="elite-kpi-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- CARTE 4 : DEVIS VALIDÉS / TERMINÉS -->
+                            <div class="elite-kpi-card" data-tab-switch="leads">
+                                <div class="elite-kpi-info">
+                                    <span class="elite-kpi-label">DEVIS VALIDÉS</span>
+                                    <span class="elite-kpi-num" id="statDoneLeadsKpi">0</span>
+                                </div>
+                                <div class="elite-kpi-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
                                     </svg>
                                 </div>
                             </div>
@@ -327,8 +320,8 @@
                     <div class="elite-table-card">
                         <div class="elite-table-toolbar">
                             <div class="elite-toolbar-left">
-                                <h3 class="elite-table-heading">SUIVI OPÉRATIONNEL DES CHANTIERS &amp; DEVIS</h3>
-                                <p class="elite-table-sub">Progression en temps réel des études de plans, permis et travaux du studio.</p>
+                                <h3 class="elite-table-heading">DEMANDES DE DEVIS &amp; DOSSIERS CLIENTS</h3>
+                                <p class="elite-table-sub">Données réelles synchronisées en direct avec votre base de données TiDB.</p>
                             </div>
                             <div class="elite-toolbar-actions">
                                 <button class="btn-primary-pill" data-tab-switch="projects">
@@ -338,12 +331,12 @@
                                     </svg>
                                     <span>Ajouter un projet</span>
                                 </button>
-                                <button class="btn-outline-pill-small" data-tab-switch="settings">
+                                <button class="btn-outline-pill-small" data-tab-switch="leads">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
                                     </svg>
-                                    <span>Infos du site</span>
+                                    <span>Tous les devis (<span id="dashToolbarLeadsCount">0</span>)</span>
                                 </button>
                             </div>
                         </div>
@@ -376,7 +369,7 @@
                                 <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.2rem;">Projets actuellement visibles par le public sur le Link in Bio.</p>
                             </div>
                             <button class="btn-outline-pill-small" data-tab-switch="projects">
-                                <span>Gérer tous les projets (7)</span>
+                                <span>Gérer tous les projets (<span id="dashProjectsCountBadge">0</span>)</span>
                                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
