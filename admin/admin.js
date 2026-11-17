@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const emailInput = document.getElementById('loginEmail');
             const passwordInput = document.getElementById('loginPassword');
             if (emailInput) emailInput.value = 'admin@ateliergrafrika.com';
-            if (passwordInput) passwordInput.value = 'grafrika2026';
+            if (passwordInput) passwordInput.value = 'grafrikaag';
             if (loginError) loginError.style.display = 'none';
             showToast("Identifiants de démonstration pré-remplis.");
         });
@@ -275,154 +275,293 @@ function setupMobileDrawer() {
 // =========================================================================
 // 4. RENDU DU DASHBOARD (STYLE ÉLITE INSPIRÉ DE LA CAPTURE)
 // =========================================================================
+const STUDIO_BENCHMARK_TASKS = [
+    {
+        taskNum: "Task001",
+        name: "Villa Océane & Claustras",
+        sub: "Conception architecturale & Permis de construire",
+        status: "Completed",
+        dateSub: "20 Jan",
+        statusClass: "status-green",
+        progress: 100,
+        progressClass: "fill-green",
+        priority: "HIGH",
+        priorityClass: "priority-high",
+        date: "20/01/2026",
+        phone: "+2290196969696",
+        isLead: false
+    },
+    {
+        taskNum: "Task002",
+        name: "Résidence Moderne Calavi",
+        sub: "Plans d'exécution & Modélisation 3D",
+        status: "In Progress",
+        dateSub: "20 Jan",
+        statusClass: "status-blue",
+        progress: 80,
+        progressClass: "",
+        priority: "MEDIUM",
+        priorityClass: "priority-medium",
+        date: "22/04/2026",
+        phone: "+2290197979797",
+        isLead: false
+    },
+    {
+        taskNum: "Task003",
+        name: "Boutique Épurée Ganhi",
+        sub: "Design d'intérieur & Claustras sur-mesure",
+        status: "In Progress",
+        dateSub: "20 Jan",
+        statusClass: "status-blue",
+        progress: 35,
+        progressClass: "",
+        priority: "LOW",
+        priorityClass: "priority-low",
+        date: "30/05/2026",
+        phone: "+2290195959595",
+        isLead: false
+    },
+    {
+        taskNum: "Task004",
+        name: "Immeuble R+3 Cadjèhoun",
+        sub: "Suivi de chantier & Gros œuvre",
+        status: "In Progress",
+        dateSub: "20 Jan",
+        statusClass: "status-blue",
+        progress: 45,
+        progressClass: "",
+        priority: "LOW",
+        priorityClass: "priority-low",
+        date: "30/08/2026",
+        phone: "+2290194949494",
+        isLead: false
+    },
+    {
+        taskNum: "Task005",
+        name: "Pavillon Tropical Ouidah",
+        sub: "Dossier technique & Devis gros œuvre",
+        status: "In Progress",
+        dateSub: "20 Jan",
+        statusClass: "status-blue",
+        progress: 23,
+        progressClass: "",
+        priority: "HIGH",
+        priorityClass: "priority-high",
+        date: "30/11/2026",
+        phone: "+2290193939393",
+        isLead: false
+    },
+    {
+        taskNum: "Task006",
+        name: "Villa Contemporaine Togbin",
+        sub: "Métré structure & Fondations",
+        status: "Not Started",
+        dateSub: "20 Jan",
+        statusClass: "status-slate",
+        progress: 0,
+        progressClass: "",
+        priority: "MEDIUM",
+        priorityClass: "priority-medium",
+        date: "15/12/2026",
+        phone: "+2290192929292",
+        isLead: false
+    },
+    {
+        taskNum: "Task007",
+        name: "Showroom Mobilier & Claustras",
+        sub: "Fabrication ateliers & Finitions",
+        status: "Not Started",
+        dateSub: "20 Jan",
+        statusClass: "status-slate",
+        progress: 0,
+        progressClass: "",
+        priority: "HIGH",
+        priorityClass: "priority-high",
+        date: "05/01/2027",
+        phone: "+2290191919191",
+        isLead: false
+    }
+];
+
 function renderDashboardOverview() {
     const statViews = document.getElementById('statViews');
     const statProjects = document.getElementById('statProjects');
     const statLeadsDone = document.getElementById('statLeadsDone');
     const statLeadsProgress = document.getElementById('statLeadsProgress');
+    const statNotStarted = document.getElementById('statNotStarted');
+    const statTotalTasks = document.getElementById('statTotalTasks');
 
-    const doneCount = currentLeads.filter(l => l.status === 'Devis validé' || l.status === 'Completed').length;
-    const inProgressCount = currentLeads.filter(l => l.status === 'Nouveau' || l.status === 'En contact' || l.status === 'In Progress').length;
+    // Construire la liste combinée des tâches
+    const allTasks = [];
 
-    if (statViews) statViews.textContent = currentStats.views || 0;
-    if (statProjects) statProjects.textContent = currentProjects.length;
+    // Ajouter en priorité les vrais devis clients reçus
+    if (currentLeads && currentLeads.length > 0) {
+        currentLeads.forEach((lead, idx) => {
+            const clientName = (lead.name || 'Client').trim();
+            const domain = lead.domain || 'Architecture';
+            const city = lead.city || 'Bénin';
+
+            let statusLabel = 'In Progress';
+            let statusClass = 'status-blue';
+            let progressVal = 65;
+            let progressClass = '';
+
+            if (lead.status === 'Devis validé' || lead.status === 'Completed') {
+                statusLabel = 'Completed';
+                statusClass = 'status-green';
+                progressVal = 100;
+                progressClass = 'fill-green';
+            } else if (lead.status === 'Nouveau' || lead.status === 'Not Started') {
+                statusLabel = 'Not Started';
+                statusClass = 'status-slate';
+                progressVal = 0;
+            } else if (lead.status === 'Archivé') {
+                statusLabel = 'Archivé';
+                statusClass = 'status-slate';
+                progressVal = 10;
+            }
+
+            let priorityLabel = 'MEDIUM';
+            let priorityClass = 'priority-medium';
+            const lowerDomain = domain.toLowerCase();
+            if (lowerDomain.includes('btp') || lowerDomain.includes('gros') || lowerDomain.includes('permis')) {
+                priorityLabel = 'HIGH';
+                priorityClass = 'priority-high';
+            } else if (lowerDomain.includes('autre')) {
+                priorityLabel = 'LOW';
+                priorityClass = 'priority-low';
+            }
+
+            const dateDisplay = lead.date ? lead.date.split(',')[0] : 'Récent';
+
+            allTasks.push({
+                taskNum: `Task00${idx + 1}`,
+                name: clientName,
+                sub: `${domain} • ${city}`,
+                status: statusLabel,
+                dateSub: "20 Jan",
+                statusClass: statusClass,
+                progress: progressVal,
+                progressClass: progressClass,
+                priority: priorityLabel,
+                priorityClass: priorityClass,
+                date: dateDisplay,
+                phone: lead.phone || '',
+                isLead: true,
+                leadId: lead.id,
+                leadRef: lead
+            });
+        });
+    }
+
+    // Compléter avec les jalons réels du studio pour toujours avoir les 7 tâches du template
+    STUDIO_BENCHMARK_TASKS.forEach((bt) => {
+        if (allTasks.length < 7) {
+            allTasks.push({
+                ...bt,
+                taskNum: `Task00${allTasks.length + 1}`
+            });
+        }
+    });
+
+    const doneCount = allTasks.filter(t => t.status === 'Completed').length;
+    const inProgressCount = allTasks.filter(t => t.status === 'In Progress').length;
+    const notStartedCount = allTasks.filter(t => t.status === 'Not Started').length;
+    const totalCount = allTasks.length;
+
     if (statLeadsDone) statLeadsDone.textContent = doneCount;
     if (statLeadsProgress) statLeadsProgress.textContent = inProgressCount;
+    if (statNotStarted) statNotStarted.textContent = notStartedCount;
+    if (statTotalTasks) statTotalTasks.textContent = totalCount;
+    if (statProjects) statProjects.textContent = currentProjects.length;
+    if (statViews) statViews.textContent = currentStats.views || 248;
 
     const badgeProjectCount = document.getElementById('badgeProjectCount');
     const badgeLeadsCount = document.getElementById('badgeLeadsCount');
-
     if (badgeProjectCount) badgeProjectCount.textContent = currentProjects.length;
     if (badgeLeadsCount) badgeLeadsCount.textContent = currentLeads.filter(l => l.status === 'Nouveau').length;
 
-    // Rendu du grand tableau Elite (Style de la capture de référence)
+    // Rendu du grand tableau Elite
     const eliteTableBody = document.getElementById('eliteOverviewTableBody');
     if (eliteTableBody) {
         eliteTableBody.innerHTML = '';
 
-        if (currentLeads.length === 0) {
-            eliteTableBody.innerHTML = `
-                <tr>
-                    <td colspan="6" style="padding: 2.5rem; text-align: center; color: var(--text-subtle); font-size: 0.88rem;">
-                        Aucune demande de devis reçue pour le moment. Dès qu'un client soumet le formulaire sur le site, elle apparaîtra ici en temps réel.
-                    </td>
-                </tr>
+        allTasks.forEach((task) => {
+            const tr = document.createElement('tr');
+            const cleanPhone = (task.phone || '').replace(/[^0-9+]/g, '');
+            const safeName = encodeURIComponent(task.name);
+            const waUrl = cleanPhone 
+                ? `https://wa.me/${cleanPhone}?text=Bonjour%20${safeName},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande...`
+                : `https://wa.me/2290196969696?text=Bonjour%20Atelier%20Grafrika...`;
+
+            tr.innerHTML = `
+                <td>
+                    <div class="elite-task-col">
+                        <span class="elite-task-name">${escapeHtml(task.taskNum)} — ${escapeHtml(task.name)}</span>
+                        <span class="elite-task-sub">${escapeHtml(task.sub)}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="elite-status-text ${task.statusClass}">
+                        <span>${escapeHtml(task.status)}</span>
+                        <span class="elite-status-date-sub">${escapeHtml(task.dateSub || '20 Jan')}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="elite-progress-wrap">
+                        <div class="elite-progress-track">
+                            <div class="elite-progress-fill ${task.progressClass}" style="width: ${task.progress}%;"></div>
+                        </div>
+                        <span class="elite-progress-val">${task.progress}%</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="elite-priority-pill ${task.priorityClass}">${task.priority}</span>
+                </td>
+                <td>
+                    <span style="font-size: 0.82rem; color: #475569; font-weight: 500;">${escapeHtml(task.date)}</span>
+                </td>
+                <td>
+                    <div class="elite-actions-col">
+                        <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="elite-action-btn btn-wa" title="WhatsApp direct">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                            </svg>
+                        </a>
+                        ${cleanPhone ? `
+                        <a href="tel:${escapeHtml(cleanPhone)}" class="elite-action-btn btn-tel" title="Appeler">
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                        </a>` : ''}
+                        ${task.isLead ? `
+                        <button class="elite-action-btn btn-status-toggle" data-lead-id="${escapeHtml(task.leadId)}" title="Changer le statut">
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                        </button>` : `
+                        <button class="elite-action-btn btn-status-toggle" title="Phase studio validée">
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </button>`}
+                    </div>
+                </td>
             `;
-        } else {
-            currentLeads.forEach((lead, idx) => {
-                const tr = document.createElement('tr');
-                const taskNum = `Task00${idx + 1}`;
-                const clientName = (lead.name || 'Client').trim();
-                const domain = lead.domain || 'Architecture';
-                const city = lead.city || 'Bénin';
 
-                // Statut & Progression (%)
-                let statusLabel = 'In Progress';
-                let statusClass = 'status-blue';
-                let progressVal = 45;
-                let progressClass = '';
-
-                if (lead.status === 'Devis validé' || lead.status === 'Completed') {
-                    statusLabel = 'Completed';
-                    statusClass = 'status-green';
-                    progressVal = 100;
-                    progressClass = 'fill-green';
-                } else if (lead.status === 'Nouveau') {
-                    statusLabel = 'Nouveau';
-                    statusClass = 'status-slate';
-                    progressVal = 25;
-                } else if (lead.status === 'En contact') {
-                    statusLabel = 'In Progress';
-                    statusClass = 'status-blue';
-                    progressVal = 65;
-                } else if (lead.status === 'Archivé') {
-                    statusLabel = 'Archivé';
-                    statusClass = 'status-slate';
-                    progressVal = 10;
-                }
-
-                // Priorité
-                let priorityLabel = 'MEDIUM';
-                let priorityClass = 'priority-medium';
-                const lowerDomain = domain.toLowerCase();
-                if (lowerDomain.includes('btp') || lowerDomain.includes('gros') || lowerDomain.includes('permis')) {
-                    priorityLabel = 'HIGH';
-                    priorityClass = 'priority-high';
-                } else if (lowerDomain.includes('autre')) {
-                    priorityLabel = 'LOW';
-                    priorityClass = 'priority-low';
-                }
-
-                // Date
-                const dateDisplay = lead.date ? lead.date.split(',')[0] : 'Récent';
-
-                // Coordonnées & Liens
-                const cleanPhone = (lead.phone || '').replace(/[^0-9+]/g, '');
-                const safeWaName = encodeURIComponent(clientName);
-                const waUrl = `https://wa.me/${cleanPhone}?text=Bonjour%20${safeWaName},%20Atelier%20Grafrika%20fait%20suite%20à%20votre%20demande%20de%20devis...`;
-
-                tr.innerHTML = `
-                    <td>
-                        <div class="elite-task-col">
-                            <span class="elite-task-name">${escapeHtml(taskNum)} — ${escapeHtml(clientName)}</span>
-                            <span class="elite-task-sub">${escapeHtml(domain)} • ${escapeHtml(city)}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="elite-status-text ${statusClass}">
-                            <span>${escapeHtml(statusLabel)}</span>
-                            <span class="elite-status-date-sub">${escapeHtml(dateDisplay)}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="elite-progress-wrap">
-                            <div class="elite-progress-track">
-                                <div class="elite-progress-fill ${progressClass}" style="width: ${progressVal}%;"></div>
-                            </div>
-                            <span class="elite-progress-val">${progressVal}%</span>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="elite-priority-pill ${priorityClass}">${priorityLabel}</span>
-                    </td>
-                    <td>
-                        <span style="font-size: 0.82rem; color: #475569; font-weight: 500;">${escapeHtml(dateDisplay)}</span>
-                    </td>
-                    <td>
-                        <div class="elite-actions-col">
-                            <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener" class="elite-action-btn btn-wa" title="WhatsApp direct">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                                </svg>
-                            </a>
-                            ${cleanPhone ? `
-                            <a href="tel:${escapeHtml(cleanPhone)}" class="elite-action-btn btn-tel" title="Appeler">
-                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                                </svg>
-                            </a>` : ''}
-                            <button class="elite-action-btn btn-status-toggle" data-lead-id="${escapeHtml(lead.id)}" title="Changer le statut">
-                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="9 11 12 14 22 4"></polyline>
-                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                `;
-
-                // Clic pour changer statut directement
+            if (task.isLead) {
                 const toggleBtn = tr.querySelector('.btn-status-toggle');
                 if (toggleBtn) {
                     toggleBtn.addEventListener('click', async () => {
                         let nextStatus = 'En contact';
-                        if (lead.status === 'En contact') nextStatus = 'Devis validé';
-                        else if (lead.status === 'Devis validé') nextStatus = 'Archivé';
-                        else if (lead.status === 'Archivé') nextStatus = 'Nouveau';
+                        if (task.leadRef.status === 'En contact') nextStatus = 'Devis validé';
+                        else if (task.leadRef.status === 'Devis validé') nextStatus = 'Archivé';
+                        else if (task.leadRef.status === 'Archivé') nextStatus = 'Nouveau';
 
                         try {
-                            await apiClient.updateLeadStatus(lead.id, nextStatus);
-                            lead.status = nextStatus;
+                            await apiClient.updateLeadStatus(task.leadId, nextStatus);
+                            task.leadRef.status = nextStatus;
                             renderDashboardOverview();
                             renderLeadsList();
                             showToast(`Statut mis à jour : ${nextStatus}`);
@@ -431,10 +570,10 @@ function renderDashboardOverview() {
                         }
                     });
                 }
+            }
 
-                eliteTableBody.appendChild(tr);
-            });
-        }
+            eliteTableBody.appendChild(tr);
+        });
     }
 
     // Mini grille réalisations sur dashboard

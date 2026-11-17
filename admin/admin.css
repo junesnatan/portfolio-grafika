@@ -604,7 +604,7 @@ body.admin-body {
     box-shadow: none;
     border: none;
     display: grid;
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: 240px 1fr;
 }
 
 
@@ -612,12 +612,12 @@ body.admin-body {
    3. SIDEBAR ANCRÉE PLEINE HAUTEUR (STYLE TEMPLATE ÉLITE BLEU PROFOND)
    ========================================================================== */
 .dash-sidebar {
-    width: 260px;
-    min-width: 260px;
+    width: 240px;
+    min-width: 240px;
     background-color: #104c91;
     color: #ffffff;
     border-right: none;
-    padding: 1.8rem 0 1.5rem 1.25rem;
+    padding: 2.4rem 0 1.8rem 1.4rem;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -628,237 +628,120 @@ body.admin-body {
     z-index: 50;
 }
 
-.dash-sidebar-header {
-    margin-bottom: 2rem;
-    padding-right: 1.25rem;
-}
-
-.dash-brand-block {
+.elite-sidebar-header {
     display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    text-decoration: none;
-    color: #ffffff;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-right: 1.4rem;
+    margin-bottom: 2.4rem;
 }
 
-.dash-brand-name {
+.elite-brand-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.elite-brand-title {
     font-family: var(--font-heading);
     font-size: 1.05rem;
     font-weight: 800;
+    color: #ffffff;
     letter-spacing: -0.01em;
-    color: #ffffff;
+    line-height: 1.25;
 }
 
-.dash-brand-title .text-red {
-    color: #ff8585;
+.elite-brand-sub {
+    font-family: inherit;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-weight: 400;
+    letter-spacing: 0.02em;
 }
 
-.dash-brand-title .text-blue {
-    color: #ffffff;
-}
-
-.dash-brand-sub {
-    font-size: 0.62rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.7);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 2px;
-}
-
-.sidebar-claustra-accent {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 0.75rem;
-}
-
-.sidebar-claustra-accent span {
-    width: 6px;
-    height: 6px;
-    border-radius: 1px;
-    background: rgba(255, 255, 255, 0.4);
-    display: inline-block;
-}
-
-.sidebar-claustra-accent span:nth-child(even) {
-    background: #ff8585;
-    border-radius: 50%;
-}
-
-.dash-nav-scroll {
+/* NAVIGATION TEXTE MINIMALISTE MAJUSCULE CONFORME AU MODÈLE */
+.elite-nav-list {
     display: flex;
     flex-direction: column;
+    gap: 0.65rem;
+    flex: 1;
 }
 
-.nav-group-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.55);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.6rem;
-    padding-left: 0.85rem;
-}
-
-.dash-nav-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-}
-
-.dash-nav-btn {
+.dash-nav-btn,
+.elite-nav-btn {
     width: 100%;
-    height: 46px;
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    padding: 0 1.25rem 0 0.95rem;
-    border-radius: 9999px 0 0 9999px;
+    padding: 0.85rem 1.4rem;
     border: none;
     background: transparent;
     font-family: var(--font-heading);
-    font-size: 0.84rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.82);
     cursor: pointer;
     text-align: left;
-    transition: all 0.18s ease;
     text-decoration: none;
     position: relative;
-}
-
-.dash-nav-btn .nav-svg {
-    color: rgba(255, 255, 255, 0.75);
-    transition: color 0.18s ease;
-    flex-shrink: 0;
-}
-
-.dash-nav-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.dash-nav-btn:hover .nav-svg {
-    color: #ffffff;
-}
-
-/* L'ONGLET ACTIF BLANC DU TEMPLATE DE RÉFÉRENCE */
-.dash-nav-btn.active {
-    color: #104c91 !important;
-    background: #ffffff !important;
-    font-weight: 700;
-    box-shadow: -4px 6px 16px rgba(0, 0, 0, 0.08);
+    transition: color 0.16s ease, background 0.16s ease;
+    display: flex;
+    align-items: center;
     border-radius: 9999px 0 0 9999px;
 }
 
-.dash-nav-btn.active .nav-svg {
+.dash-nav-btn:hover,
+.elite-nav-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* L'onglet actif blanc signature avec les courbes inversées du template */
+.dash-nav-btn.active,
+.elite-nav-btn.active {
+    background: #ffffff !important;
     color: #104c91 !important;
-}
-
-.nav-counter-pill {
-    margin-left: auto;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-}
-
-.dash-nav-btn.active .nav-counter-pill {
-    background: #104c91;
-    color: #ffffff;
-}
-
-.nav-counter-pill.red {
-    background: #ff5252;
-    color: #ffffff;
-}
-
-.btn-logout-subtle {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.btn-logout-subtle:hover {
-    color: #ffffff !important;
-    background: rgba(239, 68, 68, 0.4) !important;
-}
-
-.btn-logout-subtle:hover .nav-svg {
-    color: #ffffff;
-}
-
-/* Mini Promo Card en bas de la sidebar (Flat Design, zéro dégradé, sans canyon vide) */
-.sidebar-promo-box {
-    margin-top: 1.8rem;
-    margin-bottom: 1rem;
-    flex-shrink: 0;
-}
-
-.promo-inner-card {
-    background: #0b1b2b;
-    color: #ffffff;
-    border-radius: 16px;
-    padding: 1.15rem 1rem;
-    text-align: left;
-    box-shadow: 0 4px 16px rgba(11, 27, 43, 0.15);
+    font-weight: 800 !important;
+    box-shadow: -4px 6px 18px rgba(0, 0, 0, 0.06);
     position: relative;
+    z-index: 10;
 }
 
-.promo-icon-circle {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.dash-nav-btn.active::before,
+.elite-nav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: -16px;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    background: transparent;
+    border-bottom-right-radius: 16px;
+    box-shadow: 5px 5px 0 5px #ffffff;
+    pointer-events: none;
+}
+
+.dash-nav-btn.active::after,
+.elite-nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    background: transparent;
+    border-top-right-radius: 16px;
+    box-shadow: 5px -5px 0 5px #ffffff;
+    pointer-events: none;
+}
+
+.elite-logout-btn {
+    margin-top: auto;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.elite-logout-btn:hover {
     color: #ffffff;
-    margin-bottom: 0.65rem;
-}
-
-.promo-title {
-    font-family: var(--font-heading);
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.15rem;
-    line-height: 1.2;
-}
-
-.promo-desc {
-    font-size: 0.7rem;
-    color: #94a3b8;
-    margin-bottom: 0.85rem;
-    line-height: 1.35;
-}
-
-.promo-btn-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-    width: 100%;
-    background: #ffffff;
-    color: #0b1b2b;
-    border-radius: var(--radius-pill);
-    padding: 0.58rem 0.9rem;
-    font-family: var(--font-heading);
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-align: center;
-    text-decoration: none;
-    border: none;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-    transition: background 0.16s ease, transform 0.16s ease;
-}
-
-.promo-btn-pill:hover {
-    background: #f1f5f9;
-    transform: translateY(-1px);
+    background: rgba(239, 68, 68, 0.35);
 }
 
 
