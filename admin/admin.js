@@ -638,120 +638,60 @@ document.getElementById('projectCategoryFilter')?.addEventListener('change', ren
 const MAX_PROJECT_PHOTOS = 8;
 const YOUTUBE_ASPECT_RATIO = 16 / 9;
 
-// Cache en mémoire du logo officiel pour le filigrane
-let cachedOfficialLogoImg = null;
+// Cache en mémoire du filigrane importé par l'utilisateur
+let cachedUserWatermarkImg = null;
+let cachedUserWatermarkSrc = '';
 
-async function getOfficialLogoImage() {
-    if (cachedOfficialLogoImg) return cachedOfficialLogoImg;
+async function getUserWatermarkImage() {
+    const wmUrl = currentSettings?.watermarkUrl;
+    const isEnabled = currentSettings?.autoWatermark !== false;
+    if (!isEnabled || !wmUrl) return null;
+
+    if (cachedUserWatermarkImg && cachedUserWatermarkSrc === wmUrl) {
+        return cachedUserWatermarkImg;
+    }
+
     return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => {
-            cachedOfficialLogoImg = img;
+            cachedUserWatermarkImg = img;
+            cachedUserWatermarkSrc = wmUrl;
             resolve(img);
         };
-        img.onerror = () => {
-            const fallback = new Image();
-            fallback.crossOrigin = 'anonymous';
-            fallback.onload = () => {
-                cachedOfficialLogoImg = fallback;
-                resolve(fallback);
-            };
-            fallback.onerror = () => resolve(null);
-            fallback.src = '../assets/logo.png';
-        };
-        img.src = '/assets/logo.png';
+        img.onerror = () => resolve(null);
+        img.src = wmUrl;
     });
 }
 
 /**
- * Appose fidèlement le filigrane officiel Atelier Grafrika (identique au premier projet) :
- * 1. Monogramme 'aG' architectural translucide au centre
- * 2. Ligne horizontale de texte 'ATELIER GRAFRIKA' translucide au milieu
- * 3. Badge circulaire blanc avec logo officiel au bas centre
- * ZÉRO logo d'angle ou filigrane parasite.
- * Détecte si l'image comporte déjà le badge officiel pour éviter tout doublon.
+ * Applique fidèlement le filigrane officiel importé par l'utilisateur.
+ * Si aucun filigrane n'a été téléversé, aucune modification n'est appliquée.
  */
-async function applyOfficialGrafrikaWatermark(ctx, targetWidth, targetHeight) {
-    if (currentSettings?.autoWatermark === false) {
-        return;
+async function applyUserWatermark(ctx, targetWidth, targetHeight) {
+    const wmImg = await getUserWatermarkImage();
+    if (!wmImg || !wmImg.width || !wmImg.height) return;
+
+    ctx.save();
+    const wmAspect = wmImg.width / wmImg.height;
+
+    // Si le filigrane est au ratio panoramique 16:9 (overlay complet transparent)
+    if (Math.abs(wmAspect - YOUTUBE_ASPECT_RATIO) < 0.25 || (wmImg.width >= 1000 && wmImg.height >= 500)) {
+        ctx.drawImage(wmImg, 0, 0, targetWidth, targetHeight);
+    } else {
+        // Si c'est un badge, signature ou logo isolé, on le positionne centré au bas
+        const wmWidth = Math.min(Math.round(targetWidth * 0.22), Math.max(120, wmImg.width));
+        const wmHeight = Math.round(wmWidth / wmAspect);
+        const posX = Math.round((targetWidth - wmWidth) / 2);
+        const posY = targetHeight - wmHeight - Math.round(targetHeight * 0.04);
+        ctx.drawImage(wmImg, posX, posY, wmWidth, wmHeight);
     }
-
-    const badgeCenterX = Math.round(targetWidth / 2);
-    const badgeCenterY = targetHeight - Math.round(targetHeight * 0.042); // ~862 pour 900
-    const badgeRadius = Math.round(targetHeight * 0.038); // ~34px pour 900
-
-    // Détection intelligente : vérifie si le badge blanc central existe déjà sur l'image
-    try {
-        const sampleOffset = Math.round(badgeRadius * 0.65);
-        const pLeft = ctx.getImageData(badgeCenterX - sampleOffset, badgeCenterY, 1, 1).data;
-        const pRight = ctx.getImageData(badgeCenterX + sampleOffset, badgeCenterY, 1, 1).data;
-
-        if (pLeft[0] > 230 && pLeft[1] > 230 && pLeft[2] > 230 &&
-            pRight[0] > 230 && pRight[1] > 230 && pRight[2] > 230) {
-            // L'image possède déjà le filigrane officiel (ex: export 3D du studio) : aucun doublon ajouté
-            return;
-        }
-    } catch {
-        // En cas de restriction cross-origin sur canvas, poursuivre l'application standard
-    }
-
-    const logoImg = await getOfficialLogoImage();
-    if (!logoImg || !logoImg.width) return;
-
-    // 1. Monogramme central translucide 'aG'
-    ctx.save();
-    ctx.globalAlpha = 0.16;
-    try {
-        ctx.filter = 'brightness(0) invert(1)';
-    } catch {}
-    const monoW = Math.round(targetWidth * 0.29); // ~460px pour 1600
-    const monoH = monoW;
-    const monoX = Math.round((targetWidth - monoW) / 2);
-    const monoY = Math.round((targetHeight - monoH) / 2) - 15;
-    const cropH = Math.round(logoImg.height * 0.74);
-    ctx.drawImage(logoImg, 0, 0, logoImg.width, cropH, monoX, monoY, monoW, monoH);
     ctx.restore();
-
-    // 2. Ligne horizontale de texte translucide
-    ctx.save();
-    ctx.fillStyle = '#ffffff';
-    ctx.globalAlpha = 0.22;
-    const fontSize = Math.max(16, Math.round(targetWidth * 0.015)); // ~24px pour 1600
-    ctx.font = `bold ${fontSize}px 'Montserrat', sans-serif`;
-    ctx.textBaseline = 'middle';
-    const textY = Math.round(targetHeight / 2) + Math.round(targetHeight * 0.05); // ~495
-    const gap = Math.round(targetWidth * 0.17); // ~270px pour laisser l'espace au monogramme central
-
-    ctx.textAlign = 'right';
-    ctx.fillText('GRAFRIKA   ATELIER GRAFRIKA', targetWidth / 2 - gap, textY);
-
-    ctx.textAlign = 'left';
-    ctx.fillText('ATELIER GRAFRIKA   ATELIER GRAFRIKA', targetWidth / 2 + gap, textY);
-    ctx.restore();
-
-    // 3. Badge circulaire blanc au bas centre
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(badgeCenterX, badgeCenterY, badgeRadius, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.28)';
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetY = 2;
-    ctx.fill();
-
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    const logoSize = Math.round(badgeRadius * 1.55); // ~53px
-    ctx.drawImage(logoImg, badgeCenterX - logoSize / 2, badgeCenterY - logoSize / 2, logoSize, logoSize);
-    ctx.restore();
-
-    // AUCUN LOGO D'ANGLE N'EST DESSINÉ
 }
 
 /**
  * Recadre, optimise et signe automatiquement une image au format 16:9
- * avec centrage cover intelligent, filigrane officiel et compression propre.
+ * avec centrage cover intelligent, filigrane utilisateur et compression propre.
  */
 async function processImageToYouTubeFormat(fileOrBlobOrUrl) {
     return new Promise((resolve, reject) => {
@@ -789,11 +729,11 @@ async function processImageToYouTubeFormat(fileOrBlobOrUrl) {
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
 
-                // Application automatique du filigrane officiel Atelier Grafrika (sans logo d'angle)
+                // Application du filigrane importé par l'utilisateur (si présent)
                 try {
-                    await applyOfficialGrafrikaWatermark(ctx, targetWidth, targetHeight);
+                    await applyUserWatermark(ctx, targetWidth, targetHeight);
                 } catch (wmErr) {
-                    console.warn("Filigrane officiel omis pour cette image:", wmErr);
+                    console.warn("Filigrane utilisateur omis pour cette image:", wmErr);
                 }
 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
@@ -1243,13 +1183,13 @@ function openProjectModal(project = null) {
 
     const wmNotice = document.getElementById('projWatermarkNotice');
     if (wmNotice) {
-        if (currentSettings.autoWatermark !== false) {
+        if (currentSettings.watermarkUrl && currentSettings.autoWatermark !== false) {
             wmNotice.style.display = 'flex';
             wmNotice.innerHTML = `
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
-                <span>Filigrane officiel Atelier Grafrika appliqué automatiquement (format 16:9 • aucun logo d'angle)</span>
+                <span>Filigrane actif : chaque photo ajoutée recevra votre filigrane officiel</span>
             `;
         } else {
             wmNotice.style.display = 'none';
@@ -1556,17 +1496,26 @@ function loadSettingsForm() {
 
     if (document.getElementById('setAdminEmail')) document.getElementById('setAdminEmail').value = authUser.email || '';
 
-    // Signature des photos (sans aucun logo par défaut)
+    // Filigrane des photos importé par l'utilisateur
     const previewImg = document.getElementById('watermarkPreviewImg');
     const emptyNotice = document.getElementById('watermarkEmptyNotice');
     const btnClear = document.getElementById('btnClearWatermark');
 
-    if (previewImg) {
-        previewImg.src = '/assets/logo.png';
-        previewImg.style.display = 'block';
+    if (currentSettings.watermarkUrl) {
+        if (previewImg) {
+            previewImg.src = currentSettings.watermarkUrl;
+            previewImg.style.display = 'block';
+        }
+        if (emptyNotice) emptyNotice.style.display = 'none';
+        if (btnClear) btnClear.style.display = 'inline-flex';
+    } else {
+        if (previewImg) {
+            previewImg.src = '';
+            previewImg.style.display = 'none';
+        }
+        if (emptyNotice) emptyNotice.style.display = 'block';
+        if (btnClear) btnClear.style.display = 'none';
     }
-    if (emptyNotice) emptyNotice.style.display = 'none';
-    if (btnClear) btnClear.style.display = 'none';
 
     const checkAuto = document.getElementById('checkAutoWatermark');
     if (checkAuto) {
@@ -1578,7 +1527,45 @@ function setupSettingsForms() {
     const contactForm = document.getElementById('settingsContactForm');
     const securityForm = document.getElementById('settingsSecurityForm');
 
-    // Filigrane officiel Atelier Grafrika (activé / désactivé)
+    // Gestion de l'import du filigrane officiel par l'utilisateur
+    const watermarkInput = document.getElementById('watermarkFileInput');
+    if (watermarkInput) {
+        watermarkInput.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            showToast("Importation et enregistrement de votre filigrane...", "info");
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const dataUrl = ev.target.result;
+                    currentSettings.watermarkUrl = dataUrl;
+                    cachedUserWatermarkImg = null;
+                    cachedUserWatermarkSrc = '';
+
+                    const preview = document.getElementById('watermarkPreviewImg');
+                    if (preview) {
+                        preview.src = dataUrl;
+                        preview.style.display = 'block';
+                    }
+                    const emptyNotice = document.getElementById('watermarkEmptyNotice');
+                    if (emptyNotice) emptyNotice.style.display = 'none';
+                    const btnClear = document.getElementById('btnClearWatermark');
+                    if (btnClear) btnClear.style.display = 'inline-flex';
+
+                    await apiClient.saveSettings(currentSettings);
+                    const notice = document.getElementById('projWatermarkNotice');
+                    if (notice) notice.style.display = 'flex';
+                    showToast("Votre filigrane a été enregistré ! Il signera vos prochaines photos.");
+                } catch (err) {
+                    console.error("Erreur enregistrement filigrane:", err);
+                    showToast("Impossible d'enregistrer le filigrane.", "alert");
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     const checkAuto = document.getElementById('checkAutoWatermark');
     if (checkAuto) {
         checkAuto.addEventListener('change', async () => {
@@ -1586,9 +1573,31 @@ function setupSettingsForms() {
             await apiClient.saveSettings(currentSettings);
             const notice = document.getElementById('projWatermarkNotice');
             if (notice) {
-                notice.style.display = checkAuto.checked ? 'flex' : 'none';
+                notice.style.display = (currentSettings.watermarkUrl && checkAuto.checked) ? 'flex' : 'none';
             }
-            showToast(checkAuto.checked ? "Filigrane officiel activé sur les nouvelles photos." : "Filigrane automatique désactivé.");
+            showToast(checkAuto.checked ? "Signature automatique activée." : "Signature automatique désactivée.");
+        });
+    }
+
+    const btnClearWatermark = document.getElementById('btnClearWatermark');
+    if (btnClearWatermark) {
+        btnClearWatermark.addEventListener('click', async () => {
+            currentSettings.watermarkUrl = '';
+            cachedUserWatermarkImg = null;
+            cachedUserWatermarkSrc = '';
+            const preview = document.getElementById('watermarkPreviewImg');
+            if (preview) {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+            const emptyNotice = document.getElementById('watermarkEmptyNotice');
+            if (emptyNotice) emptyNotice.style.display = 'block';
+            btnClearWatermark.style.display = 'none';
+
+            await apiClient.saveSettings(currentSettings);
+            const notice = document.getElementById('projWatermarkNotice');
+            if (notice) notice.style.display = 'none';
+            showToast("Filigrane retiré. Les photos seront importées sans filigrane.");
         });
     }
 
