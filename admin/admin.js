@@ -643,7 +643,7 @@ let cachedWatermarkImg = null;
 let cachedWatermarkSource = '';
 
 async function getWatermarkImage() {
-    const wmUrl = currentSettings?.watermarkUrl || '/assets/logo.png';
+    const wmUrl = currentSettings?.watermarkUrl;
     const isEnabled = currentSettings?.autoWatermark !== false;
     if (!isEnabled || !wmUrl) return null;
 
@@ -1191,7 +1191,17 @@ function openProjectModal(project = null) {
 
     const wmNotice = document.getElementById('projWatermarkNotice');
     if (wmNotice) {
-        wmNotice.style.display = currentSettings.autoWatermark !== false ? 'flex' : 'none';
+        if (currentSettings.watermarkUrl && currentSettings.autoWatermark !== false) {
+            wmNotice.style.display = 'flex';
+            wmNotice.innerHTML = `
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <span>Signature automatique active : votre signature est apposée en bas de chaque photo</span>
+            `;
+        } else {
+            wmNotice.style.display = 'none';
+        }
     }
 
     renderEditingPhotosThumbnails();
@@ -1494,11 +1504,27 @@ function loadSettingsForm() {
 
     if (document.getElementById('setAdminEmail')) document.getElementById('setAdminEmail').value = authUser.email || '';
 
-    // Signature / Filigrane officiel
+    // Signature des photos (sans aucun logo par défaut)
     const previewImg = document.getElementById('watermarkPreviewImg');
-    if (previewImg) {
-        previewImg.src = currentSettings.watermarkUrl || '/assets/logo.png';
+    const emptyNotice = document.getElementById('watermarkEmptyNotice');
+    const btnClear = document.getElementById('btnClearWatermark');
+
+    if (currentSettings.watermarkUrl) {
+        if (previewImg) {
+            previewImg.src = currentSettings.watermarkUrl;
+            previewImg.style.display = 'block';
+        }
+        if (emptyNotice) emptyNotice.style.display = 'none';
+        if (btnClear) btnClear.style.display = 'inline-flex';
+    } else {
+        if (previewImg) {
+            previewImg.src = '';
+            previewImg.style.display = 'none';
+        }
+        if (emptyNotice) emptyNotice.style.display = 'block';
+        if (btnClear) btnClear.style.display = 'none';
     }
+
     const checkAuto = document.getElementById('checkAutoWatermark');
     if (checkAuto) {
         checkAuto.checked = currentSettings.autoWatermark !== false;
@@ -1526,10 +1552,17 @@ function setupSettingsForms() {
                     cachedWatermarkImg = null;
 
                     const preview = document.getElementById('watermarkPreviewImg');
-                    if (preview) preview.src = optimizedDataUrl;
+                    if (preview) {
+                        preview.src = optimizedDataUrl;
+                        preview.style.display = 'block';
+                    }
+                    const emptyNotice = document.getElementById('watermarkEmptyNotice');
+                    if (emptyNotice) emptyNotice.style.display = 'none';
+                    const btnClear = document.getElementById('btnClearWatermark');
+                    if (btnClear) btnClear.style.display = 'inline-flex';
 
                     await apiClient.saveSettings(currentSettings);
-                    showToast("Votre signature officielle a été enregistrée avec succès !");
+                    showToast("Votre signature a été enregistrée avec succès !");
                 } catch (err) {
                     console.error("Erreur enregistrement signature:", err);
                     showToast("Erreur lors de l'enregistrement de la signature.", "alert");
@@ -1545,20 +1578,31 @@ function setupSettingsForms() {
             currentSettings.autoWatermark = checkAuto.checked;
             await apiClient.saveSettings(currentSettings);
             const notice = document.getElementById('projWatermarkNotice');
-            if (notice) notice.style.display = checkAuto.checked ? 'flex' : 'none';
+            if (notice) {
+                notice.style.display = (currentSettings.watermarkUrl && checkAuto.checked) ? 'flex' : 'none';
+            }
             showToast(checkAuto.checked ? "Signature automatique activée sur toutes les photos." : "Signature automatique désactivée.");
         });
     }
 
-    const btnResetWatermark = document.getElementById('btnResetWatermark');
-    if (btnResetWatermark) {
-        btnResetWatermark.addEventListener('click', async () => {
-            currentSettings.watermarkUrl = '/assets/logo.png';
+    const btnClearWatermark = document.getElementById('btnClearWatermark');
+    if (btnClearWatermark) {
+        btnClearWatermark.addEventListener('click', async () => {
+            currentSettings.watermarkUrl = '';
             cachedWatermarkImg = null;
             const preview = document.getElementById('watermarkPreviewImg');
-            if (preview) preview.src = '/assets/logo.png';
+            if (preview) {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+            const emptyNotice = document.getElementById('watermarkEmptyNotice');
+            if (emptyNotice) emptyNotice.style.display = 'block';
+            btnClearWatermark.style.display = 'none';
+
             await apiClient.saveSettings(currentSettings);
-            showToast("Signature réinitialisée au logo officiel.");
+            const notice = document.getElementById('projWatermarkNotice');
+            if (notice) notice.style.display = 'none';
+            showToast("Signature retirée. Les photos seront importées sans signature.");
         });
     }
 

@@ -36,7 +36,7 @@ export const DEFAULT_SETTINGS = {
     facebook: "https://www.facebook.com/share/14yYvD9ULWL/",
     linkedin: "https://www.linkedin.com/in/m-principe-junior-zegue-aa1405246?utm_source=share_via&utm_content=profile&utm_medium=member_android",
     x: "https://x.com/AtelierGrafrika",
-    watermarkUrl: "/assets/logo.png",
+    watermarkUrl: "",
     autoWatermark: true
 };
 

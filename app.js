@@ -355,11 +355,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const detailDur = document.getElementById('detailDur');
         if (detailDur) detailDur.textContent = formatDuration(proj.duration);
         document.getElementById('detailDesc').textContent = proj.description || '';
-        const detailPhotosCount = document.getElementById('detailPhotosCount');
-        if (detailPhotosCount) {
-            const count = currentProjectPhotos.length;
-            detailPhotosCount.textContent = `${count} photo${count > 1 ? 's' : ''}`;
-        }
 
         thumbnailsStrip.innerHTML = '';
         currentProjectPhotos.forEach((photoUrl, pIdx) => {
