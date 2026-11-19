@@ -638,54 +638,120 @@ document.getElementById('projectCategoryFilter')?.addEventListener('change', ren
 const MAX_PROJECT_PHOTOS = 8;
 const YOUTUBE_ASPECT_RATIO = 16 / 9;
 
-// Cache en mémoire de la signature / filigrane
-let cachedWatermarkImg = null;
-let cachedWatermarkSource = '';
+// Cache en mémoire du logo officiel pour le filigrane
+let cachedOfficialLogoImg = null;
 
-async function getWatermarkImage() {
-    const wmUrl = currentSettings?.watermarkUrl;
-    const isEnabled = currentSettings?.autoWatermark !== false;
-    if (!isEnabled || !wmUrl) return null;
-
-    if (cachedWatermarkImg && cachedWatermarkSource === wmUrl) {
-        return cachedWatermarkImg;
-    }
-
+async function getOfficialLogoImage() {
+    if (cachedOfficialLogoImg) return cachedOfficialLogoImg;
     return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => {
-            cachedWatermarkImg = img;
-            cachedWatermarkSource = wmUrl;
+            cachedOfficialLogoImg = img;
             resolve(img);
         };
-        img.onerror = () => resolve(null);
-        img.src = wmUrl;
-    });
-}
-
-function optimizePngWatermark(dataUrl) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-            const maxW = 600;
-            if (img.width <= maxW) return resolve(dataUrl);
-
-            const canvas = document.createElement('canvas');
-            canvas.width = maxW;
-            canvas.height = Math.round(maxW / (img.width / img.height));
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/png'));
+        img.onerror = () => {
+            const fallback = new Image();
+            fallback.crossOrigin = 'anonymous';
+            fallback.onload = () => {
+                cachedOfficialLogoImg = fallback;
+                resolve(fallback);
+            };
+            fallback.onerror = () => resolve(null);
+            fallback.src = '../assets/logo.png';
         };
-        img.onerror = () => resolve(dataUrl);
-        img.src = dataUrl;
+        img.src = '/assets/logo.png';
     });
 }
 
 /**
+ * Appose fidèlement le filigrane officiel Atelier Grafrika (identique au premier projet) :
+ * 1. Monogramme 'aG' architectural translucide au centre
+ * 2. Ligne horizontale de texte 'ATELIER GRAFRIKA' translucide au milieu
+ * 3. Badge circulaire blanc avec logo officiel au bas centre
+ * ZÉRO logo d'angle ou filigrane parasite.
+ * Détecte si l'image comporte déjà le badge officiel pour éviter tout doublon.
+ */
+async function applyOfficialGrafrikaWatermark(ctx, targetWidth, targetHeight) {
+    if (currentSettings?.autoWatermark === false) {
+        return;
+    }
+
+    const badgeCenterX = Math.round(targetWidth / 2);
+    const badgeCenterY = targetHeight - Math.round(targetHeight * 0.042); // ~862 pour 900
+    const badgeRadius = Math.round(targetHeight * 0.038); // ~34px pour 900
+
+    // Détection intelligente : vérifie si le badge blanc central existe déjà sur l'image
+    try {
+        const sampleOffset = Math.round(badgeRadius * 0.65);
+        const pLeft = ctx.getImageData(badgeCenterX - sampleOffset, badgeCenterY, 1, 1).data;
+        const pRight = ctx.getImageData(badgeCenterX + sampleOffset, badgeCenterY, 1, 1).data;
+
+        if (pLeft[0] > 230 && pLeft[1] > 230 && pLeft[2] > 230 &&
+            pRight[0] > 230 && pRight[1] > 230 && pRight[2] > 230) {
+            // L'image possède déjà le filigrane officiel (ex: export 3D du studio) : aucun doublon ajouté
+            return;
+        }
+    } catch {
+        // En cas de restriction cross-origin sur canvas, poursuivre l'application standard
+    }
+
+    const logoImg = await getOfficialLogoImage();
+    if (!logoImg || !logoImg.width) return;
+
+    // 1. Monogramme central translucide 'aG'
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    try {
+        ctx.filter = 'brightness(0) invert(1)';
+    } catch {}
+    const monoW = Math.round(targetWidth * 0.29); // ~460px pour 1600
+    const monoH = monoW;
+    const monoX = Math.round((targetWidth - monoW) / 2);
+    const monoY = Math.round((targetHeight - monoH) / 2) - 15;
+    const cropH = Math.round(logoImg.height * 0.74);
+    ctx.drawImage(logoImg, 0, 0, logoImg.width, cropH, monoX, monoY, monoW, monoH);
+    ctx.restore();
+
+    // 2. Ligne horizontale de texte translucide
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    ctx.globalAlpha = 0.22;
+    const fontSize = Math.max(16, Math.round(targetWidth * 0.015)); // ~24px pour 1600
+    ctx.font = `bold ${fontSize}px 'Montserrat', sans-serif`;
+    ctx.textBaseline = 'middle';
+    const textY = Math.round(targetHeight / 2) + Math.round(targetHeight * 0.05); // ~495
+    const gap = Math.round(targetWidth * 0.17); // ~270px pour laisser l'espace au monogramme central
+
+    ctx.textAlign = 'right';
+    ctx.fillText('GRAFRIKA   ATELIER GRAFRIKA', targetWidth / 2 - gap, textY);
+
+    ctx.textAlign = 'left';
+    ctx.fillText('ATELIER GRAFRIKA   ATELIER GRAFRIKA', targetWidth / 2 + gap, textY);
+    ctx.restore();
+
+    // 3. Badge circulaire blanc au bas centre
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(badgeCenterX, badgeCenterY, badgeRadius, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.28)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 2;
+    ctx.fill();
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    const logoSize = Math.round(badgeRadius * 1.55); // ~53px
+    ctx.drawImage(logoImg, badgeCenterX - logoSize / 2, badgeCenterY - logoSize / 2, logoSize, logoSize);
+    ctx.restore();
+
+    // AUCUN LOGO D'ANGLE N'EST DESSINÉ
+}
+
+/**
  * Recadre, optimise et signe automatiquement une image au format 16:9
- * avec centrage cover intelligent, signature transparente et compression propre.
+ * avec centrage cover intelligent, filigrane officiel et compression propre.
  */
 async function processImageToYouTubeFormat(fileOrBlobOrUrl) {
     return new Promise((resolve, reject) => {
@@ -723,25 +789,11 @@ async function processImageToYouTubeFormat(fileOrBlobOrUrl) {
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
 
-                // Application automatique de la signature sans arrière-plan
+                // Application automatique du filigrane officiel Atelier Grafrika (sans logo d'angle)
                 try {
-                    const wmImg = await getWatermarkImage();
-                    if (wmImg && wmImg.width > 0 && wmImg.height > 0) {
-                        const wmAspect = wmImg.width / wmImg.height;
-                        const wmWidth = Math.min(260, Math.round(targetWidth * 0.17));
-                        const wmHeight = Math.round(wmWidth / wmAspect);
-                        const padX = 42;
-                        const padY = 36;
-                        const posX = targetWidth - wmWidth - padX;
-                        const posY = targetHeight - wmHeight - padY;
-
-                        ctx.save();
-                        ctx.globalAlpha = 0.94;
-                        ctx.drawImage(wmImg, posX, posY, wmWidth, wmHeight);
-                        ctx.restore();
-                    }
+                    await applyOfficialGrafrikaWatermark(ctx, targetWidth, targetHeight);
                 } catch (wmErr) {
-                    console.warn("Filigrane omis pour cette image:", wmErr);
+                    console.warn("Filigrane officiel omis pour cette image:", wmErr);
                 }
 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
@@ -1191,13 +1243,13 @@ function openProjectModal(project = null) {
 
     const wmNotice = document.getElementById('projWatermarkNotice');
     if (wmNotice) {
-        if (currentSettings.watermarkUrl && currentSettings.autoWatermark !== false) {
+        if (currentSettings.autoWatermark !== false) {
             wmNotice.style.display = 'flex';
             wmNotice.innerHTML = `
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
-                <span>Signature automatique active : votre signature est apposée en bas de chaque photo</span>
+                <span>Filigrane officiel Atelier Grafrika appliqué automatiquement (format 16:9 • aucun logo d'angle)</span>
             `;
         } else {
             wmNotice.style.display = 'none';
@@ -1509,21 +1561,12 @@ function loadSettingsForm() {
     const emptyNotice = document.getElementById('watermarkEmptyNotice');
     const btnClear = document.getElementById('btnClearWatermark');
 
-    if (currentSettings.watermarkUrl) {
-        if (previewImg) {
-            previewImg.src = currentSettings.watermarkUrl;
-            previewImg.style.display = 'block';
-        }
-        if (emptyNotice) emptyNotice.style.display = 'none';
-        if (btnClear) btnClear.style.display = 'inline-flex';
-    } else {
-        if (previewImg) {
-            previewImg.src = '';
-            previewImg.style.display = 'none';
-        }
-        if (emptyNotice) emptyNotice.style.display = 'block';
-        if (btnClear) btnClear.style.display = 'none';
+    if (previewImg) {
+        previewImg.src = '/assets/logo.png';
+        previewImg.style.display = 'block';
     }
+    if (emptyNotice) emptyNotice.style.display = 'none';
+    if (btnClear) btnClear.style.display = 'none';
 
     const checkAuto = document.getElementById('checkAutoWatermark');
     if (checkAuto) {
@@ -1535,43 +1578,7 @@ function setupSettingsForms() {
     const contactForm = document.getElementById('settingsContactForm');
     const securityForm = document.getElementById('settingsSecurityForm');
 
-    // Gestion de la signature automatique PNG (sans arrière-plan)
-    const watermarkInput = document.getElementById('watermarkFileInput');
-    if (watermarkInput) {
-        watermarkInput.addEventListener('change', async (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-
-            showToast("Traitement et enregistrement de votre signature...", "info");
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                try {
-                    const rawDataUrl = ev.target.result;
-                    const optimizedDataUrl = await optimizePngWatermark(rawDataUrl);
-                    currentSettings.watermarkUrl = optimizedDataUrl;
-                    cachedWatermarkImg = null;
-
-                    const preview = document.getElementById('watermarkPreviewImg');
-                    if (preview) {
-                        preview.src = optimizedDataUrl;
-                        preview.style.display = 'block';
-                    }
-                    const emptyNotice = document.getElementById('watermarkEmptyNotice');
-                    if (emptyNotice) emptyNotice.style.display = 'none';
-                    const btnClear = document.getElementById('btnClearWatermark');
-                    if (btnClear) btnClear.style.display = 'inline-flex';
-
-                    await apiClient.saveSettings(currentSettings);
-                    showToast("Votre signature a été enregistrée avec succès !");
-                } catch (err) {
-                    console.error("Erreur enregistrement signature:", err);
-                    showToast("Erreur lors de l'enregistrement de la signature.", "alert");
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
+    // Filigrane officiel Atelier Grafrika (activé / désactivé)
     const checkAuto = document.getElementById('checkAutoWatermark');
     if (checkAuto) {
         checkAuto.addEventListener('change', async () => {
@@ -1579,32 +1586,13 @@ function setupSettingsForms() {
             await apiClient.saveSettings(currentSettings);
             const notice = document.getElementById('projWatermarkNotice');
             if (notice) {
-                notice.style.display = (currentSettings.watermarkUrl && checkAuto.checked) ? 'flex' : 'none';
+                notice.style.display = checkAuto.checked ? 'flex' : 'none';
             }
-            showToast(checkAuto.checked ? "Signature automatique activée sur toutes les photos." : "Signature automatique désactivée.");
+            showToast(checkAuto.checked ? "Filigrane officiel activé sur les nouvelles photos." : "Filigrane automatique désactivé.");
         });
     }
 
-    const btnClearWatermark = document.getElementById('btnClearWatermark');
-    if (btnClearWatermark) {
-        btnClearWatermark.addEventListener('click', async () => {
-            currentSettings.watermarkUrl = '';
-            cachedWatermarkImg = null;
-            const preview = document.getElementById('watermarkPreviewImg');
-            if (preview) {
-                preview.src = '';
-                preview.style.display = 'none';
-            }
-            const emptyNotice = document.getElementById('watermarkEmptyNotice');
-            if (emptyNotice) emptyNotice.style.display = 'block';
-            btnClearWatermark.style.display = 'none';
 
-            await apiClient.saveSettings(currentSettings);
-            const notice = document.getElementById('projWatermarkNotice');
-            if (notice) notice.style.display = 'none';
-            showToast("Signature retirée. Les photos seront importées sans signature.");
-        });
-    }
 
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {

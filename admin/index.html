@@ -670,57 +670,37 @@
                             </div>
                         </div>
 
-                        <!-- CARTE 3 : SIGNATURE & FILIGRANE OFFICIEL -->
+                        <!-- CARTE 3 : FILIGRANE OFFICIEL ATELIER GRAFRIKA -->
                         <div class="settings-rounded-card" style="grid-column: 1 / -1;">
                             <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
                                 <div>
-                                    <h3 class="widget-section-title">Signature des photos</h3>
-                                    <p class="stats-sub-text">Envoyez votre signature au format <strong>PNG (sans arrière-plan)</strong>. Le système apposera uniquement votre signature au bas de chaque photo importée.</p>
+                                    <h3 class="widget-section-title">Filigrane officiel Atelier Grafrika</h3>
+                                    <p class="stats-sub-text">Le filigrane officiel (badge circulaire blanc au bas centre et sceau architectural Atelier Grafrika) est intégré automatiquement à chaque photo importée.</p>
                                 </div>
                                 <div class="watermark-toggle-badge">
                                     <label class="watermark-toggle-label">
                                         <input type="checkbox" id="checkAutoWatermark" checked>
-                                        <span>Signature automatique active</span>
+                                        <span>Filigrane automatique actif</span>
                                     </label>
                                 </div>
                             </div>
 
                             <div class="watermark-config-grid">
                                 <div class="watermark-preview-card">
-                                    <div class="watermark-checkerboard" id="watermarkPreviewBox">
-                                        <img id="watermarkPreviewImg" src="" alt="Signature" style="display: none;">
-                                        <div id="watermarkEmptyNotice" style="text-align: center; color: #94a3b8; font-size: 0.78rem; padding: 0.5rem;">
-                                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 0.3rem; opacity: 0.7;">
-                                                <path d="M12 20h9"></path>
-                                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                                            </svg>
-                                            <div>Aucune signature importée</div>
-                                        </div>
+                                    <div class="watermark-checkerboard" id="watermarkPreviewBox" style="background: #1e293b; display: flex; align-items: center; justify-content: center; min-height: 110px;">
+                                        <img id="watermarkPreviewImg" src="/assets/logo.png" alt="Filigrane officiel" style="max-height: 80px; width: auto; object-fit: contain;">
                                     </div>
-                                    <span class="watermark-checker-hint">Aperçu avec transparence</span>
+                                    <span class="watermark-checker-hint">Sceau officiel du studio</span>
                                 </div>
 
                                 <div class="watermark-upload-column">
-                                    <label class="btn-primary-pill" style="cursor: pointer; display: inline-flex; align-self: flex-start;">
-                                        <input type="file" id="watermarkFileInput" accept="image/png,image/webp" style="display: none;">
-                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="7 10 12 15 17 10"></polyline>
-                                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                                        </svg>
-                                        <span>Importer ma signature PNG</span>
-                                    </label>
-
-                                    <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; margin: 0.35rem 0;">
-                                        Format requis : <strong>PNG sans arrière-plan</strong> (détouré).<br>
-                                        Dès que vous ajoutez des images ou un fichier ZIP dans un projet, votre signature est automatiquement apposée dans le coin inférieur de chaque photo.
-                                    </p>
-
-                                    <div style="display: flex; gap: 0.8rem; align-items: center; margin-top: 0.5rem;">
-                                        <button type="button" class="btn-outline-pill-small" id="btnClearWatermark" style="color: var(--brand-red); border-color: #fecaca; display: none;">
-                                            <span>Supprimer la signature</span>
-                                        </button>
+                                    <div style="font-size: 0.88rem; color: var(--text-primary); font-weight: 600; margin-bottom: 0.35rem;">
+                                        Protection et signature 100% intégrées
                                     </div>
+                                    <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+                                        Toutes les photos importées (individuellement ou par archive ZIP) sont automatiquement recadrées au format <strong>16:9 panoramique</strong> et protégées avec le sceau officiel Atelier Grafrika.<br>
+                                        <strong>Aucun logo d'angle n'est ajouté.</strong> Si une image comporte déjà le filigrane du studio lors de vos rendus 3D, le système le détecte et préserve l'image sans doublon.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -894,7 +874,7 @@
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
-                        <span>Signature automatique active : chaque photo ajoutée est signée avec votre signature officielle</span>
+                        <span>Filigrane officiel Atelier Grafrika appliqué automatiquement (format 16:9 • aucun logo d'angle)</span>
                     </div>
 
                     <div class="photo-url-input-row">
