@@ -825,16 +825,25 @@ body {
     z-index: 3;
 }
 
+.card-project-title {
+    font-family: var(--font-heading);
+    font-size: 0.84rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.25rem;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+}
+
 .card-meta-line {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: #cbd5e1;
-    margin-bottom: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    margin-bottom: 0;
+    letter-spacing: 0.03em;
 }
 
 .card-spec-surface {
@@ -848,23 +857,14 @@ body {
 }
 
 .card-spec-dur {
-    color: #e2e8f0;
-}
-
-.card-project-title {
-    font-family: var(--font-heading);
-    font-size: 0.96rem;
-    font-weight: 800;
-    line-height: 1.25;
-    margin-bottom: 0.2rem;
-    color: #ffffff;
+    display: none;
 }
 
 .card-project-loc {
     font-size: 0.72rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.88);
-    display: block;
+    color: #e2e8f0;
+    display: inline;
 }
 
 /* Points de pagination mobile */
@@ -1896,7 +1896,7 @@ body {
 
 .detail-title {
     font-family: var(--font-heading);
-    font-size: 1.35rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: var(--text-primary);
     margin-bottom: 0.35rem;

@@ -223,13 +223,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span class="card-arch-chip">${escapeHtml(proj.category)}</span>
                 <img src="${escapeHtml(proj.photos[0])}" alt="${escapeHtml(proj.title)}" loading="lazy">
                 <div class="card-title-scrim">
+                    <h3 class="card-project-title">${escapeHtml(proj.title)}</h3>
                     <div class="card-meta-line">
                         <span class="card-spec-surface">${escapeHtml(formatSurface(proj.surface))}</span>
                         <span class="card-spec-sep">•</span>
-                        <span class="card-spec-dur">${escapeHtml(formatDuration(proj.duration))}</span>
+                        <span class="card-project-loc">${escapeHtml(proj.location)}</span>
                     </div>
-                    <h3 class="card-project-title">${escapeHtml(proj.title)}</h3>
-                    <span class="card-project-loc">${escapeHtml(proj.location)}</span>
                 </div>
             `;
 
@@ -353,7 +352,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('detailTitle').textContent = proj.title;
         document.getElementById('detailLoc').textContent = proj.location;
         document.getElementById('detailArea').textContent = formatSurface(proj.surface);
-        document.getElementById('detailDur').textContent = formatDuration(proj.duration);
+        const detailDur = document.getElementById('detailDur');
+        if (detailDur) detailDur.textContent = formatDuration(proj.duration);
         document.getElementById('detailDesc').textContent = proj.description || '';
         const detailPhotosCount = document.getElementById('detailPhotosCount');
         if (detailPhotosCount) {

@@ -633,23 +633,68 @@ document.getElementById('projectCategoryFilter')?.addEventListener('change', ren
 // =========================================================================
 // 6. MODAL DE PROJET & GESTION DES PHOTOS
 // =========================================================================
-// CONSTANTES & UTILITAIRES MULTIMÉDIA (FORMAT YOUTUBE 16:9 & MAXI 8 PHOTOS)
+// CONSTANTES & UTILITAIRES MULTIMÉDIA (FORMAT PANORAMIQUE & MAXI 8 PHOTOS)
 // =========================================================================
 const MAX_PROJECT_PHOTOS = 8;
 const YOUTUBE_ASPECT_RATIO = 16 / 9;
 
+// Cache en mémoire de la signature / filigrane
+let cachedWatermarkImg = null;
+let cachedWatermarkSource = '';
+
+async function getWatermarkImage() {
+    const wmUrl = currentSettings?.watermarkUrl || '/assets/logo.png';
+    const isEnabled = currentSettings?.autoWatermark !== false;
+    if (!isEnabled || !wmUrl) return null;
+
+    if (cachedWatermarkImg && cachedWatermarkSource === wmUrl) {
+        return cachedWatermarkImg;
+    }
+
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            cachedWatermarkImg = img;
+            cachedWatermarkSource = wmUrl;
+            resolve(img);
+        };
+        img.onerror = () => resolve(null);
+        img.src = wmUrl;
+    });
+}
+
+function optimizePngWatermark(dataUrl) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const maxW = 600;
+            if (img.width <= maxW) return resolve(dataUrl);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = maxW;
+            canvas.height = Math.round(maxW / (img.width / img.height));
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
+    });
+}
+
 /**
- * Recadre et compresse automatiquement une image au format 16:9 (YouTube)
- * avec centrage automatique intelligent et compression JPEG propre.
+ * Recadre, optimise et signe automatiquement une image au format 16:9
+ * avec centrage cover intelligent, signature transparente et compression propre.
  */
 async function processImageToYouTubeFormat(fileOrBlobOrUrl) {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
 
-        img.onload = () => {
+        img.onload = async () => {
             try {
-                // Dimensions cibles au format 16:9 (max 1600x900 pour un compromis poids/netteté idéal)
+                // Dimensions cibles au format panoramique (max 1600x900)
                 const targetWidth = Math.min(1600, Math.max(960, img.naturalWidth || 1280));
                 const targetHeight = Math.round(targetWidth / YOUTUBE_ASPECT_RATIO);
 
@@ -677,6 +722,27 @@ async function processImageToYouTubeFormat(fileOrBlobOrUrl) {
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
+
+                // Application automatique de la signature sans arrière-plan
+                try {
+                    const wmImg = await getWatermarkImage();
+                    if (wmImg && wmImg.width > 0 && wmImg.height > 0) {
+                        const wmAspect = wmImg.width / wmImg.height;
+                        const wmWidth = Math.min(260, Math.round(targetWidth * 0.17));
+                        const wmHeight = Math.round(wmWidth / wmAspect);
+                        const padX = 42;
+                        const padY = 36;
+                        const posX = targetWidth - wmWidth - padX;
+                        const posY = targetHeight - wmHeight - padY;
+
+                        ctx.save();
+                        ctx.globalAlpha = 0.94;
+                        ctx.drawImage(wmImg, posX, posY, wmWidth, wmHeight);
+                        ctx.restore();
+                    }
+                } catch (wmErr) {
+                    console.warn("Filigrane omis pour cette image:", wmErr);
+                }
 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
                 resolve(dataUrl);
@@ -1059,7 +1125,24 @@ function openProjectModal(project = null) {
 
         document.getElementById('projId').value = project.id;
         document.getElementById('projTitle').value = project.title;
-        document.getElementById('projCategory').value = project.category;
+
+        // Typologie / Catégorie avec fallback custom
+        const catSelect = document.getElementById('projCategory');
+        if (catSelect && project.category) {
+            let matched = false;
+            for (let opt of catSelect.options) {
+                if (opt.value.toLowerCase() === project.category.toLowerCase()) {
+                    catSelect.value = opt.value;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                const customOpt = new Option(project.category, project.category, true, true);
+                catSelect.add(customOpt);
+                catSelect.value = project.category;
+            }
+        }
 
         // Sélection de la ville béninoise dans le select
         const locSelect = document.getElementById('projLocation');
@@ -1097,11 +1180,18 @@ function openProjectModal(project = null) {
 
         document.getElementById('projectForm').reset();
         document.getElementById('projId').value = '';
+        const catSelect = document.getElementById('projCategory');
+        if (catSelect) catSelect.value = 'Villa Duplex (R+1)';
         const locSelect = document.getElementById('projLocation');
         if (locSelect) locSelect.value = 'Cotonou';
         document.getElementById('projSurface').value = '';
         document.getElementById('projDuration').value = '';
         currentEditingPhotos = [];
+    }
+
+    const wmNotice = document.getElementById('projWatermarkNotice');
+    if (wmNotice) {
+        wmNotice.style.display = currentSettings.autoWatermark !== false ? 'flex' : 'none';
     }
 
     renderEditingPhotosThumbnails();
@@ -1403,16 +1493,80 @@ function loadSettingsForm() {
     if (document.getElementById('setX')) document.getElementById('setX').value = currentSettings.x || '';
 
     if (document.getElementById('setAdminEmail')) document.getElementById('setAdminEmail').value = authUser.email || '';
+
+    // Signature / Filigrane officiel
+    const previewImg = document.getElementById('watermarkPreviewImg');
+    if (previewImg) {
+        previewImg.src = currentSettings.watermarkUrl || '/assets/logo.png';
+    }
+    const checkAuto = document.getElementById('checkAutoWatermark');
+    if (checkAuto) {
+        checkAuto.checked = currentSettings.autoWatermark !== false;
+    }
 }
 
 function setupSettingsForms() {
     const contactForm = document.getElementById('settingsContactForm');
     const securityForm = document.getElementById('settingsSecurityForm');
 
+    // Gestion de la signature automatique PNG (sans arrière-plan)
+    const watermarkInput = document.getElementById('watermarkFileInput');
+    if (watermarkInput) {
+        watermarkInput.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            showToast("Traitement et enregistrement de votre signature...", "info");
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const rawDataUrl = ev.target.result;
+                    const optimizedDataUrl = await optimizePngWatermark(rawDataUrl);
+                    currentSettings.watermarkUrl = optimizedDataUrl;
+                    cachedWatermarkImg = null;
+
+                    const preview = document.getElementById('watermarkPreviewImg');
+                    if (preview) preview.src = optimizedDataUrl;
+
+                    await apiClient.saveSettings(currentSettings);
+                    showToast("Votre signature officielle a été enregistrée avec succès !");
+                } catch (err) {
+                    console.error("Erreur enregistrement signature:", err);
+                    showToast("Erreur lors de l'enregistrement de la signature.", "alert");
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    const checkAuto = document.getElementById('checkAutoWatermark');
+    if (checkAuto) {
+        checkAuto.addEventListener('change', async () => {
+            currentSettings.autoWatermark = checkAuto.checked;
+            await apiClient.saveSettings(currentSettings);
+            const notice = document.getElementById('projWatermarkNotice');
+            if (notice) notice.style.display = checkAuto.checked ? 'flex' : 'none';
+            showToast(checkAuto.checked ? "Signature automatique activée sur toutes les photos." : "Signature automatique désactivée.");
+        });
+    }
+
+    const btnResetWatermark = document.getElementById('btnResetWatermark');
+    if (btnResetWatermark) {
+        btnResetWatermark.addEventListener('click', async () => {
+            currentSettings.watermarkUrl = '/assets/logo.png';
+            cachedWatermarkImg = null;
+            const preview = document.getElementById('watermarkPreviewImg');
+            if (preview) preview.src = '/assets/logo.png';
+            await apiClient.saveSettings(currentSettings);
+            showToast("Signature réinitialisée au logo officiel.");
+        });
+    }
+
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const updated = {
+                ...currentSettings,
                 whatsapp: document.getElementById('setWhatsapp').value.trim(),
                 phone: document.getElementById('setPhone').value.trim(),
                 email: document.getElementById('setEmail').value.trim(),

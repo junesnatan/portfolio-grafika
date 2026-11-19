@@ -412,13 +412,17 @@
                             </div>
 
                             <select id="projectCategoryFilter" class="clean-select-pill">
-                                <option value="all">Toutes les catégories</option>
-                                <option value="Architecture">Architecture</option>
-                                <option value="Design d'Espace">Design d'Espace</option>
-                                <option value="BTP & Chantier">BTP & Chantier</option>
-                                <option value="BTP & Gros Œuvre">BTP & Gros Œuvre</option>
-                                <option value="Architecture & Permis">Architecture & Permis</option>
-                                <option value="Architecture & BTP">Architecture & BTP</option>
+                                <option value="all">Toutes les typologies</option>
+                                <option value="Villa Duplex (R+1)">Villa Duplex (R+1)</option>
+                                <option value="Villa Plain-Pied">Villa Plain-Pied</option>
+                                <option value="Villa R+2 / R+3">Villa R+2 / R+3</option>
+                                <option value="Villa Contemporaine">Villa Contemporaine</option>
+                                <option value="Résidence Privée">Résidence Privée</option>
+                                <option value="Immeuble Résidentiel">Immeuble Résidentiel</option>
+                                <option value="Design d'Espace & Intérieur">Design d'Espace & Intérieur</option>
+                                <option value="Rénovation & Aménagement">Rénovation & Aménagement</option>
+                                <option value="Complexe Commercial & Bureaux">Complexe Commercial & Bureaux</option>
+                                <option value="Gros Œuvre & BTP">Gros Œuvre & BTP</option>
                             </select>
                         </div>
 
@@ -666,6 +670,54 @@
                             </div>
                         </div>
 
+                        <!-- CARTE 3 : SIGNATURE & FILIGRANE OFFICIEL -->
+                        <div class="settings-rounded-card" style="grid-column: 1 / -1;">
+                            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                                <div>
+                                    <h3 class="widget-section-title">Signature &amp; Filigrane des photos</h3>
+                                    <p class="stats-sub-text">Envoyez votre signature ou logo officiel au format <strong>PNG (sans arrière-plan)</strong>. Le système signera automatiquement chaque photo ajoutée aux projets.</p>
+                                </div>
+                                <div class="watermark-toggle-badge">
+                                    <label class="watermark-toggle-label">
+                                        <input type="checkbox" id="checkAutoWatermark" checked>
+                                        <span>Signature automatique active</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="watermark-config-grid">
+                                <div class="watermark-preview-card">
+                                    <div class="watermark-checkerboard" id="watermarkPreviewBox">
+                                        <img id="watermarkPreviewImg" src="/assets/logo.png" alt="Signature officielle">
+                                    </div>
+                                    <span class="watermark-checker-hint">Aperçu avec transparence</span>
+                                </div>
+
+                                <div class="watermark-upload-column">
+                                    <label class="btn-primary-pill" style="cursor: pointer; display: inline-flex; align-self: flex-start;">
+                                        <input type="file" id="watermarkFileInput" accept="image/png,image/webp" style="display: none;">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                        <span>Importer ma signature PNG</span>
+                                    </label>
+
+                                    <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; margin: 0.35rem 0;">
+                                        Format requis : <strong>PNG sans arrière-plan</strong> (détouré).<br>
+                                        Dès que vous ajoutez des images ou un fichier ZIP dans un projet, votre signature est automatiquement apposée dans le coin inférieur de chaque photo.
+                                    </p>
+
+                                    <div style="display: flex; gap: 0.8rem; align-items: center; margin-top: 0.5rem;">
+                                        <button type="button" class="btn-outline-pill-small" id="btnResetWatermark" style="color: var(--text-secondary);">
+                                            <span>Rétablir le logo officiel</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -706,15 +758,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="projCategory">Catégorie *</label>
+                        <label for="projCategory">Typologie / Catégorie *</label>
                         <select id="projCategory" required>
-                            <option value="Architecture">Architecture</option>
-                            <option value="Design d'Espace">Design d'Espace</option>
-                            <option value="BTP & Chantier">BTP & Chantier</option>
-                            <option value="BTP & Gros Œuvre">BTP & Gros Œuvre</option>
-                            <option value="Architecture & Permis">Architecture & Permis</option>
-                            <option value="Architecture & BTP">Architecture & BTP</option>
+                            <option value="Villa Duplex (R+1)">Villa Duplex (R+1)</option>
+                            <option value="Villa Plain-Pied">Villa Plain-Pied</option>
+                            <option value="Villa R+2 / R+3">Villa R+2 / R+3</option>
+                            <option value="Villa Contemporaine">Villa Contemporaine</option>
+                            <option value="Résidence Privée">Résidence Privée</option>
+                            <option value="Immeuble Résidentiel">Immeuble Résidentiel</option>
+                            <option value="Design d'Espace & Intérieur">Design d'Espace & Intérieur</option>
                             <option value="Rénovation & Aménagement">Rénovation & Aménagement</option>
+                            <option value="Complexe Commercial & Bureaux">Complexe Commercial & Bureaux</option>
+                            <option value="Gros Œuvre & BTP">Gros Œuvre & BTP</option>
                         </select>
                     </div>
                 </div>
@@ -826,6 +881,13 @@
                             <span>Glissez vos photos ou votre <strong>fichier ZIP</strong> ici</span>
                             <span class="dropzone-sub">Classement automatique • 8 photos maximum</span>
                         </div>
+                    </div>
+
+                    <div class="photos-watermark-notice" id="projWatermarkNotice">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span>Signature automatique active : chaque photo ajoutée est signée avec votre signature officielle</span>
                     </div>
 
                     <div class="photo-url-input-row">
