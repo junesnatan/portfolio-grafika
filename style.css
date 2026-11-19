@@ -1787,7 +1787,7 @@ body {
 .detail-gallery-stage {
     position: relative;
     width: 100%;
-    height: 285px;
+    aspect-ratio: 16 / 9;
     background: #080d14;
     overflow: hidden;
 }
@@ -1834,9 +1834,10 @@ body {
 }
 
 .thumb-item {
-    width: 52px;
-    height: 52px;
-    border-radius: 9px;
+    width: 68px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border-radius: 7px;
     overflow: hidden;
     cursor: pointer;
     flex-shrink: 0;

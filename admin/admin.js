@@ -613,6 +613,186 @@ document.getElementById('projectCategoryFilter')?.addEventListener('change', ren
 // =========================================================================
 // 6. MODAL DE PROJET & GESTION DES PHOTOS
 // =========================================================================
+// CONSTANTES & UTILITAIRES MULTIMÉDIA (FORMAT YOUTUBE 16:9 & MAXI 8 PHOTOS)
+// =========================================================================
+const MAX_PROJECT_PHOTOS = 8;
+const YOUTUBE_ASPECT_RATIO = 16 / 9;
+
+/**
+ * Recadre et compresse automatiquement une image au format 16:9 (YouTube)
+ * avec centrage automatique intelligent et compression JPEG propre.
+ */
+async function processImageToYouTubeFormat(fileOrBlobOrUrl) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+
+        img.onload = () => {
+            try {
+                // Dimensions cibles au format 16:9 (max 1600x900 pour un compromis poids/netteté idéal)
+                const targetWidth = Math.min(1600, Math.max(960, img.naturalWidth || 1280));
+                const targetHeight = Math.round(targetWidth / YOUTUBE_ASPECT_RATIO);
+
+                const canvas = document.createElement('canvas');
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const ctx = canvas.getContext('2d');
+
+                // Calcul du centrage cover pour remplir le 16:9
+                const imgAspect = img.naturalWidth / img.naturalHeight;
+                let sx = 0, sy = 0, sWidth = img.naturalWidth, sHeight = img.naturalHeight;
+
+                if (imgAspect > YOUTUBE_ASPECT_RATIO) {
+                    sHeight = img.naturalHeight;
+                    sWidth = sHeight * YOUTUBE_ASPECT_RATIO;
+                    sx = (img.naturalWidth - sWidth) / 2;
+                    sy = 0;
+                } else {
+                    sWidth = img.naturalWidth;
+                    sHeight = sWidth / YOUTUBE_ASPECT_RATIO;
+                    sx = 0;
+                    sy = (img.naturalHeight - sHeight) / 2;
+                }
+
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                resolve(dataUrl);
+            } catch (err) {
+                if (typeof fileOrBlobOrUrl === 'string') resolve(fileOrBlobOrUrl);
+                else reject(err);
+            }
+        };
+
+        img.onerror = () => reject(new Error("Impossible de décoder l'image."));
+
+        if (typeof fileOrBlobOrUrl === 'string') {
+            img.src = fileOrBlobOrUrl;
+        } else {
+            const reader = new FileReader();
+            reader.onload = (e) => { img.src = e.target.result; };
+            reader.onerror = reject;
+            reader.readAsDataURL(fileOrBlobOrUrl);
+        }
+    });
+}
+
+/**
+ * Extraction universelle d'archive ZIP dans le navigateur (API native DecompressionStream)
+ * Filtre les images, les classe dans l'ordre alphabétique/numérique naturel (01, 02...)
+ * et les formate au ratio 16:9 YouTube (maxi 8 photos).
+ */
+async function extractImagesFromZip(zipFile) {
+    const arrayBuffer = await zipFile.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const view = new DataView(arrayBuffer);
+    const entries = [];
+
+    let eocdOffset = -1;
+    for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) {
+        if (view.getUint32(i, true) === 0x06054b50) {
+            eocdOffset = i;
+            break;
+        }
+    }
+
+    if (eocdOffset !== -1) {
+        const totalEntries = view.getUint16(eocdOffset + 10, true);
+        const cdOffset = view.getUint32(eocdOffset + 16, true);
+        let pos = cdOffset;
+
+        for (let i = 0; i < totalEntries && pos + 46 <= eocdOffset; i++) {
+            if (view.getUint32(pos, true) !== 0x02014b50) break;
+            const compression = view.getUint16(pos + 10, true);
+            const compSize = view.getUint32(pos + 20, true);
+            const uncompSize = view.getUint32(pos + 24, true);
+            const nameLen = view.getUint16(pos + 28, true);
+            const extraLen = view.getUint16(pos + 30, true);
+            const commentLen = view.getUint16(pos + 32, true);
+            const localOffset = view.getUint32(pos + 42, true);
+
+            const nameBytes = bytes.subarray(pos + 46, pos + 46 + nameLen);
+            const name = new TextDecoder('utf-8').decode(nameBytes);
+
+            if (localOffset + 30 <= bytes.length && view.getUint32(localOffset, true) === 0x04034b50) {
+                const localNameLen = view.getUint16(localOffset + 26, true);
+                const localExtraLen = view.getUint16(localOffset + 28, true);
+                const dataStart = localOffset + 30 + localNameLen + localExtraLen;
+                const compressedData = bytes.subarray(dataStart, dataStart + compSize);
+                entries.push({ name, compression, compSize, uncompSize, compressedData });
+            }
+
+            pos += 46 + nameLen + extraLen + commentLen;
+        }
+    } else {
+        let pos = 0;
+        while (pos + 30 <= bytes.length) {
+            if (view.getUint32(pos, true) !== 0x04034b50) break;
+            const compression = view.getUint16(pos + 8, true);
+            const compSize = view.getUint32(pos + 18, true);
+            const uncompSize = view.getUint32(pos + 22, true);
+            const nameLen = view.getUint16(pos + 26, true);
+            const extraLen = view.getUint16(pos + 28, true);
+            const nameBytes = bytes.subarray(pos + 30, pos + 30 + nameLen);
+            const name = new TextDecoder('utf-8').decode(nameBytes);
+            const dataStart = pos + 30 + nameLen + extraLen;
+            const compressedData = bytes.subarray(dataStart, dataStart + compSize);
+
+            entries.push({ name, compression, compSize, uncompSize, compressedData });
+            pos = dataStart + compSize;
+        }
+    }
+
+    const isImageFile = (n) => {
+        if (!n || n.endsWith('/') || n.includes('__MACOSX') || n.startsWith('.') || n.includes('/.')) return false;
+        return /\.(jpe?g|png|webp|avif)$/i.test(n);
+    };
+
+    const imageEntries = entries.filter(e => isImageFile(e.name));
+    if (imageEntries.length === 0) {
+        throw new Error("Aucune image valide (JPG, PNG, WEBP) trouvée dans l'archive ZIP.");
+    }
+
+    // CLASSEMENT NATUREL DANS L'ORDRE (01, 02, 03... 08)
+    imageEntries.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+
+    const toProcess = imageEntries.slice(0, MAX_PROJECT_PHOTOS);
+    const processedPhotos = [];
+
+    for (const entry of toProcess) {
+        let uncompressedBytes;
+        if (entry.compression === 0) {
+            uncompressedBytes = entry.compressedData;
+        } else if (entry.compression === 8) {
+            const stream = new Response(new Blob([entry.compressedData]).stream().pipeThrough(new DecompressionStream('deflate-raw')));
+            const buf = await stream.arrayBuffer();
+            uncompressedBytes = new Uint8Array(buf);
+        }
+
+        if (uncompressedBytes) {
+            let mime = 'image/jpeg';
+            if (/\.png$/i.test(entry.name)) mime = 'image/png';
+            else if (/\.webp$/i.test(entry.name)) mime = 'image/webp';
+            else if (/\.avif$/i.test(entry.name)) mime = 'image/avif';
+
+            const blob = new Blob([uncompressedBytes], { type: mime });
+            const youTube169Url = await processImageToYouTubeFormat(blob);
+            processedPhotos.push(youTube169Url);
+        }
+    }
+
+    return {
+        photos: processedPhotos,
+        totalFound: imageEntries.length,
+        wasTruncated: imageEntries.length > MAX_PROJECT_PHOTOS
+    };
+}
+
+// =========================================================================
+// 6. MODAL PROJET & GESTION DES PHOTOS
+// =========================================================================
 function setupProjectModal() {
     const projectModal = document.getElementById('projectModal');
     const btnAddNewProject = document.getElementById('btnAddNewProject');
@@ -622,6 +802,8 @@ function setupProjectModal() {
     const btnAddPhotoUrl = document.getElementById('btnAddPhotoUrl');
     const projPhotoUrlInput = document.getElementById('projPhotoUrlInput');
     const projPhotosFileInput = document.getElementById('projPhotosFileInput');
+    const projZipFileInput = document.getElementById('projZipFileInput');
+    const projPhotosDropzone = document.getElementById('projPhotosDropzone');
 
     if (btnAddNewProject) {
         btnAddNewProject.addEventListener('click', () => openProjectModal());
@@ -640,28 +822,129 @@ function setupProjectModal() {
     });
 
     if (btnAddPhotoUrl && projPhotoUrlInput) {
-        btnAddPhotoUrl.addEventListener('click', () => {
+        btnAddPhotoUrl.addEventListener('click', async () => {
             const url = projPhotoUrlInput.value.trim();
-            if (url) {
-                currentEditingPhotos.push(url);
-                projPhotoUrlInput.value = '';
-                renderEditingPhotosThumbnails();
+            if (!url) return;
+
+            if (currentEditingPhotos.length >= MAX_PROJECT_PHOTOS) {
+                showToast(`Limite atteinte : maximum ${MAX_PROJECT_PHOTOS} photos par projet.`, 'alert');
+                return;
             }
+
+            try {
+                showToast("Formatage de l'image au ratio 16:9...", "info");
+                const processed = await processImageToYouTubeFormat(url);
+                currentEditingPhotos.push(processed);
+            } catch {
+                currentEditingPhotos.push(url);
+            }
+            projPhotoUrlInput.value = '';
+            renderEditingPhotosThumbnails();
+        });
+    }
+
+    // Gestionnaire d'extraction de fichier ZIP
+    async function handleZipUpload(zipFile) {
+        try {
+            showToast("Extraction et classement des photos de l'archive ZIP...", "info");
+            const result = await extractImagesFromZip(zipFile);
+
+            currentEditingPhotos = result.photos;
+            renderEditingPhotosThumbnails();
+
+            if (result.wasTruncated) {
+                showToast(`Archive extraite : les 8 premières photos ordonnées ont été retenues au format YouTube (16:9).`, 'info');
+            } else {
+                showToast(`Succès : ${result.photos.length} photo${result.photos.length > 1 ? 's' : ''} extraites et classées dans l'ordre (format 16:9) !`);
+            }
+        } catch (err) {
+            console.error("Erreur extraction ZIP:", err);
+            showToast(err.message || "Erreur lors de l'extraction de l'archive ZIP.", "alert");
+        }
+    }
+
+    // Gestionnaire d'upload d'images standard
+    async function handleImageFiles(files) {
+        if (!files || files.length === 0) return;
+
+        const fileList = Array.from(files);
+        fileList.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+
+        const remainingSlots = MAX_PROJECT_PHOTOS - currentEditingPhotos.length;
+        if (remainingSlots <= 0) {
+            showToast(`Limite atteinte : maximum ${MAX_PROJECT_PHOTOS} photos par projet.`, 'alert');
+            return;
+        }
+
+        const filesToProcess = fileList.slice(0, remainingSlots);
+        if (fileList.length > remainingSlots) {
+            showToast(`Note : seules les ${remainingSlots} premières photos ont été ajoutées pour respecter la limite de ${MAX_PROJECT_PHOTOS}.`, 'info');
+        }
+
+        showToast("Formatage des photos au ratio 16:9 (YouTube)...", "info");
+        for (const file of filesToProcess) {
+            try {
+                const formatted = await processImageToYouTubeFormat(file);
+                currentEditingPhotos.push(formatted);
+            } catch (err) {
+                console.warn("Échec traitement image 16:9:", err);
+            }
+        }
+        renderEditingPhotosThumbnails();
+    }
+
+    if (projZipFileInput) {
+        projZipFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+                await handleZipUpload(file);
+            }
+            projZipFileInput.value = '';
         });
     }
 
     if (projPhotosFileInput) {
-        projPhotosFileInput.addEventListener('change', (e) => {
+        projPhotosFileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    currentEditingPhotos.push(event.target.result);
-                    renderEditingPhotosThumbnails();
-                };
-                reader.readAsDataURL(file);
-            });
+            const zip = files.find(f => f.name.endsWith('.zip') || f.type.includes('zip'));
+            if (zip) {
+                await handleZipUpload(zip);
+            } else {
+                await handleImageFiles(files);
+            }
             projPhotosFileInput.value = '';
+        });
+    }
+
+    if (projPhotosDropzone) {
+        projPhotosDropzone.addEventListener('click', () => {
+            projPhotosFileInput?.click();
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            projPhotosDropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                projPhotosDropzone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            projPhotosDropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                projPhotosDropzone.classList.remove('dragover');
+            });
+        });
+
+        projPhotosDropzone.addEventListener('drop', async (e) => {
+            const files = Array.from(e.dataTransfer?.files || []);
+            const zip = files.find(f => f.name.endsWith('.zip') || f.type.includes('zip'));
+            if (zip) {
+                await handleZipUpload(zip);
+            } else if (files.length > 0) {
+                await handleImageFiles(files);
+            }
         });
     }
 
@@ -677,12 +960,12 @@ function setupProjectModal() {
             const description = document.getElementById('projDescription').value.trim();
 
             if (currentEditingPhotos.length === 0) {
-                showToast("Veuillez ajouter au moins une photo pour cette réalisation.", 'alert');
+                showToast("Veuillez ajouter au moins une photo (format 16:9) pour cette réalisation.", 'alert');
                 return;
             }
 
-            if (currentEditingPhotos.length < 7) {
-                showToast(`Note : ${currentEditingPhotos.length}/7 photos ajoutées. Pour une expérience optimale type galerie de prestige, 7 photos sont recommandées.`, 'info');
+            if (currentEditingPhotos.length > MAX_PROJECT_PHOTOS) {
+                currentEditingPhotos = currentEditingPhotos.slice(0, MAX_PROJECT_PHOTOS);
             }
 
             const projectData = {
@@ -705,10 +988,10 @@ function setupProjectModal() {
             try {
                 if (idInput) {
                     await apiClient.updateProject(idInput, projectData);
-                    showToast("Projet mis à jour avec succès !");
+                    showToast("Projet mis à jour avec succès au format 16:9 !");
                 } else {
                     await apiClient.createProject(projectData);
-                    showToast("Nouveau projet publié avec succès !");
+                    showToast("Nouveau projet publié avec succès au format 16:9 !");
                 }
 
                 currentProjects = await apiClient.getProjects();
@@ -771,34 +1054,86 @@ function closeProjectModal() {
 
 function renderEditingPhotosThumbnails() {
     const container = document.getElementById('projPhotosContainer');
-    if (!container) return;
+    const countText = document.getElementById('projPhotoCountText');
+    const countHint = document.getElementById('projPhotoCountHint');
 
+    if (countText) {
+        countText.textContent = `${currentEditingPhotos.length} / ${MAX_PROJECT_PHOTOS}`;
+    }
+
+    if (countHint) {
+        if (currentEditingPhotos.length === 0) {
+            countHint.textContent = "La photo #01 sert de couverture";
+        } else {
+            countHint.textContent = `Photo #01 = Couverture • ${currentEditingPhotos.length} photo${currentEditingPhotos.length > 1 ? 's' : ''} au format 16:9`;
+        }
+    }
+
+    if (!container) return;
     container.innerHTML = '';
+
     currentEditingPhotos.forEach((photoUrl, idx) => {
         const item = document.createElement('div');
         item.className = `admin-thumb-item ${idx === 0 ? 'is-cover' : ''}`;
-        item.title = idx === 0 ? "Photo de couverture" : "Cliquer pour définir en couverture";
+        item.title = idx === 0 ? "Photo #01 : Couverture principale" : `Photo #${idx + 1} (Cliquer pour définir en couverture)`;
 
         item.innerHTML = `
             <img src="${photoUrl}" alt="Photo ${idx + 1}">
-            <button type="button" class="admin-thumb-del" data-idx="${idx}" title="Supprimer la photo">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+            <span class="thumb-order-badge">#0${idx + 1}</span>
+            ${idx === 0 ? '<span class="thumb-cover-tag">Couverture</span>' : ''}
+            <div class="thumb-controls">
+                ${idx > 0 ? `
+                <button type="button" class="thumb-move-btn" data-move-left="${idx}" title="Déplacer vers la gauche">
+                    ◀
+                </button>` : ''}
+                ${idx < currentEditingPhotos.length - 1 ? `
+                <button type="button" class="thumb-move-btn" data-move-right="${idx}" title="Déplacer vers la droite">
+                    ▶
+                </button>` : ''}
+                <button type="button" class="admin-thumb-del" data-idx="${idx}" title="Supprimer la photo">
+                    ✕
+                </button>
+            </div>
         `;
 
         item.addEventListener('click', (e) => {
-            if (e.target.closest('.admin-thumb-del')) return;
+            if (e.target.closest('.thumb-controls')) return;
             if (idx !== 0) {
                 const clicked = currentEditingPhotos.splice(idx, 1)[0];
                 currentEditingPhotos.unshift(clicked);
                 renderEditingPhotosThumbnails();
+                showToast(`La photo #${idx + 1} est maintenant la couverture principale.`);
             }
         });
 
         container.appendChild(item);
+    });
+
+    // Écouteurs de réorganisation d'ordre
+    container.querySelectorAll('[data-move-left]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const i = parseInt(btn.dataset.moveLeft, 10);
+            if (i > 0) {
+                const temp = currentEditingPhotos[i];
+                currentEditingPhotos[i] = currentEditingPhotos[i - 1];
+                currentEditingPhotos[i - 1] = temp;
+                renderEditingPhotosThumbnails();
+            }
+        });
+    });
+
+    container.querySelectorAll('[data-move-right]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const i = parseInt(btn.dataset.moveRight, 10);
+            if (i < currentEditingPhotos.length - 1) {
+                const temp = currentEditingPhotos[i];
+                currentEditingPhotos[i] = currentEditingPhotos[i + 1];
+                currentEditingPhotos[i + 1] = temp;
+                renderEditingPhotosThumbnails();
+            }
+        });
     });
 
     container.querySelectorAll('.admin-thumb-del').forEach(btn => {

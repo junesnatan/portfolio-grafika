@@ -336,6 +336,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('detailArea').textContent = proj.surface || 'Sur-mesure';
         document.getElementById('detailDur').textContent = proj.duration || 'Étude personnalisée';
         document.getElementById('detailDesc').textContent = proj.description || '';
+        const detailPhotosCount = document.getElementById('detailPhotosCount');
+        if (detailPhotosCount) {
+            const count = currentProjectPhotos.length;
+            detailPhotosCount.textContent = `${count} photo${count > 1 ? 's' : ''} (16:9)`;
+        }
 
         thumbnailsStrip.innerHTML = '';
         currentProjectPhotos.forEach((photoUrl, pIdx) => {
