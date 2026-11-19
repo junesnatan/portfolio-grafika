@@ -1854,6 +1854,34 @@ body.admin-body {
     transition: border-color 0.16s ease;
 }
 
+/* Groupe de saisie avec unité automatique (m², mois) */
+.input-unit-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-unit-group input {
+    width: 100%;
+    padding-right: 3.5rem !important;
+}
+
+.input-unit-tag {
+    position: absolute;
+    right: 0.75rem;
+    font-family: var(--font-heading);
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--brand-blue);
+    background: #f1f5f9;
+    padding: 0.2rem 0.55rem;
+    border-radius: 7px;
+    border: 1px solid #e2e8f0;
+    pointer-events: none;
+    user-select: none;
+}
+
 .form-line-sep {
     height: 1px;
     background: var(--border-subtle);

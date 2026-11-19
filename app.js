@@ -107,6 +107,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =========================================================================
     // 2. DISPOSITION EN ARCHE (PC) / CAROUSEL TOUCH SNAP AVEC POINTS (MOBILE)
     // =========================================================================
+    // Utilitaires de formatage automatique des unités
+    function formatSurface(surfaceVal) {
+        if (!surfaceVal) return 'Sur-mesure';
+        const s = String(surfaceVal).trim();
+        if (!s || s.toLowerCase() === 'sur-mesure') return 'Sur-mesure';
+        if (/m²|m2|m carré/i.test(s)) return s.replace(/m2/i, 'm²');
+        const num = s.replace(/[^\d.,]/g, '');
+        return num ? `${num} m²` : s;
+    }
+
+    function formatDuration(durationVal) {
+        if (!durationVal) return 'Étude personnalisée';
+        const d = String(durationVal).trim();
+        if (!d || d.toLowerCase() === 'non spécifié' || d.toLowerCase() === 'durée') return 'Étude personnalisée';
+        if (/mois|an|ans|semaine|semaines|jour|jours/i.test(d)) return d;
+        const num = d.replace(/[^\d.,]/g, '');
+        return num ? `${num} mois` : d;
+    }
+
     function renderCards(projectList) {
         if (!archTrack) return;
         archTrack.innerHTML = '';
@@ -205,9 +224,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <img src="${escapeHtml(proj.photos[0])}" alt="${escapeHtml(proj.title)}" loading="lazy">
                 <div class="card-title-scrim">
                     <div class="card-meta-line">
-                        <span class="card-spec-surface">${escapeHtml(proj.surface || "Sur-mesure")}</span>
+                        <span class="card-spec-surface">${escapeHtml(formatSurface(proj.surface))}</span>
                         <span class="card-spec-sep">•</span>
-                        <span class="card-spec-dur">${escapeHtml(proj.duration || "Étude personnalisée")}</span>
+                        <span class="card-spec-dur">${escapeHtml(formatDuration(proj.duration))}</span>
                     </div>
                     <h3 class="card-project-title">${escapeHtml(proj.title)}</h3>
                     <span class="card-project-loc">${escapeHtml(proj.location)}</span>
@@ -333,13 +352,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('detailCategory').textContent = proj.category;
         document.getElementById('detailTitle').textContent = proj.title;
         document.getElementById('detailLoc').textContent = proj.location;
-        document.getElementById('detailArea').textContent = proj.surface || 'Sur-mesure';
-        document.getElementById('detailDur').textContent = proj.duration || 'Étude personnalisée';
+        document.getElementById('detailArea').textContent = formatSurface(proj.surface);
+        document.getElementById('detailDur').textContent = formatDuration(proj.duration);
         document.getElementById('detailDesc').textContent = proj.description || '';
         const detailPhotosCount = document.getElementById('detailPhotosCount');
         if (detailPhotosCount) {
             const count = currentProjectPhotos.length;
-            detailPhotosCount.textContent = `${count} photo${count > 1 ? 's' : ''} (16:9)`;
+            detailPhotosCount.textContent = `${count} photo${count > 1 ? 's' : ''}`;
         }
 
         thumbnailsStrip.innerHTML = '';

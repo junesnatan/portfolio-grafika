@@ -500,6 +500,26 @@ function renderDashboardOverview() {
 // =========================================================================
 // 5. GESTION DES PROJETS (CMS PORTFOLIO)
 // =========================================================================
+
+// Utilitaires de formatage automatique des unités (m², mois)
+function formatSurface(surfaceVal) {
+    if (!surfaceVal) return 'Sur-mesure';
+    const s = String(surfaceVal).trim();
+    if (!s || s.toLowerCase() === 'sur-mesure') return 'Sur-mesure';
+    if (/m²|m2|m carré/i.test(s)) return s.replace(/m2/i, 'm²');
+    const num = s.replace(/[^\d.,]/g, '');
+    return num ? `${num} m²` : s;
+}
+
+function formatDuration(durationVal) {
+    if (!durationVal) return 'Étude personnalisée';
+    const d = String(durationVal).trim();
+    if (!d || d.toLowerCase() === 'non spécifié' || d.toLowerCase() === 'durée') return 'Étude personnalisée';
+    if (/mois|an|ans|semaine|semaines|jour|jours/i.test(d)) return d;
+    const num = d.replace(/[^\d.,]/g, '');
+    return num ? `${num} mois` : d;
+}
+
 function renderProjectsList() {
     const container = document.getElementById('projectsAdminGrid');
     if (!container) return;
@@ -564,9 +584,9 @@ function renderProjectsList() {
                 <h3 class="proj-card-title">${escapeHtml(proj.title)}</h3>
                 <span class="proj-card-loc">${escapeHtml(proj.location)}</span>
                 <div class="proj-card-meta-row">
-                    <span>${escapeHtml(proj.surface || 'Sur-mesure')}</span>
+                    <span>${escapeHtml(formatSurface(proj.surface))}</span>
                     <span>•</span>
-                    <span>${escapeHtml(proj.duration || 'Durée')}</span>
+                    <span>${escapeHtml(formatDuration(proj.duration))}</span>
                 </div>
                 <p class="proj-card-desc">${escapeHtml(proj.description || '')}</p>
                 <div class="proj-card-actions">
@@ -832,7 +852,7 @@ function setupProjectModal() {
             }
 
             try {
-                showToast("Formatage de l'image au ratio 16:9...", "info");
+                showToast("Optimisation de l'image...", "info");
                 const processed = await processImageToYouTubeFormat(url);
                 currentEditingPhotos.push(processed);
             } catch {
@@ -846,16 +866,16 @@ function setupProjectModal() {
     // Gestionnaire d'extraction de fichier ZIP
     async function handleZipUpload(zipFile) {
         try {
-            showToast("Extraction et classement des photos de l'archive ZIP...", "info");
+            showToast("Importation et classement des photos de l'archive ZIP...", "info");
             const result = await extractImagesFromZip(zipFile);
 
             currentEditingPhotos = result.photos;
             renderEditingPhotosThumbnails();
 
             if (result.wasTruncated) {
-                showToast(`Archive extraite : les 8 premières photos ordonnées ont été retenues au format YouTube (16:9).`, 'info');
+                showToast(`Archive importée : les 8 premières photos ordonnées ont été ajoutées.`, 'info');
             } else {
-                showToast(`Succès : ${result.photos.length} photo${result.photos.length > 1 ? 's' : ''} extraites et classées dans l'ordre (format 16:9) !`);
+                showToast(`Succès : ${result.photos.length} photo${result.photos.length > 1 ? 's' : ''} extraites et classées dans l'ordre !`);
             }
         } catch (err) {
             console.error("Erreur extraction ZIP:", err);
@@ -881,13 +901,13 @@ function setupProjectModal() {
             showToast(`Note : seules les ${remainingSlots} premières photos ont été ajoutées pour respecter la limite de ${MAX_PROJECT_PHOTOS}.`, 'info');
         }
 
-        showToast("Formatage des photos au ratio 16:9 (YouTube)...", "info");
+        showToast("Traitement des photos...", "info");
         for (const file of filesToProcess) {
             try {
                 const formatted = await processImageToYouTubeFormat(file);
                 currentEditingPhotos.push(formatted);
             } catch (err) {
-                console.warn("Échec traitement image 16:9:", err);
+                console.warn("Échec traitement image:", err);
             }
         }
         renderEditingPhotosThumbnails();
@@ -955,12 +975,12 @@ function setupProjectModal() {
             const title = document.getElementById('projTitle').value.trim();
             const category = document.getElementById('projCategory').value;
             const location = document.getElementById('projLocation').value.trim();
-            const surface = document.getElementById('projSurface').value.trim();
-            const duration = document.getElementById('projDuration').value.trim();
+            const rawSurface = document.getElementById('projSurface').value.trim();
+            const rawDuration = document.getElementById('projDuration').value.trim();
             const description = document.getElementById('projDescription').value.trim();
 
             if (currentEditingPhotos.length === 0) {
-                showToast("Veuillez ajouter au moins une photo (format 16:9) pour cette réalisation.", 'alert');
+                showToast("Veuillez ajouter au moins une photo pour cette réalisation.", 'alert');
                 return;
             }
 
@@ -968,12 +988,25 @@ function setupProjectModal() {
                 currentEditingPhotos = currentEditingPhotos.slice(0, MAX_PROJECT_PHOTOS);
             }
 
+            // Gestion automatique des unités (m², mois)
+            let surface = 'Sur-mesure';
+            if (rawSurface) {
+                const sNum = rawSurface.replace(/[^\d.,]/g, '');
+                surface = sNum ? `${sNum} m²` : rawSurface;
+            }
+
+            let duration = 'Étude personnalisée';
+            if (rawDuration) {
+                const dNum = rawDuration.replace(/[^\d.,]/g, '');
+                duration = dNum ? `${dNum} mois` : rawDuration;
+            }
+
             const projectData = {
                 title,
                 category,
-                location,
-                surface: surface || "Sur-mesure",
-                duration: duration || "Non spécifié",
+                location: location || "Cotonou",
+                surface,
+                duration,
                 description,
                 photos: [...currentEditingPhotos]
             };
@@ -988,10 +1021,10 @@ function setupProjectModal() {
             try {
                 if (idInput) {
                     await apiClient.updateProject(idInput, projectData);
-                    showToast("Projet mis à jour avec succès au format 16:9 !");
+                    showToast("Projet mis à jour avec succès !");
                 } else {
                     await apiClient.createProject(projectData);
-                    showToast("Nouveau projet publié avec succès au format 16:9 !");
+                    showToast("Nouveau projet publié avec succès !");
                 }
 
                 currentProjects = await apiClient.getProjects();
@@ -1027,9 +1060,33 @@ function openProjectModal(project = null) {
         document.getElementById('projId').value = project.id;
         document.getElementById('projTitle').value = project.title;
         document.getElementById('projCategory').value = project.category;
-        document.getElementById('projLocation').value = project.location;
-        document.getElementById('projSurface').value = project.surface || '';
-        document.getElementById('projDuration').value = project.duration || '';
+
+        // Sélection de la ville béninoise dans le select
+        const locSelect = document.getElementById('projLocation');
+        if (locSelect) {
+            let matched = false;
+            const targetLoc = (project.location || '').trim();
+            for (let opt of locSelect.options) {
+                if (opt.value.toLowerCase() === targetLoc.toLowerCase()) {
+                    locSelect.value = opt.value;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched && targetLoc) {
+                const customOpt = new Option(targetLoc, targetLoc, true, true);
+                locSelect.add(customOpt);
+                locSelect.value = targetLoc;
+            }
+        }
+
+        // Unité automatique : on extrait uniquement le nombre
+        const surfVal = (project.surface || '').replace(/[^\d.,]/g, '');
+        document.getElementById('projSurface').value = surfVal;
+
+        const durVal = (project.duration || '').replace(/[^\d.,]/g, '');
+        document.getElementById('projDuration').value = durVal;
+
         document.getElementById('projDescription').value = project.description || '';
 
         currentEditingPhotos = [...(project.photos || [])];
@@ -1040,6 +1097,10 @@ function openProjectModal(project = null) {
 
         document.getElementById('projectForm').reset();
         document.getElementById('projId').value = '';
+        const locSelect = document.getElementById('projLocation');
+        if (locSelect) locSelect.value = 'Cotonou';
+        document.getElementById('projSurface').value = '';
+        document.getElementById('projDuration').value = '';
         currentEditingPhotos = [];
     }
 
@@ -1063,9 +1124,9 @@ function renderEditingPhotosThumbnails() {
 
     if (countHint) {
         if (currentEditingPhotos.length === 0) {
-            countHint.textContent = "La photo #01 sert de couverture";
+            countHint.textContent = "La première photo servira de couverture";
         } else {
-            countHint.textContent = `Photo #01 = Couverture • ${currentEditingPhotos.length} photo${currentEditingPhotos.length > 1 ? 's' : ''} au format 16:9`;
+            countHint.textContent = `Première photo = Couverture • ${currentEditingPhotos.length} photo${currentEditingPhotos.length > 1 ? 's' : ''}`;
         }
     }
 
