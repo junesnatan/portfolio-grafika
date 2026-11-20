@@ -1,16 +1,15 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
 export function getJwtSecret() {
-    if (!JWT_SECRET) {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
         if (process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview')) {
-            console.error('CRITICAL WARNING: JWT_SECRET environment variable is missing in production.');
+            throw new Error('Configuration de sécurité requise : la variable JWT_SECRET doit être définie sur le serveur de production.');
         }
-        return process.env.JWT_SECRET || 'atelier-grafrika-architectural-jwt-key-2026';
+        return 'atelier-grafrika-dev-jwt-key-local-only';
     }
-    return JWT_SECRET;
+    return secret;
 }
 
 export function signToken(payload) {

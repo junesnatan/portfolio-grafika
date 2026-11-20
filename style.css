@@ -2043,3 +2043,37 @@ a.location-tag:hover .location-external-arrow {
     opacity: 1;
     transform: translate(1px, -1px);
 }
+
+/* ==========================================================================
+   ACCESSIBILITÉ WCAG 2.2 AA : FOCUS VISIBLE & RÉDUCTION DES MOUVEMENTS
+   ========================================================================== */
+a:focus-visible,
+button:focus-visible,
+.action-tile:focus-visible,
+.arch-card:focus-visible,
+.custom-select-trigger:focus-visible,
+.thumb-item:focus-visible,
+.modal-close-btn:focus-visible,
+.filter-btn:focus-visible,
+.social-item:focus-visible,
+.cta-button:focus-visible {
+    outline: 2px solid var(--brand-blue) !important;
+    outline-offset: 3px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .arch-card {
+        transform: none !important;
+        transition: none !important;
+    }
+    .splash-screen {
+        display: none !important;
+    }
+}
+

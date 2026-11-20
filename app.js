@@ -206,6 +206,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.className = 'arch-card';
             card.dataset.id = proj.id;
             card.dataset.index = idx;
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', `Voir le projet ${proj.title} - ${proj.category}`);
 
             const dist = idx - centerIdx;
             const absDist = Math.abs(dist);
@@ -246,6 +249,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             card.addEventListener('click', () => {
                 openDetailModal(proj);
+            });
+
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openDetailModal(proj);
+                }
             });
 
             archTrack.appendChild(card);

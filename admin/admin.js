@@ -569,7 +569,7 @@ function renderProjectsList() {
 
         card.innerHTML = `
             <div class="proj-card-media">
-                <img src="${cover}" alt="${escapeHtml(proj.title)}" loading="lazy">
+                <img src="${escapeHtml(cover)}" alt="${escapeHtml(proj.title)}" loading="lazy">
                 <span class="proj-card-badge">${escapeHtml(proj.category)}</span>
                 <span class="proj-photos-count">
                     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

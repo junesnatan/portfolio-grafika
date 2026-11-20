@@ -71,14 +71,6 @@ export const apiClient = {
 
             return data;
         } catch (err) {
-            // Fallback de secours hors-ligne (émulation locale)
-            const isDefaultEmail = email.toLowerCase().includes('ateliergrafrika') || email.toLowerCase().includes('ateliergrafika');
-            const isDefaultPass = password === 'grafrika2026' || password === 'grafika2026';
-            if (isDefaultEmail && isDefaultPass) {
-                const mockToken = 'mock-jwt-token-local';
-                this.setToken(mockToken, remember);
-                return { success: true, token: mockToken, user: { email } };
-            }
             throw err;
         }
     },
@@ -86,9 +78,6 @@ export const apiClient = {
     async checkAuth() {
         const token = this.getToken();
         if (!token) return false;
-
-        // Si token mock local
-        if (token === 'mock-jwt-token-local') return true;
 
         try {
             const res = await fetch('/api/auth/verify', {
@@ -98,7 +87,7 @@ export const apiClient = {
             const data = await res.json();
             return data.valid === true;
         } catch {
-            return !!token;
+            return false;
         }
     },
 
