@@ -34,7 +34,7 @@ export default async function handler(req, res) {
             const totalAdmins = Number(countRes.rows[0]?.count || 0);
 
             if (totalAdmins === 0) {
-                const initEmail = (process.env.INITIAL_ADMIN_EMAIL || 'admin@ateliergrafrika.com').toLowerCase();
+                const initEmail = (process.env.INITIAL_ADMIN_EMAIL || 'admin@ateliergrafrika.bj').toLowerCase();
                 const initPass = process.env.INITIAL_ADMIN_PASSWORD || 'grafrika2026';
 
                 if (normalizedEmail === initEmail && password === initPass) {

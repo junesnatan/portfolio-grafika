@@ -396,11 +396,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         detailModal.classList.add('active');
+        detailModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
     }
 
     function closeDetail() {
         detailModal.classList.remove('active');
+        detailModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
     }
 
@@ -412,6 +414,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function openQuote() {
         if (quoteModal) {
             quoteModal.classList.add('active');
+            quoteModal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
         }
     }
@@ -419,18 +422,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     function closeQuote() {
         if (quoteModal) {
             quoteModal.classList.remove('active');
+            quoteModal.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
         }
     }
 
     if (btnOpenModal) btnOpenModal.addEventListener('click', openQuote);
     if (btnMainQuote) btnMainQuote.addEventListener('click', openQuote);
+    document.querySelectorAll('.cta-action-btn, [data-open-quote]').forEach(el => {
+        el.addEventListener('click', openQuote);
+    });
     if (btnCloseQuote) btnCloseQuote.addEventListener('click', closeQuote);
 
     document.querySelectorAll('.modal-overlay').forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = '';
             }
         });
@@ -456,14 +464,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     const realDomainInput = document.getElementById('cDomain');
 
     if (customSelect && customSelectTrigger && customSelectOptions) {
+        customSelectTrigger.setAttribute('tabindex', '0');
+        customSelectTrigger.setAttribute('role', 'combobox');
+        customSelectTrigger.setAttribute('aria-haspopup', 'listbox');
+
         customSelectTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             customSelect.classList.toggle('open');
             customSelectTrigger.setAttribute('aria-expanded', customSelect.classList.contains('open'));
         });
 
+        customSelectTrigger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                customSelect.classList.add('open');
+                customSelectTrigger.setAttribute('aria-expanded', 'true');
+                const firstOpt = customSelectOptions.querySelector('.custom-option');
+                if (firstOpt) firstOpt.focus();
+            } else if (e.key === 'Escape') {
+                customSelect.classList.remove('open');
+                customSelectTrigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+
         const options = customSelectOptions.querySelectorAll('.custom-option');
-        options.forEach(opt => {
+        options.forEach((opt, idx) => {
+            opt.setAttribute('tabindex', '0');
+            opt.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    opt.click();
+                    customSelectTrigger.focus();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const nextOpt = options[idx + 1] || options[0];
+                    nextOpt.focus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const prevOpt = options[idx - 1] || options[options.length - 1];
+                    prevOpt.focus();
+                } else if (e.key === 'Escape') {
+                    customSelect.classList.remove('open');
+                    customSelectTrigger.setAttribute('aria-expanded', 'false');
+                    customSelectTrigger.focus();
+                }
+            });
+
             opt.addEventListener('click', () => {
                 const val = opt.getAttribute('data-value');
                 const title = opt.querySelector('.option-title').textContent.trim();
