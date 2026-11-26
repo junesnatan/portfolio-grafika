@@ -39,6 +39,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const archTrack = document.getElementById('archTrack');
     const archGallery = document.getElementById('archGallery');
     const mobileDotsContainer = document.getElementById('mobileCarouselDots');
+    const projectsSeeMoreWrap = document.getElementById('projectsSeeMoreWrap');
+    const btnToggleMoreProjects = document.getElementById('btnToggleMoreProjects');
+    const seeMoreBtnText = document.getElementById('seeMoreBtnText');
+
+    let isProjectsExpanded = false;
+
+    function getDisplayLimit() {
+        return window.innerWidth <= 768 ? 3 : 5;
+    }
 
     // Récupérer les projets
     let projects = await apiClient.getProjects();
@@ -168,6 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 </div>
             `;
+            if (projectsSeeMoreWrap) projectsSeeMoreWrap.style.display = 'none';
             if (mobileDotsContainer) {
                 mobileDotsContainer.innerHTML = '';
                 mobileDotsContainer.style.display = 'none';
@@ -179,31 +189,49 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (projectsSubtext) {
             projectsSubtext.textContent = "Découvrez nos réalisations récentes sélectionnées.";
         }
-        if (mobileDotsContainer) {
-            mobileDotsContainer.style.display = 'flex';
-        }
 
         const total = projectList.length;
-        const centerIdx = Math.floor(total / 2);
+        const limit = getDisplayLimit();
+        const shouldShowSeeMore = total > limit;
 
-        // Points de pagination mobile
-        if (mobileDotsContainer) {
-            mobileDotsContainer.innerHTML = '';
-            projectList.forEach((_, idx) => {
-                const dot = document.createElement('div');
-                dot.className = `dot-indicator ${idx === 0 ? 'active' : ''}`;
-                dot.dataset.index = idx;
-                dot.addEventListener('click', () => {
-                    scrollToProject(idx);
-                });
-                mobileDotsContainer.appendChild(dot);
-            });
+        if (projectsSeeMoreWrap && btnToggleMoreProjects) {
+            if (shouldShowSeeMore) {
+                projectsSeeMoreWrap.style.display = 'flex';
+                if (isProjectsExpanded) {
+                    btnToggleMoreProjects.classList.add('is-expanded');
+                    btnToggleMoreProjects.setAttribute('aria-expanded', 'true');
+                    if (seeMoreBtnText) seeMoreBtnText.textContent = "Voir moins de réalisations";
+                } else {
+                    btnToggleMoreProjects.classList.remove('is-expanded');
+                    btnToggleMoreProjects.setAttribute('aria-expanded', 'false');
+                    const remaining = total - limit;
+                    if (seeMoreBtnText) seeMoreBtnText.textContent = `Voir plus de réalisations (+${remaining})`;
+                }
+            } else {
+                projectsSeeMoreWrap.style.display = 'none';
+            }
         }
 
-        // Générer les cartes
-        projectList.forEach((proj, idx) => {
+        const visibleList = (!isProjectsExpanded && shouldShowSeeMore)
+            ? projectList.slice(0, limit)
+            : projectList;
+
+        const visibleTotal = visibleList.length;
+        const centerIdx = Math.floor(visibleTotal / 2);
+
+        // Masquer les points horizontaux devenus obsolètes
+        if (mobileDotsContainer) {
+            mobileDotsContainer.innerHTML = '';
+            mobileDotsContainer.style.display = 'none';
+        }
+
+        // Générer les cartes visibles
+        visibleList.forEach((proj, idx) => {
             const card = document.createElement('div');
             card.className = 'arch-card';
+            if (isProjectsExpanded && idx >= limit) {
+                card.classList.add('anim-fade-in');
+            }
             card.dataset.id = proj.id;
             card.dataset.index = idx;
             card.setAttribute('tabindex', '0');
@@ -262,6 +290,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    if (btnToggleMoreProjects) {
+        btnToggleMoreProjects.addEventListener('click', () => {
+            isProjectsExpanded = !isProjectsExpanded;
+            renderCards(projects);
+            if (!isProjectsExpanded) {
+                const projSection = document.getElementById('projets');
+                if (projSection) {
+                    projSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    }
+
     function scrollToProject(index) {
         if (!archTrack || !archGallery) return;
         const cards = archTrack.querySelectorAll('.arch-card');
@@ -278,6 +319,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (archGallery) {
         archGallery.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) return;
             const cards = archTrack.querySelectorAll('.arch-card');
             const centerPoint = archGallery.scrollLeft + (archGallery.offsetWidth / 2);
             let closestIdx = 0;
@@ -291,19 +333,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                     closestIdx = idx;
                 }
             });
-
-            if (mobileDotsContainer) {
-                const dots = mobileDotsContainer.querySelectorAll('.dot-indicator');
-                dots.forEach((dot, idx) => {
-                    dot.classList.toggle('active', idx === closestIdx);
-                });
-            }
         });
     }
 
+    let lastDisplayLimit = getDisplayLimit();
     window.addEventListener('resize', () => {
-        const total = projects.length;
-        const centerIdx = Math.floor(total / 2);
+        const currentLimit = getDisplayLimit();
+        if (currentLimit !== lastDisplayLimit) {
+            lastDisplayLimit = currentLimit;
+            renderCards(projects);
+            return;
+        }
+
+        const limit = getDisplayLimit();
+        const shouldShowSeeMore = projects.length > limit;
+        const visibleTotal = (!isProjectsExpanded && shouldShowSeeMore)
+            ? Math.min(projects.length, limit)
+            : projects.length;
+        const centerIdx = Math.floor(visibleTotal / 2);
         const cards = archTrack.querySelectorAll('.arch-card');
         
         cards.forEach((card, idx) => {
