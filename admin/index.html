@@ -190,8 +190,8 @@
                     <button class="dash-nav-btn elite-nav-btn active" data-tab="dashboard">
                         <span>VUE D'ENSEMBLE</span>
                     </button>
-                    <button class="dash-nav-btn elite-nav-btn" data-tab="settings">
-                        <span>INFOS DU SITE</span>
+                    <button class="dash-nav-btn elite-nav-btn" data-tab="stats">
+                        <span>TRAFIC &amp; VISITEURS</span>
                     </button>
                     <button class="dash-nav-btn elite-nav-btn" data-tab="projects">
                         <span>PROJETS RÉALISÉS</span>
@@ -199,9 +199,9 @@
                     <button class="dash-nav-btn elite-nav-btn" data-tab="leads">
                         <span>DEVIS &amp; CONTACTS</span>
                     </button>
-                    <a href="../" target="_blank" rel="noopener" class="dash-nav-btn elite-nav-btn">
-                        <span>VOIR LE SITE</span>
-                    </a>
+                    <button class="dash-nav-btn elite-nav-btn" data-tab="settings">
+                        <span>INFOS DU SITE</span>
+                    </button>
                     <button id="logoutBtn" class="dash-nav-btn elite-nav-btn elite-logout-btn">
                         <span>DÉCONNEXION</span>
                     </button>
@@ -309,6 +309,20 @@
                                     <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- CARTE 5 : VISITEURS DU SITE -->
+                            <div class="elite-kpi-card" data-tab-switch="stats">
+                                <div class="elite-kpi-info">
+                                    <span class="elite-kpi-label">TRAFIC DU SITE</span>
+                                    <span class="elite-kpi-num" id="statDashboardViewsKpi">0</span>
+                                </div>
+                                <div class="elite-kpi-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                 </div>
                             </div>
@@ -495,71 +509,201 @@
 
 
                 <!-- =============================================================
-                     ONGLET 4 : STATISTIQUES (ANALYTICS DÉTAILLÉES)
+                     ONGLET 4 : STATISTIQUES & TRAFIC VISITEURS EN DIRECT
                      ============================================================= -->
                 <div class="tab-pane" id="tabStats">
-                    <div class="stats-overview-grid">
-                        <div class="stats-box-rounded">
-                            <h3 class="widget-section-title">Sources de contact</h3>
-                            <p class="stats-sub-text">Répartition des interactions sur votre portfolio</p>
-                            
-                            <div class="metric-progress-list">
-                                <div class="progress-row">
-                                    <div class="progress-labels">
-                                        <span>Clics WhatsApp direct</span>
-                                        <strong>72%</strong>
-                                    </div>
-                                    <div class="progress-bar-track">
-                                        <div class="progress-bar-fill bg-blue" style="width: 72%;"></div>
-                                    </div>
-                                </div>
+                    
+                    <!-- BANDEAU ACTION & ACTUALISATION EN DIRECT -->
+                    <div class="pane-action-bar" style="margin-bottom: 1.5rem;">
+                        <div class="pane-title-group">
+                            <h2 class="pane-title" style="margin: 0; font-size: 1.25rem;">Trafic &amp; Analyse des Visiteurs</h2>
+                            <p class="pane-subtitle" style="margin: 0.2rem 0 0; font-size: 0.85rem;">Surveillez en direct vos visiteurs, clics WhatsApp et canaux d'acquisition.</p>
+                        </div>
+                        <div class="pane-actions-right">
+                            <button type="button" class="btn-outline-pill-small" id="btnRefreshTraffic">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" id="refreshTrafficIcon">
+                                    <polyline points="23 4 23 10 17 10"></polyline>
+                                    <polyline points="1 20 1 14 7 14"></polyline>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                                </svg>
+                                <span>Actualiser en direct</span>
+                            </button>
+                        </div>
+                    </div>
 
-                                <div class="progress-row">
-                                    <div class="progress-labels">
-                                        <span>Formulaire de devis</span>
-                                        <strong>20%</strong>
-                                    </div>
-                                    <div class="progress-bar-track">
-                                        <div class="progress-bar-fill bg-red" style="width: 20%;"></div>
-                                    </div>
+                    <!-- CARTES KPI DU TRAFIC -->
+                    <div class="traffic-kpi-grid">
+                        <div class="traffic-kpi-card">
+                            <div class="traffic-kpi-header">
+                                <span class="traffic-kpi-tag">TOTAL PAGES VUES</span>
+                                <div class="traffic-kpi-icon-wrap bg-blue-subtle">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
                                 </div>
-
-                                <div class="progress-row">
-                                    <div class="progress-labels">
-                                        <span>Appels téléphoniques</span>
-                                        <strong>8%</strong>
-                                    </div>
-                                    <div class="progress-bar-track">
-                                        <div class="progress-bar-fill bg-slate" style="width: 8%;"></div>
-                                    </div>
-                                </div>
+                            </div>
+                            <div class="traffic-kpi-val" id="statTrafficViews">0</div>
+                            <div class="traffic-kpi-foot">
+                                <span class="traffic-badge-green">Actif</span>
+                                <span>Consultations du portfolio</span>
                             </div>
                         </div>
 
-                        <div class="stats-box-rounded">
-                            <h3 class="widget-section-title">Audience géographique</h3>
-                            <p class="stats-sub-text">Origine des visiteurs consultant votre travail</p>
-                            
-                            <div class="geo-tags-cloud">
-                                <div class="geo-tag-pill">
-                                    <span class="geo-name">Bénin (Cotonou, Calavi)</span>
-                                    <span class="geo-val">65%</span>
+                        <div class="traffic-kpi-card">
+                            <div class="traffic-kpi-header">
+                                <span class="traffic-kpi-tag">VISITEURS UNIQUES</span>
+                                <div class="traffic-kpi-icon-wrap bg-indigo-subtle">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
                                 </div>
-                                <div class="geo-tag-pill">
-                                    <span class="geo-name">France (Diaspora)</span>
-                                    <span class="geo-val">18%</span>
+                            </div>
+                            <div class="traffic-kpi-val" id="statTrafficUniq">0</div>
+                            <div class="traffic-kpi-foot">
+                                <span class="traffic-badge-blue">Audience</span>
+                                <span>Personnes distinctes</span>
+                            </div>
+                        </div>
+
+                        <div class="traffic-kpi-card">
+                            <div class="traffic-kpi-header">
+                                <span class="traffic-kpi-tag">CLICS WHATSAPP</span>
+                                <div class="traffic-kpi-icon-wrap bg-emerald-subtle">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                                    </svg>
                                 </div>
-                                <div class="geo-tag-pill">
-                                    <span class="geo-name">Côte d'Ivoire & Togo</span>
-                                    <span class="geo-val">11%</span>
+                            </div>
+                            <div class="traffic-kpi-val" id="statTrafficWhatsApp">0</div>
+                            <div class="traffic-kpi-foot">
+                                <span class="traffic-badge-emerald">Conversion</span>
+                                <span>Prises de contact directes</span>
+                            </div>
+                        </div>
+
+                        <div class="traffic-kpi-card">
+                            <div class="traffic-kpi-header">
+                                <span class="traffic-kpi-tag">TAUX DE CONVERSION</span>
+                                <div class="traffic-kpi-icon-wrap bg-amber-subtle">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                        <polyline points="17 6 23 6 23 12"></polyline>
+                                    </svg>
                                 </div>
-                                <div class="geo-tag-pill">
-                                    <span class="geo-name">USA / Canada</span>
-                                    <span class="geo-val">6%</span>
-                                </div>
+                            </div>
+                            <div class="traffic-kpi-val" id="statTrafficRate">0.0%</div>
+                            <div class="traffic-kpi-foot">
+                                <span class="traffic-badge-amber">Interactions</span>
+                                <span>Visiteurs devenus contacts</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- GRILLE ANALYTICS 1 : GRAPHIQUE + CANAUX -->
+                    <div class="traffic-analytics-grid">
+                        
+                        <!-- CARTE GRAPHIQUE D'ÉVOLUTION -->
+                        <div class="traffic-box-card">
+                            <div class="traffic-box-header">
+                                <div>
+                                    <h3 class="widget-section-title">Évolution des visites quotidiennes</h3>
+                                    <p class="stats-sub-text">Historique des consultations et clics WhatsApp</p>
+                                </div>
+                                <div class="chart-legend-wrap">
+                                    <div class="legend-item"><span class="legend-dot bg-blue"></span><span>Visites</span></div>
+                                    <div class="legend-item"><span class="legend-dot bg-emerald"></span><span>WhatsApp</span></div>
+                                </div>
+                            </div>
+
+                            <div class="traffic-chart-container" id="trafficChartWrapper">
+                                <!-- Barres interactives générées dynamiquement en JS -->
+                            </div>
+                        </div>
+
+                        <!-- CARTE CANAUX D'ACQUISITION / SOURCES -->
+                        <div class="traffic-box-card">
+                            <div class="traffic-box-header">
+                                <div>
+                                    <h3 class="widget-section-title">Canaux d'acquisition</h3>
+                                    <p class="stats-sub-text">Origine des visiteurs (Google, TikTok, Instagram, Direct)</p>
+                                </div>
+                            </div>
+
+                            <div class="metric-progress-list" id="trafficSourcesContainer">
+                                <!-- Injecté en JS -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- GRILLE ANALYTICS 2 : APPAREILS + TOP RÉALISATIONS -->
+                    <div class="traffic-analytics-grid" style="margin-top: 1.5rem;">
+                        
+                        <!-- CARTE APPAREILS -->
+                        <div class="traffic-box-card">
+                            <div class="traffic-box-header">
+                                <div>
+                                    <h3 class="widget-section-title">Appareils &amp; Plateformes</h3>
+                                    <p class="stats-sub-text">Mobile vs Ordinateur vs Tablette</p>
+                                </div>
+                            </div>
+                            <div class="devices-display-list" id="trafficDevicesContainer">
+                                <!-- Injecté en JS -->
+                            </div>
+                        </div>
+
+                        <!-- CARTE RÉALISATIONS LES PLUS VUES -->
+                        <div class="traffic-box-card">
+                            <div class="traffic-box-header">
+                                <div>
+                                    <h3 class="widget-section-title">Réalisations les plus consultées</h3>
+                                    <p class="stats-sub-text">Projets ayant suscité le plus de clics et d'attention</p>
+                                </div>
+                            </div>
+                            <div class="top-projects-view-list" id="trafficTopProjectsContainer">
+                                <!-- Injecté en JS -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- TABLEAU JOURNAL EN TEMPS RÉEL (LIVE STREAM) -->
+                    <div class="elite-table-card" style="margin-top: 1.5rem;">
+                        <div class="elite-table-toolbar">
+                            <div class="elite-toolbar-left">
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span class="status-dot-live"></span>
+                                    <h3 class="elite-table-heading">JOURNAL D'ACTIVITÉ EN TEMPS RÉEL</h3>
+                                </div>
+                                <p class="elite-table-sub">Dernières visites, projets explorés et interactions directes.</p>
+                            </div>
+                            <div class="elite-toolbar-actions">
+                                <span class="live-counter-badge" id="trafficLogsBadge">0 événements récents</span>
+                            </div>
+                        </div>
+
+                        <div class="elite-table-responsive">
+                            <table class="elite-table">
+                                <thead>
+                                    <tr>
+                                        <th>DATE &amp; HEURE</th>
+                                        <th>ACTION / ÉVÉNEMENT</th>
+                                        <th>SOURCE / CANAL</th>
+                                        <th>APPAREIL &amp; SYSTÈME</th>
+                                        <th>DÉTAILS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trafficLiveLogsBody">
+                                    <!-- Injecté dynamiquement en JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
 
 

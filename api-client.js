@@ -277,8 +277,97 @@ export const apiClient = {
     },
 
     // -------------------------------------------------------------
-    // 5. STATISTIQUES & ANALYTICS
+    // 5. STATISTIQUES & ANALYTICS VISITEURS
     // -------------------------------------------------------------
+    getVisitorId() {
+        try {
+            let vid = localStorage.getItem('grafrika_vid');
+            if (!vid) {
+                vid = 'v_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+                localStorage.setItem('grafrika_vid', vid);
+            }
+            return vid;
+        } catch {
+            return 'v_anon_' + Date.now().toString(36);
+        }
+    },
+
+    getDeviceContext() {
+        const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
+        let device = 'Ordinateur';
+        if (/Mobi|Android|iPhone|iPod/i.test(ua) || (typeof window !== 'undefined' && window.innerWidth <= 768)) {
+            device = 'Mobile';
+        } else if (/iPad|Tablet/i.test(ua) || (typeof window !== 'undefined' && window.innerWidth > 768 && window.innerWidth <= 1024)) {
+            device = 'Tablette';
+        }
+
+        let browser = 'Inconnu';
+        if (ua.includes('TikTok')) browser = 'TikTok App';
+        else if (ua.includes('Instagram')) browser = 'Instagram App';
+        else if (ua.includes('FBAN') || ua.includes('FBAV')) browser = 'Facebook App';
+        else if (ua.includes('Chrome')) browser = 'Chrome';
+        else if (ua.includes('Safari')) browser = 'Safari';
+        else if (ua.includes('Firefox')) browser = 'Firefox';
+        else if (ua.includes('Edg')) browser = 'Edge';
+
+        let os = 'Inconnu';
+        if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+        else if (/Android/i.test(ua)) os = 'Android';
+        else if (/Windows/i.test(ua)) os = 'Windows';
+        else if (/Macintosh|Mac OS/i.test(ua)) os = 'macOS';
+        else if (/Linux/i.test(ua)) os = 'Linux';
+
+        let referrer = typeof document !== 'undefined' ? (document.referrer || '') : '';
+        let source = 'Accès Direct';
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmSource = urlParams.get('utm_source');
+
+            if (utmSource) {
+                source = utmSource.charAt(0).toUpperCase() + utmSource.slice(1);
+            } else if (referrer) {
+                const refLower = referrer.toLowerCase();
+                if (refLower.includes('google.')) source = 'Google Search';
+                else if (refLower.includes('tiktok.com')) source = 'TikTok';
+                else if (refLower.includes('instagram.com')) source = 'Instagram';
+                else if (refLower.includes('facebook.com') || refLower.includes('fb.com')) source = 'Facebook';
+                else if (refLower.includes('linkedin.com')) source = 'LinkedIn';
+                else if (refLower.includes('t.co') || refLower.includes('x.com')) source = 'X (Twitter)';
+                else if (refLower.includes('whatsapp.com')) source = 'WhatsApp';
+                else {
+                    const host = new URL(referrer).hostname;
+                    source = host.replace('www.', '');
+                }
+            }
+        } catch {}
+
+        return { device, browser, os, referrer, source };
+    },
+
+    async recordVisit(eventType = 'pageview', metadata = '') {
+        try {
+            const ctx = this.getDeviceContext();
+            const payload = {
+                event_type: eventType,
+                visitor_id: this.getVisitorId(),
+                referrer: ctx.referrer || 'Direct',
+                source_category: ctx.source,
+                device_type: ctx.device,
+                browser: ctx.browser,
+                os: ctx.os,
+                page: (typeof window !== 'undefined' && window.location.pathname) ? window.location.pathname : '/',
+                metadata: metadata || ''
+            };
+
+            fetch('/api/stats', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(() => {});
+        } catch {}
+    },
+
     async getStats() {
         try {
             const res = await fetch('/api/stats');
@@ -289,23 +378,29 @@ export const apiClient = {
         return { views: 248, whatsapp: 39, leads: 12 };
     },
 
-    async recordPageView() {
+    async getDetailedTraffic() {
         try {
-            fetch('/api/stats', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ metric: 'views' })
-            }).catch(() => {});
-        } catch {}
+            const res = await fetch('/api/stats?detailed=1', {
+                headers: this.getAuthHeaders()
+            });
+            if (res.ok) {
+                return await res.json();
+            }
+        } catch (err) {
+            console.warn('API getDetailedTraffic error:', err.message);
+        }
+        return null;
     },
 
-    async recordWhatsAppClick() {
-        try {
-            fetch('/api/stats', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ metric: 'whatsapp' })
-            }).catch(() => {});
-        } catch {}
+    async recordPageView() {
+        return this.recordVisit('pageview', 'Visite Portfolio');
+    },
+
+    async recordWhatsAppClick(context = 'Bouton WhatsApp') {
+        return this.recordVisit('whatsapp_click', context);
+    },
+
+    async recordProjectView(projectTitle = '') {
+        return this.recordVisit('project_view', projectTitle);
     }
 };

@@ -405,6 +405,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentProjectPhotos = proj.photos || [];
         currentPhotoIndex = 0;
 
+        // Traçabilité de l'intérêt visiteur pour les analytics de l'admin
+        if (proj && proj.title) {
+            apiClient.recordProjectView(proj.title);
+        }
+
         document.getElementById('detailCategory').textContent = proj.category;
         document.getElementById('detailTitle').textContent = proj.title;
         document.getElementById('detailLoc').textContent = proj.location;
@@ -438,7 +443,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (waBtn) {
             waBtn.href = `https://wa.me/${targetWa}?text=${whatsappMsg}`;
             waBtn.onclick = () => {
-                apiClient.recordWhatsAppClick();
+                apiClient.recordWhatsAppClick(`WhatsApp Réalisation: ${proj.title}`);
             };
         }
 
@@ -615,6 +620,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 domain,
                 message: message || 'À définir ensemble'
             }).catch(err => console.warn('Envoi lead backend:', err));
+
+            // Enregistrement de l'événement de conversion pour les statistiques
+            apiClient.recordVisit('lead_submit', `Devis: ${domain} (${city || 'Bénin'})`);
 
             // 2. Redirection WhatsApp fluide vers le numéro configuré dans les réglages
             let targetWa = '2290197932325';

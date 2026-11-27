@@ -15,6 +15,7 @@ let currentProjects = [];
 let currentLeads = [];
 let currentSettings = { ...DEFAULT_SETTINGS };
 let currentStats = { views: 248, whatsapp: 39, leads: 12 };
+let currentTraffic = null;
 
 let currentEditingPhotos = [];
 let activeLeadFilter = 'all';
@@ -124,28 +125,32 @@ async function initAdminDashboard() {
     setupProjectModal();
     setupSettingsForms();
     setupLeadFilters();
+    setupTrafficSection();
 
     await refreshAllData();
 }
 
 async function refreshAllData() {
     try {
-        const [projects, leads, settings, stats] = await Promise.all([
+        const [projects, leads, settings, stats, traffic] = await Promise.all([
             apiClient.getProjects(),
             apiClient.getLeads(),
             apiClient.getSettings(),
-            apiClient.getStats()
+            apiClient.getStats(),
+            apiClient.getDetailedTraffic()
         ]);
 
         currentProjects = projects || [];
         currentLeads = leads || [];
         currentSettings = settings || { ...DEFAULT_SETTINGS };
         currentStats = stats || { views: 248, whatsapp: 39, leads: 12 };
+        currentTraffic = traffic || null;
 
         renderDashboardOverview();
         renderProjectsList();
         renderLeadsList();
         loadSettingsForm();
+        renderTrafficAnalytics();
     } catch (err) {
         console.error("Erreur de chargement des données dashboard:", err);
         showToast("Impossible de synchroniser certaines données avec le serveur.", "alert");
@@ -173,7 +178,7 @@ function setupNavigation() {
         settings: { title: "Infos du site visiteur", sub: "Modifiez vos coordonnées WhatsApp, téléphone, adresse et réseaux sociaux." },
         projects: { title: "Projets & Réalisations", sub: "Ajoutez et gérez vos projets visibles sur le portfolio public." },
         leads: { title: "Devis & Contacts", sub: "Suivi complet des demandes de devis et prospects." },
-        stats: { title: "Analytics", sub: "Performances de votre portfolio et audience." }
+        stats: { title: "Trafic & Visiteurs", sub: "Surveillance en temps réel des consultations, clics WhatsApp et canaux d'acquisition." }
     };
 
     function switchTab(tabKey) {
@@ -192,6 +197,10 @@ function setupNavigation() {
         if (titles[tabKey]) {
             if (pageTitle) pageTitle.textContent = titles[tabKey].title;
             if (pageSubtitle) pageSubtitle.textContent = titles[tabKey].sub;
+        }
+
+        if (tabKey === 'stats') {
+            renderTrafficAnalytics();
         }
 
         const sidebar = document.getElementById('adminSidebar');
@@ -294,6 +303,11 @@ function renderDashboardOverview() {
     if (statNewLeadsKpi) statNewLeadsKpi.textContent = newLeads;
     if (statDoneLeadsKpi) statDoneLeadsKpi.textContent = doneLeads;
     if (statLeadsProgress) statLeadsProgress.textContent = inProgressLeads;
+
+    const statDashboardViewsKpi = document.getElementById('statDashboardViewsKpi');
+    if (statDashboardViewsKpi) {
+        statDashboardViewsKpi.textContent = (currentTraffic && currentTraffic.views) || (currentStats && currentStats.views) || 0;
+    }
 
     // Badges barre d'outils et navigation
     const dashToolbarLeadsCount = document.getElementById('dashToolbarLeadsCount');
@@ -1717,4 +1731,232 @@ function escapeHtml(text) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+}
+
+function formatRelativeDate(isoStr) {
+    if (!isoStr) return "À l'instant";
+    try {
+        const cleanStr = String(isoStr).replace(' ', 'T');
+        const date = new Date(cleanStr.includes('Z') ? cleanStr : cleanStr + 'Z');
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMin = Math.round(diffMs / 60000);
+
+        if (isNaN(diffMin) || diffMin < 2) return "À l'instant";
+        if (diffMin < 60) return `Il y a ${diffMin} min`;
+
+        const diffHours = Math.round(diffMin / 60);
+        if (diffHours < 24) return `Il y a ${diffHours}h`;
+
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    } catch {
+        return isoStr;
+    }
+}
+
+// =========================================================================
+// 10. GESTION DU TRAFIC & ANALYTICS VISITEURS
+// =========================================================================
+function setupTrafficSection() {
+    const btnRefreshTraffic = document.getElementById('btnRefreshTraffic');
+    const refreshTrafficIcon = document.getElementById('refreshTrafficIcon');
+
+    if (btnRefreshTraffic) {
+        btnRefreshTraffic.addEventListener('click', async () => {
+            if (refreshTrafficIcon) refreshTrafficIcon.style.animation = 'spin 0.6s linear infinite';
+            try {
+                const traffic = await apiClient.getDetailedTraffic();
+                if (traffic) {
+                    currentTraffic = traffic;
+                    renderTrafficAnalytics();
+                    showToast("Trafic visiteurs actualisé en direct !");
+                }
+            } catch (err) {
+                console.error("Erreur actualisation trafic:", err);
+                showToast("Erreur lors de l'actualisation du trafic.", "alert");
+            } finally {
+                if (refreshTrafficIcon) refreshTrafficIcon.style.animation = '';
+            }
+        });
+    }
+}
+
+function renderTrafficAnalytics() {
+    if (!currentTraffic) return;
+
+    // 1. Mise à jour des cartes KPI
+    const statViews = document.getElementById('statTrafficViews');
+    const statUniq = document.getElementById('statTrafficUniq');
+    const statWA = document.getElementById('statTrafficWhatsApp');
+    const statRate = document.getElementById('statTrafficRate');
+
+    const viewsVal = currentTraffic.views || (currentStats && currentStats.views) || 0;
+    const uniqVal = currentTraffic.uniqueVisitors || Math.max(1, Math.round(viewsVal * 0.72));
+    const waVal = currentTraffic.whatsapp || (currentStats && currentStats.whatsapp) || 0;
+
+    if (statViews) statViews.textContent = Number(viewsVal).toLocaleString('fr-FR');
+    if (statUniq) statUniq.textContent = Number(uniqVal).toLocaleString('fr-FR');
+    if (statWA) statWA.textContent = Number(waVal).toLocaleString('fr-FR');
+    if (statRate) statRate.textContent = (currentTraffic.conversionRate || '0.0') + '%';
+
+    // 2. Graphique d'évolution journalière (Bar chart)
+    const chartWrapper = document.getElementById('trafficChartWrapper');
+    if (chartWrapper && Array.isArray(currentTraffic.timeline)) {
+        chartWrapper.innerHTML = '';
+        const maxViews = Math.max(...currentTraffic.timeline.map(t => Number(t.views || 0)), 1);
+
+        currentTraffic.timeline.forEach(dayItem => {
+            const viewsCount = Number(dayItem.views || 0);
+            const waCount = Number(dayItem.whatsapp || 0);
+
+            const vHeight = Math.max(6, Math.round((viewsCount / maxViews) * 150));
+            const waHeight = Math.max(4, Math.round((waCount / maxViews) * 150));
+
+            let label = dayItem.day || '';
+            try {
+                const parts = label.split('-');
+                if (parts.length === 3) {
+                    const d = new Date(label + 'T12:00:00Z');
+                    label = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+                }
+            } catch {}
+
+            const col = document.createElement('div');
+            col.className = 'chart-day-col';
+            col.innerHTML = `
+                <div class="chart-bars-wrap">
+                    <div class="chart-bar-pillar views" style="height: ${vHeight}px;" title="${viewsCount} visites le ${label}"></div>
+                    <div class="chart-bar-pillar whatsapp" style="height: ${waHeight}px;" title="${waCount} WhatsApp le ${label}"></div>
+                </div>
+                <span class="chart-day-label">${escapeHtml(label)}</span>
+            `;
+            chartWrapper.appendChild(col);
+        });
+    }
+
+    // 3. Canaux d'acquisition (Sources)
+    const sourcesContainer = document.getElementById('trafficSourcesContainer');
+    if (sourcesContainer && Array.isArray(currentTraffic.sources)) {
+        sourcesContainer.innerHTML = '';
+        currentTraffic.sources.forEach(src => {
+            const count = Number(src.count || 0);
+            const pct = Number(src.percent || 0);
+            const barClass = src.name.includes('Google') ? 'bg-red' : (src.name.includes('TikTok') ? 'bg-slate' : (src.name.includes('Instagram') ? 'bg-amber' : 'bg-blue'));
+
+            const row = document.createElement('div');
+            row.className = 'progress-row';
+            row.innerHTML = `
+                <div class="progress-labels">
+                    <span style="display:flex;align-items:center;gap:0.4rem;">
+                        <strong>${escapeHtml(src.name)}</strong>
+                        <span style="font-size:0.75rem;color:var(--text-muted);">(${count} visites)</span>
+                    </span>
+                    <strong>${pct}%</strong>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill ${barClass}" style="width: ${Math.min(100, pct)}%;"></div>
+                </div>
+            `;
+            sourcesContainer.appendChild(row);
+        });
+    }
+
+    // 4. Appareils utilisés
+    const devContainer = document.getElementById('trafficDevicesContainer');
+    if (devContainer && Array.isArray(currentTraffic.devices)) {
+        devContainer.innerHTML = '';
+        currentTraffic.devices.forEach(dev => {
+            const count = Number(dev.count || 0);
+            const pct = Number(dev.percent || 0);
+            let iconSvg = '';
+
+            if (dev.name === 'Mobile') {
+                iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
+            } else if (dev.name === 'Tablette') {
+                iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
+            } else {
+                iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
+            }
+
+            const row = document.createElement('div');
+            row.className = 'device-row-card';
+            row.innerHTML = `
+                <div class="device-left-block">
+                    <div class="device-icon-box">${iconSvg}</div>
+                    <div>
+                        <div class="device-title">${escapeHtml(dev.name)}</div>
+                        <div class="device-sub">${count} consultations directes</div>
+                    </div>
+                </div>
+                <div class="device-pct-badge">${pct}%</div>
+            `;
+            devContainer.appendChild(row);
+        });
+    }
+
+    // 5. Projets les plus vus
+    const topProjContainer = document.getElementById('trafficTopProjectsContainer');
+    if (topProjContainer) {
+        topProjContainer.innerHTML = '';
+        const list = Array.isArray(currentTraffic.topProjects) && currentTraffic.topProjects.length > 0
+            ? currentTraffic.topProjects
+            : (currentProjects || []).slice(0, 3).map((p, i) => ({ title: p.title, views: 18 - i * 4 }));
+
+        list.forEach((item, idx) => {
+            const row = document.createElement('div');
+            row.className = 'top-project-row';
+            row.innerHTML = `
+                <div class="top-project-title-group">
+                    <span class="project-rank-num">${idx + 1}</span>
+                    <span class="project-title-text">${escapeHtml(item.title)}</span>
+                </div>
+                <span class="project-views-badge">${item.views || 0} vues</span>
+            `;
+            topProjContainer.appendChild(row);
+        });
+    }
+
+    // 6. Journal des activités en direct (Live Stream)
+    const logsTbody = document.getElementById('trafficLiveLogsBody');
+    const logsBadge = document.getElementById('trafficLogsBadge');
+
+    if (logsTbody && Array.isArray(currentTraffic.recentLogs)) {
+        logsTbody.innerHTML = '';
+        if (logsBadge) logsBadge.textContent = `${currentTraffic.recentLogs.length} événements enregistrés`;
+
+        if (currentTraffic.recentLogs.length === 0) {
+            logsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2.5rem;color:var(--text-muted);">En attente de nouveaux événements...</td></tr>`;
+        } else {
+            currentTraffic.recentLogs.forEach(log => {
+                let eventBadge = '';
+                if (log.event_type === 'whatsapp_click') {
+                    eventBadge = `<span class="badge-event-tag badge-event-whatsapp">CLIC WHATSAPP</span>`;
+                } else if (log.event_type === 'project_view') {
+                    eventBadge = `<span class="badge-event-tag badge-event-project">PROJET EXPLORÉ</span>`;
+                } else if (log.event_type === 'lead_submit') {
+                    eventBadge = `<span class="badge-event-tag badge-event-lead">DEVIS ENVOYÉ</span>`;
+                } else {
+                    eventBadge = `<span class="badge-event-tag badge-event-pageview">PAGE VUE</span>`;
+                }
+
+                let srcBadge = '';
+                const src = log.source_category || 'Direct';
+                if (src.includes('Google')) srcBadge = `<span class="badge-source-tag badge-source-google">Google Search</span>`;
+                else if (src.includes('TikTok')) srcBadge = `<span class="badge-source-tag badge-source-tiktok">TikTok</span>`;
+                else if (src.includes('Instagram')) srcBadge = `<span class="badge-source-tag badge-source-instagram">Instagram</span>`;
+                else if (src.includes('Facebook')) srcBadge = `<span class="badge-source-tag badge-source-facebook">Facebook</span>`;
+                else srcBadge = `<span class="badge-source-tag badge-source-direct">Accès Direct</span>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:600;white-space:nowrap;font-size:0.82rem;">${escapeHtml(formatRelativeDate(log.created_at))}</td>
+                    <td>${eventBadge}</td>
+                    <td>${srcBadge}</td>
+                    <td><span style="font-size:0.82rem;color:var(--brand-navy);font-weight:600;">${escapeHtml(log.device_type || 'Mobile')}</span> <span style="font-size:0.75rem;color:var(--text-muted);">(${escapeHtml(log.os || 'Inconnu')})</span></td>
+                    <td style="font-size:0.82rem;color:var(--text-secondary);">${escapeHtml(log.metadata || 'Consultation du portfolio')}</td>
+                `;
+                logsTbody.appendChild(tr);
+            });
+        }
+    }
 }
