@@ -1838,82 +1838,92 @@ function renderTrafficAnalytics() {
     const sourcesContainer = document.getElementById('trafficSourcesContainer');
     if (sourcesContainer && Array.isArray(currentTraffic.sources)) {
         sourcesContainer.innerHTML = '';
-        currentTraffic.sources.forEach(src => {
-            const count = Number(src.count || 0);
-            const pct = Number(src.percent || 0);
-            const barClass = src.name.includes('Google') ? 'bg-red' : (src.name.includes('TikTok') ? 'bg-slate' : (src.name.includes('Instagram') ? 'bg-amber' : 'bg-blue'));
+        if (currentTraffic.sources.length === 0) {
+            sourcesContainer.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.85rem;">En attente des premières visites pour calculer les sources...</div>`;
+        } else {
+            currentTraffic.sources.forEach(src => {
+                const count = Number(src.count || 0);
+                const pct = Number(src.percent || 0);
+                const barClass = src.name.includes('Google') ? 'bg-red' : (src.name.includes('TikTok') ? 'bg-slate' : (src.name.includes('Instagram') ? 'bg-amber' : 'bg-blue'));
 
-            const row = document.createElement('div');
-            row.className = 'progress-row';
-            row.innerHTML = `
-                <div class="progress-labels">
-                    <span style="display:flex;align-items:center;gap:0.4rem;">
-                        <strong>${escapeHtml(src.name)}</strong>
-                        <span style="font-size:0.75rem;color:var(--text-muted);">(${count} visites)</span>
-                    </span>
-                    <strong>${pct}%</strong>
-                </div>
-                <div class="progress-bar-track">
-                    <div class="progress-bar-fill ${barClass}" style="width: ${Math.min(100, pct)}%;"></div>
-                </div>
-            `;
-            sourcesContainer.appendChild(row);
-        });
+                const row = document.createElement('div');
+                row.className = 'progress-row';
+                row.innerHTML = `
+                    <div class="progress-labels">
+                        <span style="display:flex;align-items:center;gap:0.4rem;">
+                            <strong>${escapeHtml(src.name)}</strong>
+                            <span style="font-size:0.75rem;color:var(--text-muted);">(${count} visites)</span>
+                        </span>
+                        <strong>${pct}%</strong>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill ${barClass}" style="width: ${Math.min(100, pct)}%;"></div>
+                    </div>
+                `;
+                sourcesContainer.appendChild(row);
+            });
+        }
     }
 
     // 4. Appareils utilisés
     const devContainer = document.getElementById('trafficDevicesContainer');
     if (devContainer && Array.isArray(currentTraffic.devices)) {
         devContainer.innerHTML = '';
-        currentTraffic.devices.forEach(dev => {
-            const count = Number(dev.count || 0);
-            const pct = Number(dev.percent || 0);
-            let iconSvg = '';
+        if (currentTraffic.devices.length === 0) {
+            devContainer.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.85rem;">En attente des premières visites pour catégoriser les appareils...</div>`;
+        } else {
+            currentTraffic.devices.forEach(dev => {
+                const count = Number(dev.count || 0);
+                const pct = Number(dev.percent || 0);
+                let iconSvg = '';
 
-            if (dev.name === 'Mobile') {
-                iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
-            } else if (dev.name === 'Tablette') {
-                iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
-            } else {
-                iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
-            }
+                if (dev.name === 'Mobile') {
+                    iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
+                } else if (dev.name === 'Tablette') {
+                    iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
+                } else {
+                    iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
+                }
 
-            const row = document.createElement('div');
-            row.className = 'device-row-card';
-            row.innerHTML = `
-                <div class="device-left-block">
-                    <div class="device-icon-box">${iconSvg}</div>
-                    <div>
-                        <div class="device-title">${escapeHtml(dev.name)}</div>
-                        <div class="device-sub">${count} consultations directes</div>
+                const row = document.createElement('div');
+                row.className = 'device-row-card';
+                row.innerHTML = `
+                    <div class="device-left-block">
+                        <div class="device-icon-box">${iconSvg}</div>
+                        <div>
+                            <div class="device-title">${escapeHtml(dev.name)}</div>
+                            <div class="device-sub">${count} consultations directes</div>
+                        </div>
                     </div>
-                </div>
-                <div class="device-pct-badge">${pct}%</div>
-            `;
-            devContainer.appendChild(row);
-        });
+                    <div class="device-pct-badge">${pct}%</div>
+                `;
+                devContainer.appendChild(row);
+            });
+        }
     }
 
     // 5. Projets les plus vus
     const topProjContainer = document.getElementById('trafficTopProjectsContainer');
     if (topProjContainer) {
         topProjContainer.innerHTML = '';
-        const list = Array.isArray(currentTraffic.topProjects) && currentTraffic.topProjects.length > 0
-            ? currentTraffic.topProjects
-            : (currentProjects || []).slice(0, 3).map((p, i) => ({ title: p.title, views: 18 - i * 4 }));
+        const list = Array.isArray(currentTraffic.topProjects) ? currentTraffic.topProjects : [];
 
-        list.forEach((item, idx) => {
-            const row = document.createElement('div');
-            row.className = 'top-project-row';
-            row.innerHTML = `
-                <div class="top-project-title-group">
-                    <span class="project-rank-num">${idx + 1}</span>
-                    <span class="project-title-text">${escapeHtml(item.title)}</span>
-                </div>
-                <span class="project-views-badge">${item.views || 0} vues</span>
-            `;
-            topProjContainer.appendChild(row);
-        });
+        if (list.length === 0) {
+            topProjContainer.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.85rem;">Aucune réalisation consultée pour le moment.</div>`;
+        } else {
+            list.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'top-project-row';
+                row.innerHTML = `
+                    <div class="top-project-title-group">
+                        <span class="project-rank-num">${idx + 1}</span>
+                        <span class="project-title-text">${escapeHtml(item.title)}</span>
+                    </div>
+                    <span class="project-views-badge">${item.views || 0} vues</span>
+                `;
+                topProjContainer.appendChild(row);
+            });
+        }
     }
 
     // 6. Journal des activités en direct (Live Stream)

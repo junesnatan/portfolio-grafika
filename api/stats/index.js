@@ -52,9 +52,17 @@ export default async function handler(req, res) {
                 ? ((totalInteractions / uniqueVisitors) * 100).toFixed(1)
                 : '0.0';
 
-            // Évolution par jour (timeline des 7 derniers jours)
+            // Évolution par jour (timeline réelle des 7 derniers jours)
             let timeline = [];
             try {
+                const now = new Date();
+                const daysMap = {};
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(now.getTime() - i * 86400000);
+                    const dayStr = d.toISOString().substring(0, 10);
+                    daysMap[dayStr] = { day: dayStr, views: 0, visitors: 0, whatsapp: 0 };
+                }
+
                 const timeRes = await db.execute(`
                     SELECT substr(created_at, 1, 10) as day, 
                            SUM(CASE WHEN event_type = 'pageview' THEN 1 ELSE 0 END) as views,
@@ -65,19 +73,28 @@ export default async function handler(req, res) {
                     ORDER BY day DESC 
                     LIMIT 14;
                 `);
-                timeline = timeRes.rows.reverse();
-            } catch {}
 
-            if (!timeline || timeline.length === 0) {
-                const now = new Date();
-                timeline = Array.from({ length: 7 }).map((_, i) => {
-                    const d = new Date(now.getTime() - (6 - i) * 86400000);
-                    const dayStr = d.toISOString().substring(0, 10);
-                    return { day: dayStr, views: Math.floor(Math.random() * 8) + 12, visitors: Math.floor(Math.random() * 6) + 8, whatsapp: Math.floor(Math.random() * 3) + 1 };
+                timeRes.rows.forEach(r => {
+                    if (daysMap[r.day]) {
+                        daysMap[r.day].views = Number(r.views || 0);
+                        daysMap[r.day].visitors = Number(r.visitors || 0);
+                        daysMap[r.day].whatsapp = Number(r.whatsapp || 0);
+                    } else {
+                        daysMap[r.day] = {
+                            day: r.day,
+                            views: Number(r.views || 0),
+                            visitors: Number(r.visitors || 0),
+                            whatsapp: Number(r.whatsapp || 0)
+                        };
+                    }
                 });
+
+                timeline = Object.values(daysMap).sort((a, b) => a.day.localeCompare(b.day));
+            } catch (err) {
+                console.warn('Timeline calc error:', err.message);
             }
 
-            // Sources / Canaux de trafic
+            // Sources / Canaux de trafic réels
             let sources = [];
             try {
                 const srcRes = await db.execute(`
@@ -95,16 +112,7 @@ export default async function handler(req, res) {
                 }));
             } catch {}
 
-            if (!sources || sources.length === 0) {
-                sources = [
-                    { name: 'Google Search', count: 42, percent: 45 },
-                    { name: 'TikTok', count: 26, percent: 28 },
-                    { name: 'Instagram', count: 14, percent: 15 },
-                    { name: 'Accès Direct', count: 11, percent: 12 }
-                ];
-            }
-
-            // Appareils (Mobile vs Desktop vs Tablette)
+            // Appareils réels (Mobile vs Desktop vs Tablette)
             let devices = [];
             try {
                 const devRes = await db.execute(`
@@ -121,14 +129,6 @@ export default async function handler(req, res) {
                     percent: Math.round((Number(r.count || 0) / totalDev) * 100)
                 }));
             } catch {}
-
-            if (!devices || devices.length === 0) {
-                devices = [
-                    { name: 'Mobile', count: 68, percent: 73 },
-                    { name: 'Ordinateur', count: 21, percent: 23 },
-                    { name: 'Tablette', count: 4, percent: 4 }
-                ];
-            }
 
             // Projets les plus vus
             let topProjects = [];
